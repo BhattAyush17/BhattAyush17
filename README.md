@@ -79,9 +79,8 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 ---
 
 ## **GitHub Badges & Achievements**
-
+<!-- Add your badges below. Update this section every time you earn a new badge! -->
 <div align="center">
-  <!-- Example badges; replace or add as you earn more! -->
   <img src="https://img.shields.io/badge/Arctic%20Code%20Vault%20Contributor-blue?logo=github&style=for-the-badge" alt="Arctic Code Vault Contributor" title="Arctic Code Vault Contributor"/>
   <img src="https://img.shields.io/badge/Star%20Sponsor-yellow?logo=github&style=for-the-badge" alt="GitHub Star Sponsor" title="GitHub Star Sponsor"/>
   <img src="https://img.shields.io/badge/Developer%20Program%20Member-green?logo=github&style=for-the-badge" alt="Developer Program Member" title="Developer Program Member"/>
