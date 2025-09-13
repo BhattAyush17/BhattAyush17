@@ -61,15 +61,10 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=36&pause=1200&color=ECECEC&vCenter=true&width=300&height=50&lines=GitHub+Stats" alt="Typing SVG" />
 </div>
 
-<!-- Quick-refresh GitHub stats (refreshes every 30 minutes) -->
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=BhattAyush17&cache_seconds=1800)
-
 <div align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
   <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
 </div>
-
----
 
 ## GitHub Stats Widgets Update Frequency
 
