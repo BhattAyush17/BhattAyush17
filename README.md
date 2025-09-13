@@ -5,10 +5,9 @@
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=48&pause=1200&color=ECECEC&vCenter=true&width=800&height=60&lines=Hi+there,+I'm+Ayush+%F0%9F%91%8B" alt="Typing SVG" />
   <br>
   <span style="font-size:1.2em; font-weight:700; color:#c9d1d9;">
-    <b>Building smart solutions with Data Science, AI, and Open Source.</b>
+    <b>Transforming data into actionable insights to address real-world challenges.</b>
   </span>
 </div>
----
 
 ## **Intro**
 
