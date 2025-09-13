@@ -4,7 +4,7 @@
 <div align="left">
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=48&pause=1200&color=ECECEC&vCenter=true&width=800&height=60&lines=Hi+there,+I'm+Ayush+%F0%9F%91%8B" alt="Typing SVG" />
   <br>
-  <span style="font-size:1.2em; font-weight:700; color:#c9d1d9;">
+  <span style="font-size:1.2em; font-weight:700; color:#ececec;">
     <b>Transforming data into actionable insights to address real-world challenges.</b>
   </span>
 </div>
@@ -12,7 +12,7 @@
 ## **Intro**
 
 I'm a passionate Data Science and Machine Learning enthusiast, driven by curiosity and creativity.<br>
-I enjoy transforming data into actionable insights, building intelligent systems, and collaborating on open-source projects.<br>
+I enjoy transforming data into actionable insights, building intelligent systems, and collaborating on impactful projects.<br>
 My interests span **Machine Learning**, **Deep Learning**, **Computer Vision**, and **NLP**.<br>
 Currently, I'm working on scalable ML applications and sharing knowledge with the community.
 
@@ -22,7 +22,7 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 - Winner in campus-level ML hackathons.
 - Recognized for creative data visualizations in Kaggle micro-challenges.
-- Contributor to open-source AI tutorials.
+- Contributor to AI tutorials and guides.
 - Runner-up in internal data sprints.
 - Published beginner-friendly guides on ML tools.
 
@@ -78,6 +78,7 @@ Stats widgets on GitHub profile READMEs are not real-time; they update periodica
 Seeing "yesterday" or delayed data is normal, and today’s data will appear after the widget’s cache refreshes (now every 30 minutes).
 
 If you want code to decrease cache time for the most popular widgets, let me know!
+
 ---
 
 ## **GitHub Trophies**
