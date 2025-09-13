@@ -66,15 +66,7 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
   <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
 </div>
 
-## GitHub Stats Widgets Update Frequency
 
-**Summary:**  
-Stats widgets on GitHub profile READMEs are not real-time; they update periodically.  
-Seeing "yesterday" or delayed data is normal, and today’s data will appear after the widget’s cache refreshes (now every 30 minutes).
-
-If you want code to decrease cache time for the most popular widgets, let me know!
-
----
 
 ## **GitHub Trophies**
 
