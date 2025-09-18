@@ -2,12 +2,16 @@
 <div align="left">
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&size=48&pause=1200&color=ececec&vCenter=true&width=800&height=60&lines=Hi+there,+I'm+Ayush+%F0%9F%91%8B" alt="Typing SVG" />
   <br>
-  <b style="color:#ececec; font-size:1.2em;">
+  <span style="color:#ececec; font-family:'Montserrat', 'Segoe UI', 'Arial', sans-serif; font-size:2rem; font-weight:700;">
     Transforming data into actionable insights to address real-world challenges.
-  </b>
+  </span>
 </div>
 
-## **Intro**
+---
+
+<span style="color:#ececec; font-family:'Montserrat', 'Segoe UI', 'Arial', sans-serif; font-size:2rem; font-weight:700;">
+  Intro
+</span>
 
 I'm a passionate Data Science and Machine Learning enthusiast, driven by curiosity and creativity.<br>
 I enjoy transforming data into actionable insights, building intelligent systems, and collaborating on impactful projects.<br>
@@ -16,7 +20,9 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-## **Achievements**
+<span style="color:#ececec; font-family:'Montserrat', 'Segoe UI', 'Arial', sans-serif; font-size:2rem; font-weight:700;">
+  Achievements
+</span>
 
 - Winner in campus-level ML hackathons.
 - Recognized for creative data visualizations in Kaggle micro-challenges.
@@ -26,7 +32,9 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-## **About Me**
+<span style="color:#ececec; font-family:'Montserrat', 'Segoe UI', 'Arial', sans-serif; font-size:2rem; font-weight:700;">
+  About Me
+</span>
 
 - Strong foundation in Python, C++, and modern ML frameworks.
 - Love exploring new algorithms and staying updated with AI research.
@@ -35,7 +43,9 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-## **Languages Used**
+<span style="color:#ececec; font-family:'Montserrat', 'Segoe UI', 'Arial', sans-serif; font-size:2rem; font-weight:700;">
+  Languages Used
+</span>
 
 ![Python](https://img.shields.io/badge/Python-222222?style=for-the-badge&logo=python&logoColor=white) 
 ![C++](https://img.shields.io/badge/C++-222222?style=for-the-badge&logo=cplusplus&logoColor=white) 
@@ -53,10 +63,9 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-<!-- ------------------ GITHUB STATS HEADER ------------------ -->
-<div align="left">
-  <img src="https://readme-typing-svg.demolab.com?font=Montserrat&size=36&pause=1200&color=ececec&vCenter=true&width=300&height=50&lines=GitHub+Stats" alt="Typing SVG" />
-</div>
+<span style="color:#ececec; font-family:'Montserrat', 'Segoe UI', 'Arial', sans-serif; font-size:2rem; font-weight:700;">
+  GitHub Stats
+</span>
 
 <div align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true" height="180"/>
@@ -65,7 +74,9 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-## **GitHub Trophies**
+<span style="color:#ececec; font-family:'Montserrat', 'Segoe UI', 'Arial', sans-serif; font-size:2rem; font-weight:700;">
+  GitHub Trophies
+</span>
 
 <div align="center">
   <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true" height="120"/>
@@ -73,7 +84,10 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-## **GitHub Badges & Achievements**
+<span style="color:#ececec; font-family:'Montserrat', 'Segoe UI', 'Arial', sans-serif; font-size:2rem; font-weight:700;">
+  GitHub Badges & Achievements
+</span>
+
 <div align="center">
   <img src="https://img.shields.io/badge/Arctic%20Code%20Vault%20Contributor-blue?logo=github&style=for-the-badge" alt="Arctic Code Vault Contributor" title="Arctic Code Vault Contributor"/>
   <img src="https://img.shields.io/badge/Star%20Sponsor-yellow?logo=github&style=for-the-badge" alt="GitHub Star Sponsor" title="GitHub Star Sponsor"/>
@@ -83,7 +97,9 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-## **Featured Projects**
+<span style="color:#ececec; font-family:'Montserrat', 'Segoe UI', 'Arial', sans-serif; font-size:2rem; font-weight:700;">
+  Featured Projects
+</span>
 
 | Repository | Description | Language | Stars | Forks |
 |------------|-------------|----------|-------|-------|
@@ -95,7 +111,9 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-## **Contribution Graph**
+<span style="color:#ececec; font-family:'Montserrat', 'Segoe UI', 'Arial', sans-serif; font-size:2rem; font-weight:700;">
+  Contribution Graph
+</span>
 
 <div align="center">
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" height="220"/>
@@ -103,7 +121,9 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-## **Best Repositories**
+<span style="color:#ececec; font-family:'Montserrat', 'Segoe UI', 'Arial', sans-serif; font-size:2rem; font-weight:700;">
+  Best Repositories
+</span>
 
 <div align="center">
   <a href="https://github.com/BhattAyush17/ProPhet_BnB">
