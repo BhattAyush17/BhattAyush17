@@ -1,12 +1,10 @@
-<!-- Modern, bold, left-aligned header with animated typing effect, NO background box, using darkest white (#ececec). -->
-
 <!-- ------------------ PROFILE HEADER ------------------ -->
 <div align="left">
-  <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=48&pause=1200&color=ECECEC&vCenter=true&width=800&height=60&lines=Hi+there,+I'm+Ayush+%F0%9F%91%8B" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Montserrat&size=48&pause=1200&color=ececec&vCenter=true&width=800&height=60&lines=Hi+there,+I'm+Ayush+%F0%9F%91%8B" alt="Typing SVG" />
   <br>
-  <span style="font-size:1.2em; font-weight:700; color:#ececec;">
-    <b>Transforming data into actionable insights to address real-world challenges.</b>
-  </span>
+  <b style="color:#ececec; font-size:1.2em;">
+    Transforming data into actionable insights to address real-world challenges.
+  </b>
 </div>
 
 ## **Intro**
@@ -50,23 +48,22 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 <br>
 
 <div align="center">
-  <!-- 3D PIE CHART: Use 'style=plastic' for a 3D effect -->
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=BhattAyush17&layout=pie&theme=dark&hide_border=true&style=plastic" alt="Top Languages 3D Pie Chart" height="220" />
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=BhattAyush17&layout=pie&theme=dark&hide_border=true" alt="Top Languages Pie Chart" height="220" />
 </div>
 
 ---
 
 <!-- ------------------ GITHUB STATS HEADER ------------------ -->
 <div align="left">
-  <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=36&pause=1200&color=ECECEC&vCenter=true&width=300&height=50&lines=GitHub+Stats" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Montserrat&size=36&pause=1200&color=ececec&vCenter=true&width=300&height=50&lines=GitHub+Stats" alt="Typing SVG" />
 </div>
 
 <div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
+  <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true" height="180"/>
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true" height="180"/>
 </div>
 
-
+---
 
 ## **GitHub Trophies**
 
@@ -77,7 +74,6 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 ---
 
 ## **GitHub Badges & Achievements**
-<!-- Add your badges below. Update this section every time you earn a new badge! -->
 <div align="center">
   <img src="https://img.shields.io/badge/Arctic%20Code%20Vault%20Contributor-blue?logo=github&style=for-the-badge" alt="Arctic Code Vault Contributor" title="Arctic Code Vault Contributor"/>
   <img src="https://img.shields.io/badge/Star%20Sponsor-yellow?logo=github&style=for-the-badge" alt="GitHub Star Sponsor" title="GitHub Star Sponsor"/>
@@ -93,7 +89,7 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 |------------|-------------|----------|-------|-------|
 | [ProPhet_BnB](https://github.com/BhattAyush17/ProPhet_BnB) | Airbnb price prediction | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/ProPhet_BnB?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/ProPhet_BnB?style=social) |
 | [Lane_Morph](https://github.com/BhattAyush17/Lane_Morph) | Lane detection & morphing | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Lane_Morph?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Lane_Morph?style=social) |
-| [DSA-with-C-](https://github.com/BhattAyush17/DSA-with-C-) | DSA implementations in C++ | C++ | ![Stars](https://img.shields.io/github/stars/BhattAyush17/DSA-with-C-?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/DSA-with-C-?style=social) |
+| [DSA-with-CPP](https://github.com/BhattAyush17/DSA-with-CPP) | DSA implementations in C++ | C++ | ![Stars](https://img.shields.io/github/stars/BhattAyush17/DSA-with-CPP?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/DSA-with-CPP?style=social) |
 | [Greydge](https://github.com/BhattAyush17/Greydge) | Data pipeline for grey-scale image analysis | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Greydge?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Greydge?style=social) |
 | [zavix-animegan-app](https://github.com/BhattAyush17/zavix-animegan-app) | AnimeGAN web app | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/zavix-animegan-app?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/zavix-animegan-app?style=social) |
 
@@ -110,12 +106,11 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 ## **Best Repositories**
 
 <div align="center">
-
   <a href="https://github.com/BhattAyush17/ProPhet_BnB">
     <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=dark&hide_border=true" height="140"/>
   </a>
-  <a href="https://github.com/BhattAyush17/DSA-with-C-">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=DSA-with-C-&theme=dark&hide_border=true" height="140"/>
+  <a href="https://github.com/BhattAyush17/DSA-with-CPP">
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=DSA-with-CPP&theme=dark&hide_border=true" height="140"/>
   </a>
   <a href="https://github.com/BhattAyush17/Lane_Morph">
     <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=Lane_Morph&theme=dark&hide_border=true" height="140"/>
