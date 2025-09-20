@@ -1,0 +1,52 @@
+name: Update Streak Counter
+
+on:
+  schedule:
+    # Run daily at 00:30 UTC
+    - cron: '30 0 * * *'
+  workflow_dispatch: # Allow manual triggering
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/update-streak.yml'
+
+jobs:
+  update-streak:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        pip install requests python-dateutil
+        
+    - name: Calculate and update streak
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        USERNAME: BhattAyush17
+      run: |
+        python .github/scripts/update_streak.py
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add README.md
+        if git diff --cached --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "🔥 Update streak counter"
+          git push
+        fi
