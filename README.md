@@ -7,7 +7,6 @@
   </span>
 </div>
 
-## **Intro**
 
 I'm a passionate Data Science and Machine Learning enthusiast, driven by curiosity and creativity.<br>
 I enjoy transforming data into actionable insights, building intelligent systems, and collaborating on impactful projects.<br>
