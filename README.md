@@ -61,10 +61,13 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 <div align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
 </div>
 
-
+<div align="center">
+  <b>Current Streak</b>
+  <br>
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
+</div>
 
 ## **GitHub Trophies**
 
