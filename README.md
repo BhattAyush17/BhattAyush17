@@ -62,12 +62,14 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
     <td>
       <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
     </td>
-    <td align="center" valign="top">
-      <b>Current Streak (days)</b><br>
-     <span style="font-size:2em; color:#39d353;"><!--STREAK_COUNT-->0<!--STREAK_COUNT--></span>
-      <br>
-      <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" height="100"/>
-    </td>
+   ...
+<td align="center" valign="top">
+  <b>Current Streak (days)</b><br>
+  <span style="font-size:2em; color:#39d353;"><!--STREAK_COUNT-->0<!--STREAK_COUNT--></span>
+  <br>
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" height="100"/>
+</td>
+...
   </tr>
 </table>
 
