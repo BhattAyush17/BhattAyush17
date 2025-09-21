@@ -4,12 +4,13 @@
   
   <br>
   <span style="font-size:1.2em; font-weight:700; color:#ececec;">
-    
-    <b>Transforming data into actionable insights to address real-world challenges.</b>
+
   </span>
   <br>
   <img src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17" alt="visitors"/>
 </div>
+
+ <b>Transforming data into actionable insights to address real-world challenges.</b>
 
 ## **Intro**
 
