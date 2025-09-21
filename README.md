@@ -7,6 +7,10 @@
   </span>
 </div>
 
+<div align="center">
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17" alt="visitors"/>
+</div>
+
 ## **Intro**
 
 I'm a passionate Data Science and Machine Learning enthusiast, driven by curiosity and creativity.<br>
@@ -65,7 +69,7 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
     </td>
     <td align="center" valign="top">
       <b>Current Streak (days)</b><br>
-      <span style="font-size:2em; color:#39d353;"><!--STREAK_COUNT-->0<!--STREAK_COUNT--></span>
+      <span style="font-size:2em; color:#39d353;"><!--STREAK_COUNT-->2<!--STREAK_COUNT--></span>
       <br>
       <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" height="100"/>
     </td>
@@ -129,9 +133,5 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 </div>
 
 ---
-
-<div align="center">
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17" alt="visitors"/>
-</div>
 
 <!-- End of README -->
