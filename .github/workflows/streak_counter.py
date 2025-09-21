@@ -6,16 +6,19 @@ import re
 token = os.environ['GITHUB_TOKEN']
 repo_name = os.environ.get('REPO_NAME', 'BhattAyush17/BhattAyush17')
 readme_path = os.environ.get('README_PATH', 'README.md')
-username = repo_name.split('/')[0]
+branch = os.environ.get('BRANCH', 'main')  # Default branch
 
 g = Github(token)
 repo = g.get_repo(repo_name)
 
 now = datetime.utcnow()
-commits = repo.get_commits(author=username, since=now - timedelta(days=365))
+since = now - timedelta(days=365)
+commits = repo.get_commits(since=since, sha=branch)
 
 commit_days = set()
 for commit in commits:
+    # If you want to filter only your commits, uncomment the next line:
+    # if commit.author and commit.author.login != "BhattAyush17": continue
     commit_date = commit.commit.author.date.date()
     commit_days.add(commit_date)
 
