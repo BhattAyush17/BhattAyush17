@@ -7,6 +7,10 @@
   </span>
 </div>
 
+<div align="center">
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17" alt="visitors"/>
+</div>
+
 ## **Intro**
 
 I'm a passionate Data Science and Machine Learning enthusiast, driven by curiosity and creativity.<br>
@@ -130,8 +134,6 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-<div align="center">
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17" alt="visitors"/>
-</div>
+
 
 <!-- End of README -->
