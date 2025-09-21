@@ -1,9 +1,12 @@
 name: Update Commit Streak
 
 on:
+  push:                 # Run on every push to the repository
+    branches:
+      - main            # or your default branch
   schedule:
-    - cron: '0 0 * * *' # Runs daily at midnight UTC
-  workflow_dispatch:
+    - cron: '0 0 * * *' # Also run daily at midnight UTC
+  workflow_dispatch:    # Manual trigger
 
 jobs:
   update-streak:
@@ -25,7 +28,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_NAME: BhattAyush17/BhattAyush17
           README_PATH: README.md
-        run: python .github/streak_counter.py
+          BRANCH: main
+        run: python .github/workflows/streak_counter.py
 
       - name: Commit and push changes
         run: |
