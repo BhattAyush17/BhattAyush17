@@ -21,8 +21,10 @@ def calculate_commit_streak():
         logger.info(f"Calculating streak for user: {username}")
         logger.info(f"Repository: {repo_name}")
         
-        # Initialize GitHub connection
-        g = Github(token)
+        # Initialize GitHub connection with updated authentication
+        from github import Auth
+        auth = Auth.Token(token)
+        g = Github(auth=auth)
         repo = g.get_repo(repo_name)
         
         # Get current time using timezone-aware datetime
@@ -64,6 +66,9 @@ def calculate_commit_streak():
         
     except Exception as e:
         logger.error(f"Error calculating commit streak: {e}")
+        # If we can't connect to GitHub, we should preserve the existing streak
+        # rather than resetting it to 0
+        logger.info("Returning 0 streak due to error - existing README will be unchanged if no update occurs")
         return 0
 
 def update_readme_streak(streak):
