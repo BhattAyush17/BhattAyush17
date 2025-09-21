@@ -5,9 +5,7 @@
   <span style="font-size:1.2em; font-weight:700; color:#ececec;">
     <b>Transforming data into actionable insights to address real-world challenges.</b>
   </span>
-</div>
-
-<div align="center">
+  <br>
   <img src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17" alt="visitors"/>
 </div>
 
@@ -133,7 +131,5 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 </div>
 
 ---
-
-
 
 <!-- End of README -->
