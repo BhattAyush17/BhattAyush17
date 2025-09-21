@@ -25,9 +25,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_NAME: BhattAyush17/BhattAyush17
           README_PATH: README.md
-        run: python .github/streak_counter.py
+        run: python .github/workflows/streak_counter.py
 
       - name: Commit and push changes
+        env:
+          README_PATH: README.md
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
