@@ -52,25 +52,30 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 <br>
 
+<!-- ------------------ GITHUB STATS HEADER ------------------ -->
 <div align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=BhattAyush17&layout=pie&theme=dark&hide_border=true&style=plastic" alt="Top Languages 3D Pie Chart" height="220" />
+  <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=36&pause=1200&color=ECECEC&vCenter=true&width=350&height=50&lines=GitHub+Stats" alt="Typing SVG" />
 </div>
 
----
+<div align="center">
 
-<table>
-  <tr>
-    <td>
-      <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
-    </td>
-    <td align="center" valign="top">
-      <b>Current Streak (days)</b><br>
-      <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true" height="180"/>
-      <br>
-      <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" height="100"/>
-    </td>
-  </tr>
-</table>
+  <table>
+    <tr>
+      <td>
+        <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
+      </td>
+      <td>
+        <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true" height="180"/>
+      </td>
+      <td>
+        <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=BhattAyush17&theme=dark&hide_border=true&layout=compact" height="180"/>
+      </td>
+    </tr>
+  </table>
+
+  <br>
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" width="100%" />
+</div>
 
 ## **GitHub Trophies**
 
