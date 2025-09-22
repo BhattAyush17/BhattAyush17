@@ -58,11 +58,6 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-<!-- ------------------ GITHUB STATS HEADER ------------------ -->
-<div align="left">
-  <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=36&pause=1200&color=ECECEC&vCenter=true&width=300&height=50&lines=GitHub+Stats" alt="Typing SVG" />
-</div>
-
 <table>
   <tr>
     <td>
@@ -70,14 +65,12 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
     </td>
     <td align="center" valign="top">
       <b>Current Streak (days)</b><br>
-      <span style="font-size:2em; color:#39d353;"><!--STREAK_COUNT-->0<!--STREAK_COUNT--></span>
+      <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true" height="180"/>
       <br>
       <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" height="100"/>
     </td>
   </tr>
 </table>
-
----
 
 ## **GitHub Trophies**
 
