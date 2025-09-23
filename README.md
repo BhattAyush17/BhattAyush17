@@ -58,21 +58,22 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 </div>
 
 <div align="center">
-
   <table>
     <tr>
-      <td>
+      <td align="center" valign="top">
+        <b>GitHub Stats</b><br>
         <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
       </td>
-      <td>
+      <td align="center" valign="top">
+        <b>Current Streak</b><br>
         <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true" height="180"/>
       </td>
-      <td>
+      <td align="center" valign="top">
+        <b>Top Languages</b><br>
         <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=BhattAyush17&theme=dark&hide_border=true&layout=compact" height="180"/>
       </td>
     </tr>
   </table>
-
   <br>
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" width="100%" />
 </div>
