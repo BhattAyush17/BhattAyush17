@@ -78,6 +78,39 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" width="100%" />
 </div>
 
+---
+
+## **Verified GitHub Stats (Fallback & Proof)**
+
+> ⚠️ *Note: Automated GitHub stats widgets have been unreliable/crashing recently. Below are my verified stats and a screenshot for solid proof.*
+
+<div align="center">
+  <img src="https://github.com/BhattAyush17/BhattAyush17/raw/main/assets/github_stats_proof.png" alt="GitHub Stats Proof" width="700"/>
+</div>
+
+| Metric                          | Value    |
+|----------------------------------|----------|
+| **Total Stars Earned**           | 1        |
+| **Total Commits (last year)**    | 134      |
+| **Total PRs**                    | 6        |
+| **Total Issues**                 | 3        |
+| **Contributed to (last year)**   | 0        |
+| **Current Streak**               | (See above image or widget) |
+
+### **Most Used Languages**
+| Language           | Percentage |
+|--------------------|------------|
+| Python             | 51.10%     |
+| C++                | 36.96%     |
+| C                  | 6.43%      |
+| CSS                | 2.25%      |
+| Jupyter Notebook   | 2.14%      |
+| JavaScript         | 1.12%      |
+
+---
+
+#### 🛠️ *For transparency, see the attached screenshot showing my exact stats as of September 2025.*
+
 ## **GitHub Trophies**
 
 <div align="center">
