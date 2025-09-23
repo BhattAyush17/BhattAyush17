@@ -78,8 +78,6 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" width="100%" />
 </div>
 
----
-
 
 ## **GitHub Trophies**
 
