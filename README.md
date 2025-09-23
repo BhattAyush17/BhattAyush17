@@ -82,10 +82,15 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 ## **GitHub Trophies**
 
 <div align="center">
-  <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true" height="120"/>
+  <!-- Widget (may not always load) -->
+  <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true" height="120" alt="GitHub Trophies Widget"/>
+  <br>
+  <!-- Fallback proof screenshot (always displays) -->
+  <img src="https://github.com/BhattAyush17/BhattAyush17/raw/main/assets/github_trophies_proof.png" alt="GitHub Trophies Proof Screenshot" height="120"/>
+  <br>
+  <sub>If the widget above fails to load, refer to the screenshot below for proof of trophies.</sub>
 </div>
 
----
 
 ## **GitHub Badges & Achievements**
 <div align="center">
