@@ -21,15 +21,6 @@ Currently, I'm working on scalable ML applications and sharing knowledge with th
 
 ---
 
-## **Achievements**
-
-- Winner in campus-level ML hackathons.
-- Recognized for creative data visualizations in Kaggle micro-challenges.
-- Contributor to AI tutorials and guides.
-- Runner-up in internal data sprints.
-- Published beginner-friendly guides on ML tools.
-
----
 
 ## **About Me**
 
