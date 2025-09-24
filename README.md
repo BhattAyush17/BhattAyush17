@@ -14,9 +14,10 @@
 
 ## **Intro**
 
-I'm a passionate Data Science and Machine Learning enthusiast, driven by curiosity and creativity.<br>
+Following my curiosity into the world of Data Science and Machine Learning<br>
 I enjoy transforming data into actionable insights, building intelligent systems, and collaborating on impactful projects.<br>
 My interests span **Machine Learning**, **Deep Learning**, **Computer Vision**, and **NLP**.<br>
+Currently Learning and exploring ML and its Frameworks. Diving deep into these. 
 
 
 
@@ -28,6 +29,7 @@ My interests span **Machine Learning**, **Deep Learning**, **Computer Vision**, 
 - Strong foundation in Python, C++, and modern ML frameworks.
 - Love exploring new algorithms and staying updated with AI research.
 - Focused on making data science accessible and impactful.
+- Enjoys exploring and learning about ML and data driven projects and concepts.
 - Always open to collaboration on cool projects and innovative solutions.
 
 ---
