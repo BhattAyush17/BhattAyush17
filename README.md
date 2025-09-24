@@ -1,4 +1,4 @@
-<!-- ------------------ PROFILE HEADER ------------------ -->
+<img width="955" height="497" alt="image" src="https://github.com/user-attachments/assets/7130f14f-a961-4fa6-855a-bdaf89171ac7" /><!-- ------------------ PROFILE HEADER ------------------ -->
 <div align="left">
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=48&pause=1200&color=ECECEC&vCenter=true&width=800&height=60&lines=Hi+there,+I'm+Ayush+%F0%9F%91%8B" alt="Typing SVG" />
   
@@ -17,7 +17,8 @@
 I'm a passionate Data Science and Machine Learning enthusiast, driven by curiosity and creativity.<br>
 I enjoy transforming data into actionable insights, building intelligent systems, and collaborating on impactful projects.<br>
 My interests span **Machine Learning**, **Deep Learning**, **Computer Vision**, and **NLP**.<br>
-Currently, I'm working on scalable ML applications and sharing knowledge with the community.
+
+
 
 ---
 
