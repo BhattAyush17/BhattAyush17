@@ -1,4 +1,3 @@
-
 <div align="left">
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=48&pause=1200&color=ECECEC&vCenter=true&width=800&height=60&lines=Hi+there,+I'm+Ayush+%F0%9F%91%8B" alt="Typing SVG" />
   
@@ -19,10 +18,7 @@ I enjoy transforming data into actionable insights, building intelligent systems
 My interests span **Machine Learning**, **Deep Learning**, **Computer Vision**, and **NLP**.<br>
 Currently Learning and exploring ML and its Frameworks. Diving deep into these. 
 
-
-
 ---
-
 
 ## **About Me**
 
@@ -72,17 +68,40 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" width="100%" />
 </div>
 
-
 ## **GitHub Trophies**
 
 <div align="center">
-  <!-- Widget (may not always load) -->
-  <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true" height="120" alt="GitHub Trophies Widget"/>
+  
+  <!-- Primary Trophy Display with multiple fallbacks -->
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true&no-bg=false&margin-w=4&column=7">
+    <img alt="GitHub Trophies" src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true&no-bg=false&margin-w=4&column=7" height="150" />
+  </picture>
+  
+  <!-- Alternative trophy service as backup -->
+  <noscript>
+    <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true&margin-w=4&column=6&rank=SECRET,SSS,SS,S,AAA,AA,A,B,C" height="150" alt="GitHub Trophies" />
+  </noscript>
+  
+  <!-- Text-based fallback if images fail -->
+  <details>
+    <summary><b>🏆 Achievement Overview</b></summary>
+    <br>
+    
+  **Code Contributions:** Active contributor with consistent commits<br>
+  **Repository Impact:** Multiple starred and forked repositories<br>
+  **Community Engagement:** Collaborative projects and open source contributions<br>
+  **Technical Diversity:** Projects spanning ML, Computer Vision, and Web Development<br>
+  **Innovation:** Creative solutions in Data Science and AI applications<br>
+    
+  </details>
+  
   <br>
-
+</div>
 
 ## **GitHub Badges & Achievements**
-<div align="cernter">
+
+<div align="center">
   <img src="https://img.shields.io/badge/Arctic%20Code%20Vault%20Contributor-blue?logo=github&style=for-the-badge" alt="Arctic Code Vault Contributor" title="Arctic Code Vault Contributor"/>
   <img src="https://img.shields.io/badge/Star%20Sponsor-yellow?logo=github&style=for-the-badge" alt="GitHub Star Sponsor" title="GitHub Star Sponsor"/>
   <img src="https://img.shields.io/badge/Developer%20Program%20Member-green?logo=github&style=for-the-badge" alt="Developer Program Member" title="Developer Program Member"/>
@@ -90,9 +109,9 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
 
 ---
 
-<div align="left">
 ## **Featured Projects**
-</div>
+
+<div align="left">
 
 | Repository | Description | Language | Stars | Forks |
 |------------|-------------|----------|-------|-------|
@@ -102,6 +121,8 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
 | [Greydge](https://github.com/BhattAyush17/Greydge) | Data pipeline for grey-scale image analysis | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Greydge?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Greydge?style=social) |
 | [zavix-animegan-app](https://github.com/BhattAyush17/zavix-animegan-app) | AnimeGAN web app | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/zavix-animegan-app?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/zavix-animegan-app?style=social) |
 | [Loan-Dash-X](https://github.com/BhattAyush17/Loan-Dash-X) | Loan dashboard app | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Loan-Dash-X?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Loan-Dash-X?style=social) |
+
+</div>
 
 ---
 
@@ -130,5 +151,12 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
 </div>
 
 ---
+
+<div align="center">
+  <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 20px; border-radius: 10px; border: 1px solid #334155; margin: 20px 0;">
+    <h3 style="color: #fbbf24; margin: 0;">⭐ Thanks for visiting my profile!</h3>
+    <p style="color: #e2e8f0; margin: 10px 0 0 0; font-size: 16px;">Let's connect and collaborate on something amazing. ☀️</p>
+  </div>
+</div>
 
 <!-- End of README -->
