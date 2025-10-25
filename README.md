@@ -11,12 +11,15 @@
 
  <b>Transforming data into actionable insights to address real-world challenges.</b>
 
-/*
 <p align="center">
-  <img src="2swA.gif" 
-       style="width:100%; max-width:100%; height:auto;" alt="Scenic View">
+  <a href="https://www.youtube.com/watch?v=VIDEO_ID" target="_blank">
+    <img src="2swA.gif" 
+         alt="Scenic View" 
+         style="width:100%; height:auto; display:block; margin:0;">
+  </a>
 </p>
-*/
+
+
 
 ## **Intro**
 
