@@ -71,32 +71,7 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
 ## **GitHub Trophies**
 
 <div align="center">
-  
-  <!-- Primary Trophy Display with multiple fallbacks -->
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true&no-bg=false&margin-w=4&column=7">
-    <img alt="GitHub Trophies" src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true&no-bg=false&margin-w=4&column=7" height="150" />
-  </picture>
-  
-  <!-- Alternative trophy service as backup -->
-  <noscript>
-    <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true&margin-w=4&column=6&rank=SECRET,SSS,SS,S,AAA,AA,A,B,C" height="150" alt="GitHub Trophies" />
-  </noscript>
-  
-  <!-- Text-based fallback if images fail -->
-  <details>
-    <summary><b>🏆 Achievement Overview</b></summary>
-    <br>
-    
-  **Code Contributions:** Active contributor with consistent commits<br>
-  **Repository Impact:** Multiple starred and forked repositories<br>
-  **Community Engagement:** Collaborative projects and open source contributions<br>
-  **Technical Diversity:** Projects spanning ML, Computer Vision, and Web Development<br>
-  **Innovation:** Creative solutions in Data Science and AI applications<br>
-    
-  </details>
-  
-  <br>
+  <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true&no-bg=false&margin-w=4&column=6" />
 </div>
 
 ## **GitHub Badges & Achievements**
