@@ -11,6 +11,12 @@
 
  <b>Transforming data into actionable insights to address real-world challenges.</b>
 
+
+<p align="center">
+  <img src="https://vlipsy.com/clips/wOReCFYs/download" alt="Tanjiro attacks Rui" style="max-width:100%; height:auto;">
+</p>
+
+
 ## **Intro**
 
 Following my curiosity into the world of Data Science and Machine Learning.
@@ -130,7 +136,7 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
 <div align="center">
   <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 20px; border-radius: 10px; border: 1px solid #334155; margin: 20px 0;">
     <h3 style="color: #fbbf24; margin: 0;">⭐ Thanks for visiting my profile!</h3>
-    <p style="color: #e2e8f0; margin: 10px 0 0 0; font-size: 16px;">Let's connect and collaborate on something amazing. ☀️</p>
+    <p style="color: #e2e8f0; margin: 10px 0 0 0; font-size: 16px;">Open to groundbreaking projects and visionary collaborations. </p>
   </div>
 </div>
 
