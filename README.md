@@ -47,7 +47,7 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
 <br>
 
 <!-- ------------------ GITHUB STATS HEADER ------------------ -->
-<div align="center">
+<div align="left">
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=36&pause=1200&color=ECECEC&vCenter=true&width=350&height=50&lines=GitHub+Stats" alt="Typing SVG" />
 </div>
 
