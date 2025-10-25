@@ -54,7 +54,7 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
 <div align="center">
   <table>
     <tr>
-      <td align="center" valign="top">
+      <td align="left" valign="top">
         <b>GitHub Stats</b><br>
         <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
       </td>
