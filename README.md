@@ -82,7 +82,7 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
 
 
 ## **GitHub Badges & Achievements**
-<div align="center">
+<div align="cernter">
   <img src="https://img.shields.io/badge/Arctic%20Code%20Vault%20Contributor-blue?logo=github&style=for-the-badge" alt="Arctic Code Vault Contributor" title="Arctic Code Vault Contributor"/>
   <img src="https://img.shields.io/badge/Star%20Sponsor-yellow?logo=github&style=for-the-badge" alt="GitHub Star Sponsor" title="GitHub Star Sponsor"/>
   <img src="https://img.shields.io/badge/Developer%20Program%20Member-green?logo=github&style=for-the-badge" alt="Developer Program Member" title="Developer Program Member"/>
@@ -90,7 +90,9 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
 
 ---
 
+<div align="left">
 ## **Featured Projects**
+</div>
 
 | Repository | Description | Language | Stars | Forks |
 |------------|-------------|----------|-------|-------|
@@ -105,7 +107,7 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
 
 ## **Best Repositories**
 
-<div align="center">
+<div align="left">
 
   <a href="https://github.com/BhattAyush17/ProPhet_BnB">
     <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=dark&hide_border=true" height="140"/>
