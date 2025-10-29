@@ -24,7 +24,7 @@
 ## **Intro**
 
 Following my curiosity into the world of Data Science and Machine Learning.
-I enjoy transforming data into actionable insights, building intelligent systems, and collaborating on impactful projects.<br>
+I enjoy transforming Data into actionable insights, building intelligent systems, and collaborating on impactful projects.<br>
 My interests span **Machine Learning**, **Deep Learning**, **Computer Vision**, and **NLP**.<br>
 Currently Learning and exploring ML and its Frameworks. Diving deep into these. 
 
