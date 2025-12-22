@@ -69,7 +69,7 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
       <td align="center" valign="top">
         <b>Current Streak</b><br>
         <img
-          src="https://streak-stats.demolab.com?user=BhattAyush17&theme=dark&hide_border=true&date_format=%5BY.%5Dn.j&fire=DD2727&currStreakNum=FFFFFF&sideNums=FFFFFF"
+          src="assets/streak/streak.svg" height="180" alt="Current GitHub streak"/>
           height="180"
           alt="Current Streak"
           onerror="this.onerror=null;this.src='https://img.shields.io/badge/Streak-unavailable-555?style=for-the-badge&logo=github';"
