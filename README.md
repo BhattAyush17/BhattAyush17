@@ -1,22 +1,25 @@
-<div align="left">
+ <div align="left">
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=48&pause=1200&color=ECECEC&vCenter=true&width=800&height=60&lines=Hi+there,+I'm+Ayush+%F0%9F%91%8B" alt="Typing SVG" />
+  
   <br>
-  <span style="font-size:1.2em; font-weight:700; color:#ececec;"></span>
+  <span style="font-size:1.2em; font-weight:700; color:#ececec;">
+
+  </span>
   <br>
-  <br>
-  <img src="https://img.shields.io/badge/Profile-Active-2ea44f?style=flat&logo=github" alt="profile status"/>
   <img src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17" alt="visitors"/>
 </div>
 
-<b>Transforming data into actionable insights to address real-world challenges.</b>
+ <b>Transforming data into actionable insights to address real-world challenges.</b>
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=VIDEO_ID" target="_blank">
-    <img src="2swA.gif" alt="Scenic View" style="width:100%; height:auto; display:block; margin:0;">
+    <img src="2swA.gif" 
+         alt="Scenic View" 
+         style="width:100%; height:auto; display:block; margin:0;">
   </a>
 </p>
 
----
+
 
 ## **Intro**
 
@@ -59,102 +62,39 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
     <tr>
       <td align="center" valign="top">
         <b>GitHub Stats</b><br>
-        <img
-          src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true&cache_seconds=7200"
-          height="180"
-          alt="GitHub Stats"
-          onerror="this.onerror=null;this.src='https://img.shields.io/badge/GitHub%20Stats-unavailable-555?style=for-the-badge&logo=github';"
-        />
+        <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
       </td>
       <td align="center" valign="top">
         <b>Current Streak</b><br>
-        <img
-          src="assets/streak/streak.svg" height="180" alt="Current GitHub streak"/>
-          height="180"
-          alt="Current Streak"
-          onerror="this.onerror=null;this.src='https://img.shields.io/badge/Streak-unavailable-555?style=for-the-badge&logo=github';"
-        />
+        <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true" height="180"/>
       </td>
       <td align="center" valign="top">
         <b>Top Languages</b><br>
-        <img
-          src="https://github-readme-stats.vercel.app/api/top-langs/?username=BhattAyush17&theme=dark&hide_border=true&layout=compact&langs_count=8&cache_seconds=7200"
-          height="180"
-          alt="Top Languages"
-          onerror="this.onerror=null;this.src='https://img.shields.io/badge/Top%20Languages-unavailable-555?style=for-the-badge&logo=github';"
-        />
+        <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=BhattAyush17&theme=dark&hide_border=true&layout=compact" height="180"/>
       </td>
     </tr>
   </table>
-
   <br>
-
-  <img
-    src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true&area=true&custom_title=Contribution%20Graph&radius=8&cache_seconds=7200"
-    width="100%"
-    alt="Activity Graph"
-    onerror="this.onerror=null;this.src='https://img.shields.io/badge/Activity%20Graph-unavailable-555?style=for-the-badge&logo=github';"
-  />
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" width="100%" />
 </div>
 
 ## **GitHub Trophies**
 
 <div align="center">
-  <img
-    src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true&no-bg=false&margin-w=4&column=6&row=2&cache_seconds=7200"
-    alt="GitHub Trophies"
-    onerror="this.onerror=null;this.src='https://img.shields.io/badge/Trophies-unavailable-555?style=for-the-badge&logo=github';"
-  />
+  <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true&no-bg=false&margin-w=4&column=6" />
 </div>
 
 ## **GitHub Badges & Achievements**
 
-<div align="center" style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center;">
-
-  <!-- Program badges -->
+<div align="center">
   <img src="https://img.shields.io/badge/Arctic%20Code%20Vault%20Contributor-blue?logo=github&style=for-the-badge" alt="Arctic Code Vault Contributor" title="Arctic Code Vault Contributor"/>
   <img src="https://img.shields.io/badge/Star%20Sponsor-yellow?logo=github&style=for-the-badge" alt="GitHub Star Sponsor" title="GitHub Star Sponsor"/>
   <img src="https://img.shields.io/badge/Developer%20Program%20Member-green?logo=github&style=for-the-badge" alt="Developer Program Member" title="Developer Program Member"/>
-
-  <!-- Achievement badges (with fallbacks) -->
-  <img
-    src="https://github.githubassets.com/images/modules/profile/achievements/pull-shark-default.png"
-    alt="Pull Shark"
-    title="Pull Shark"
-    width="72"
-    onerror="this.onerror=null;this.src='https://img.shields.io/badge/Pull%20Shark-unavailable-555?style=for-the-badge&logo=github';"
-  />
-  <img
-    src="https://github.githubassets.com/images/modules/profile/achievements/quickdraw-default.png"
-    alt="Quickdraw"
-    title="Quickdraw"
-    width="72"
-    onerror="this.onerror=null;this.src='https://img.shields.io/badge/Quickdraw-unavailable-555?style=for-the-badge&logo=github';"
-  />
-  <img
-    src="https://github.githubassets.com/images/modules/profile/achievements/starstruck-default.png"
-    alt="Starstruck"
-    title="Starstruck"
-    width="72"
-    onerror="this.onerror=null;this.src='https://img.shields.io/badge/Starstruck-unavailable-555?style=for-the-badge&logo=github';"
-  />
-  <img
-    src="https://github.githubassets.com/images/modules/profile/achievements/pair-extraordinaire-default.png"
-    alt="Pair Extraordinaire"
-    title="Pair Extraordinaire"
-    width="72"
-    onerror="this.onerror=null;this.src='https://img.shields.io/badge/Pair%20Extraordinaire-unavailable-555?style=for-the-badge&logo=github';"
-  />
-  <img
-    src="https://github.githubassets.com/images/modules/profile/achievements/galaxy-brain-default.png"
-    alt="Galaxy Brain"
-    title="Galaxy Brain"
-    width="72"
-    onerror="this.onerror=null;this.src='https://img.shields.io/badge/Galaxy%20Brain-unavailable-555?style=for-the-badge&logo=github';"
-  />
 </div>
 
-## **Featured Repositories**
+---
+
+## **Featured Projects**
 
 <div align="left">
 
@@ -176,52 +116,22 @@ Currently Learning and exploring ML and its Frameworks. Diving deep into these.
 <div align="left">
 
   <a href="https://github.com/BhattAyush17/ProPhet_BnB">
-    <img
-      src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=dark&hide_border=true"
-      height="140"
-      alt="ProPhet_BnB"
-      onerror="this.onerror=null;this.src='https://img.shields.io/badge/ProPhet_BnB-repo-unavailable-555?style=for-the-badge&logo=github';"
-    />
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=dark&hide_border=true" height="140"/>
   </a>
   <a href="https://github.com/BhattAyush17/DSA-with-C-">
-    <img
-      src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=DSA-with-C-&theme=dark&hide_border=true"
-      height="140"
-      alt="DSA-with-C-"
-      onerror="this.onerror=null;this.src='https://img.shields.io/badge/DSA--with--C--repo-unavailable-555?style=for-the-badge&logo=github';"
-    />
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=DSA-with-C-&theme=dark&hide_border=true" height="140"/>
   </a>
   <a href="https://github.com/BhattAyush17/Lane_Morph">
-    <img
-      src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=Lane_Morph&theme=dark&hide_border=true"
-      height="140"
-      alt="Lane_Morph"
-      onerror="this.onerror=null;this.src='https://img.shields.io/badge/Lane_Morph-repo-unavailable-555?style=for-the-badge&logo=github';"
-    />
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=Lane_Morph&theme=dark&hide_border=true" height="140"/>
   </a>
   <a href="https://github.com/BhattAyush17/Greydge">
-    <img
-      src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=Greydge&theme=dark&hide_border=true"
-      height="140"
-      alt="Greydge"
-      onerror="this.onerror=null;this.src='https://img.shields.io/badge/Greydge-repo-unavailable-555?style=for-the-badge&logo=github';"
-    />
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=Greydge&theme=dark&hide_border=true" height="140"/>
   </a>
   <a href="https://github.com/BhattAyush17/zavix-animegan-app">
-    <img
-      src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=zavix-animegan-app&theme=dark&hide_border=true"
-      height="140"
-      alt="zavix-animegan-app"
-      onerror="this.onerror=null;this.src='https://img.shields.io/badge/zavix--animegan--app-repo-unavailable-555?style=for-the-badge&logo=github';"
-    />
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=zavix-animegan-app&theme=dark&hide_border=true" height="140"/>
   </a>
   <a href="https://github.com/BhattAyush17/Loan-Dash-X">
-    <img
-      src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=Loan-Dash-X&theme=dark&hide_border=true"
-      height="140"
-      alt="Loan-Dash-X"
-      onerror="this.onerror=null;this.src='https://img.shields.io/badge/Loan--Dash--X-repo-unavailable-555?style=for-the-badge&logo=github';"
-    />
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=Loan-Dash-X&theme=dark&hide_border=true" height="140"/>
   </a>
 </div>
 
