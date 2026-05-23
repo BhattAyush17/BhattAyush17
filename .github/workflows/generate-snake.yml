@@ -12,7 +12,6 @@ jobs:
   generate:
     permissions:
       contents: write
-
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +22,10 @@ jobs:
           github_user_name: BhattAyush17
           outputs: |
             assets/snake/github-contribution-grid-snake-dark.svg?palette=github-dark
+
+      - name: Sync latest branch
+        run: |
+          git pull --rebase origin main
 
       - name: Commit generated snake
         uses: stefanzweifel/git-auto-commit-action@v5
