@@ -477,10 +477,17 @@ def main():
             print(f"Downloading {filename}...")
             res = requests.get(url, timeout=15)
             if res.status_code == 200 and "<svg" in res.text.lower():
+                svg_text = res.text
+                # Force heading titles inside the summary SVG cards to render in pure white (#ffffff)
+                svg_text = re.sub(
+                    r'(<text\s+x="30"\s+y="40"\s+style="font-size:\s*22px;\s*fill:\s*)[^;"]+(;?")',
+                    r'\g<1>#ffffff\2',
+                    svg_text
+                )
                 filepath = os.path.join(ASSETS_DIR, filename)
                 with open(filepath, "w", encoding="utf-8") as f:
-                    f.write(res.text)
-                print(f"✅ Successfully downloaded {filename}")
+                    f.write(svg_text)
+                print(f"✅ Successfully downloaded and whitened {filename}")
         except Exception as e:
             print(f"⚠️ Error downloading {filename}: {e}. Kept old file.")
         

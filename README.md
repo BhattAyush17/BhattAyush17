@@ -153,9 +153,7 @@ Currently learning and exploring ML frameworks deeply.
 <div align="center">
 
 <!-- START_SECTION:achievements -->
-<img src="https://img.shields.io/badge/Arctic%20Code%20Vault-4B5563?style=for-the-badge&logo=github&logoColor=E5E7EB"/>
-<img src="https://img.shields.io/badge/Star%20Sponsor-6B7280?style=for-the-badge&logo=github&logoColor=E5E7EB"/>
-<img src="https://img.shields.io/badge/Developer%20Program-9CA3AF?style=for-the-badge&logo=github&logoColor=111827"/>
+<img src="assets/badges/achievement_pull_shark.png" width="75px" alt="Achievement: Pull Shark" title="Achievement: Pull Shark" /> <img src="assets/badges/achievement_yolo.png" width="75px" alt="Achievement: YOLO" title="Achievement: YOLO" /> <img src="assets/badges/achievement_quickdraw.png" width="75px" alt="Achievement: Quickdraw" title="Achievement: Quickdraw" />
 <!-- END_SECTION:achievements -->
 
 </div>
@@ -206,4 +204,13 @@ Currently learning and exploring ML frameworks deeply.
   src="https://quotes-github-readme.vercel.app/api?type=horizontal&theme=dark"
 />
 
+</div>
+
+---
+
+<div align="center" style="margin-top: 40px; padding: 20px;">
+  <h3>⭐ Thanks for visiting my profile!</h3>
+  <p style="color: #a1a1aa; font-size: 15px; font-style: italic;">
+    Open to groundbreaking projects and visionary collaborations.
+  </p>
 </div>
