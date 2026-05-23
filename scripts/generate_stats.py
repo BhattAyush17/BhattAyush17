@@ -303,48 +303,21 @@ def make_languages_svg(data):
 
 def make_streak_svg(data):
     """
-    Renders a beautiful, custom Streak Card locally using Matplotlib.
+    Downloads and caches the premium demolab Streak Stats card with the flame ring.
     """
     try:
-        total, current, longest, _ = calculate_streak(data)
-        
-        fig = plt.figure(figsize=(6, 4), dpi=100)
-        ax = fig.add_axes([0, 0, 1, 1])
-        ax.axis("off")
-        fig.patch.set_facecolor("#121212")
-        
-        # Border
-        box = FancyBboxPatch(
-            (0.02, 0.02), 0.96, 0.96,
-            boxstyle="round,pad=0.01",
-            edgecolor="#27272a",
-            facecolor="#121212",
-            linewidth=1.5
-        )
-        ax.add_patch(box)
-        
-        # Draw columns
-        # Left: Total Contributions
-        ax.text(0.18, 0.70, "Total Contributions", color="#a1a1aa", fontsize=11, fontweight="bold", ha="center")
-        ax.text(0.18, 0.45, f"{total}", color="#ffffff", fontsize=28, fontweight="bold", ha="center")
-        
-        # Middle: Current Streak (with flame)
-        ax.text(0.50, 0.70, "Current Streak", color="#a1a1aa", fontsize=11, fontweight="bold", ha="center")
-        # Draw fire flame emblem ring
-        circle = plt.Circle((0.50, 0.48), 0.16, fill=False, edgecolor="#ef4444", linewidth=2.5)
-        ax.add_artist(circle)
-        ax.text(0.50, 0.43, f"{current}", color="#ffffff", fontsize=24, fontweight="bold", ha="center")
-        ax.text(0.50, 0.22, "Days", color="#ef4444", fontsize=10, fontweight="bold", ha="center")
-        
-        # Right: Longest Streak
-        ax.text(0.82, 0.70, "Longest Streak", color="#a1a1aa", fontsize=11, fontweight="bold", ha="center")
-        ax.text(0.82, 0.45, f"{longest}", color="#ffffff", fontsize=28, fontweight="bold", ha="center")
-        
-        plt.savefig(os.path.join(ASSETS_DIR, "streak.svg"), format="svg", transparent=True, bbox_inches='tight', pad_inches=0)
-        plt.close()
-        print("✅ Successfully generated streak.svg")
+        url = f"https://streak-stats.demolab.com?user={USERNAME}&theme=dark&hide_border=true&background=121212&ring=3b82f6&fire=ff7300&stroke=27272a&currStreakNum=ffffff&sideNums=e5e7eb&currStreakLabel=a1a1aa&sideLabels=9ca3af"
+        print(f"Downloading premium streak card from {url}...")
+        res = requests.get(url, timeout=15)
+        if res.status_code == 200 and "<svg" in res.text.lower():
+            filepath = os.path.join(ASSETS_DIR, "streak.svg")
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(res.text)
+            print("✅ Successfully generated/downloaded streak.svg")
+        else:
+            print(f"⚠️ Failed to fetch premium streak card. Status: {res.status_code}")
     except Exception as e:
-        print(f"❌ Error drawing streak: {e}")
+        print(f"❌ Error fetching premium streak card: {e}")
 
 def make_graph_svg(data):
     """
