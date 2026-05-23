@@ -61,11 +61,11 @@ Currently learning and exploring ML frameworks deeply.
 <table>
 <tr>
 <td width="50%" align="center" valign="top">
-<img src="./assets/stats/github-stats.svg" width="95%">
+  <img src="./assets/stats/github-stats.svg" width="95%">
 </td>
 
 <td width="50%" align="center" valign="top">
-<img src="./assets/stats/languages.svg" width="95%">
+  <img src="./assets/stats/languages.svg" width="95%">
 </td>
 </tr>
 </table>
@@ -90,21 +90,20 @@ Currently learning and exploring ML frameworks deeply.
 <br>
 
 <div align="center">
-<img src="./assets/snake/github-contribution-grid-snake-dark.svg" width="100%">
+  <img src="./assets/snake/github-contribution-grid-snake-dark.svg" width="100%">
 </div>
 
 <br>
 
 <div align="center">
-<img src="./assets/stats/contribution-graph.svg" width="100%">
+  <img src="./assets/stats/contribution-graph.svg" width="100%">
 </div>
 
 <br>
 
 <div align="center">
-<img src="./assets/stats/productive-time.svg" width="100%">
+  <img src="./assets/stats/productive-time.svg" width="100%">
 </div>
-
 ---
 
 # GitHub Trophies
