@@ -4,15 +4,11 @@
     alt="Typing SVG"
   />
 
-  <br><br>
-
   <img
     src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17&left_color=374151&right_color=6B7280"
     alt="visitors"
   />
 </div>
-
-<br>
 
 <p>
   <b>
@@ -35,7 +31,7 @@
 </p>
 
 <p align="right">
-  <sub><i>— Giyu Tomioka</i></sub>
+  <sub><i>— peace</i></sub>
 </p>
 
 ---
@@ -126,13 +122,7 @@ Currently learning and exploring ML frameworks deeply.
 # GitHub Badges & Achievements
 
 <div align="center">
-
-<img src="https://img.shields.io/badge/Arctic%20Code%20Vault-4B5563?style=for-the-badge&logo=github&logoColor=E5E7EB"/>
-
-<img src="https://img.shields.io/badge/Star%20Sponsor-6B7280?style=for-the-badge&logo=github&logoColor=E5E7EB"/>
-
-<img src="https://img.shields.io/badge/Developer%20Program-9CA3AF?style=for-the-badge&logo=github&logoColor=111827"/>
-
+<img src="./assets/stats/achievements.svg" width="100%">
 </div>
 
 ---
