@@ -59,17 +59,46 @@ Currently learning and exploring ML frameworks deeply.
 
 ---
 
-# GitHub Analytics
+# GitHub Profile Summary
 
 <div align="center">
 
-<!-- [ stats ] [ languages ] -->
 <table width="100%">
   <tr>
     <td width="50%" align="center">
-      <img src="assets/stats/github-stats.svg" width="95%" alt="GitHub Stats" />
+      <img src="assets/stats/summary-repos-per-language.svg" width="95%" alt="Top Languages by Repo" />
     </td>
     <td width="50%" align="center">
+      <img src="assets/stats/summary-most-commit-language.svg" width="95%" alt="Top Languages by Commit" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <img src="assets/stats/summary-stats.svg" width="95%" alt="Stats Summary" />
+    </td>
+    <td width="50%" align="center">
+      <img src="assets/stats/summary-productive-time.svg" width="95%" alt="Commits Time Distribution" />
+    </td>
+  </tr>
+</table>
+
+</div>
+
+---
+
+# GitHub Stats & Streak
+
+<div align="center">
+
+<table width="100%">
+  <tr>
+    <td width="33%" align="center">
+      <img src="assets/stats/github-stats.svg" width="95%" alt="GitHub Stats" />
+    </td>
+    <td width="33%" align="center">
+      <img src="assets/stats/streak.svg" width="95%" alt="Current Streak" />
+    </td>
+    <td width="33%" align="center">
       <img src="assets/stats/languages.svg" width="95%" alt="Top Languages" />
     </td>
   </tr>
@@ -77,8 +106,25 @@ Currently learning and exploring ML frameworks deeply.
 
 <br>
 
-<!-- [ language badges ] -->
-### Languages Used
+<img src="assets/stats/contribution-graph.svg" width="100%" alt="Contribution Graph" />
+
+</div>
+
+---
+
+# GitHub Analytics
+
+<div align="center">
+
+<img src="assets/snake/github-contribution-grid-snake-dark.svg" width="100%" alt="Contribution Snake" />
+
+</div>
+
+---
+
+# Languages Used
+
+<div align="center">
 
 ![Python](https://img.shields.io/badge/Python-374151?style=for-the-badge&logo=python&logoColor=E5E7EB)
 ![C++](https://img.shields.io/badge/C++-374151?style=for-the-badge&logo=cplusplus&logoColor=E5E7EB)
@@ -88,24 +134,7 @@ Currently learning and exploring ML frameworks deeply.
 ![CSS3](https://img.shields.io/badge/CSS3-374151?style=for-the-badge&logo=css3&logoColor=E5E7EB)
 ![Shell](https://img.shields.io/badge/Shell-374151?style=for-the-badge&logo=gnu-bash&logoColor=E5E7EB)
 
-<br>
-
-<!-- [ snake ] -->
-<img src="assets/snake/github-contribution-grid-snake-dark.svg" width="100%" alt="Contribution Snake" />
-
-<br>
-
-<!-- [ contribution graph ] -->
-<img src="assets/stats/contribution-graph.svg" width="100%" alt="Contribution Graph" />
-
-<br>
-
-<!-- [ productivity ] -->
-<img src="assets/stats/productive-time.svg" width="100%" alt="Productivity Time" />
-
 </div>
-
----
 
 # GitHub Trophies
 

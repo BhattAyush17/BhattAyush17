@@ -5,12 +5,21 @@ import time
 USERNAME = "BhattAyush17"
 ASSETS_DIR = "assets/stats"
 
-# List of assets to fetch and their URLs (Enforcing a custom Premium Matte Black, White, and Silver Palette)
+# List of assets to fetch and their URLs (Enforcing custom Premium Matte Black, White, and Silver Monochrome Palette)
 URLS = {
+    # 1. GitHub Stats (Row of Three)
     "github-stats.svg": f"https://github-readme-stats.vercel.app/api?username={USERNAME}&show_icons=true&bg_color=121212&title_color=ffffff&text_color=e5e7eb&icon_color=a1a1aa&hide_border=true",
+    "streak.svg": f"https://streak-stats.demolab.com?user={USERNAME}&theme=dark&hide_border=true&background=121212&fire=ffffff&ring=ffffff&stroke=a1a1aa&currStreakNum=ffffff&sideNums=e5e7eb&currStreakLabel=a1a1aa&sideLabels=9ca3af",
     "languages.svg": f"https://github-readme-stats.vercel.app/api/top-langs/?username={USERNAME}&layout=compact&bg_color=121212&title_color=ffffff&text_color=e5e7eb&icon_color=a1a1aa&hide_border=true",
+    
+    # 2. Activity / Contribution Graph
     "contribution-graph.svg": f"https://github-readme-activity-graph.vercel.app/graph?username={USERNAME}&theme=github-dark&hide_border=true&bg_color=121212&color=ffffff&line=a1a1aa&point=ffffff&area=true",
-    "productive-time.svg": f"https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username={USERNAME}&theme=github_dark&utcOffset=5.5"
+    
+    # 3. GitHub Profile Summary Cards (2x2 Grid)
+    "summary-stats.svg": f"https://github-profile-summary-cards.vercel.app/api/cards/stats?username={USERNAME}&theme=github_dark",
+    "summary-repos-per-language.svg": f"https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username={USERNAME}&theme=github_dark",
+    "summary-most-commit-language.svg": f"https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username={USERNAME}&theme=github_dark",
+    "summary-productive-time.svg": f"https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username={USERNAME}&theme=github_dark&utcOffset=5.5"
 }
 
 def fetch_and_save(filename, url, retries=3):

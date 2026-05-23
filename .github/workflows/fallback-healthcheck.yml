@@ -16,6 +16,11 @@ jobs:
         run: |
           test -f assets/stats/github-stats.svg
           test -f assets/stats/languages.svg
-          test -f assets/stats/productive-time.svg
+          test -f assets/stats/streak.svg
           test -f assets/stats/contribution-graph.svg
+          test -f assets/stats/summary-stats.svg
+          test -f assets/stats/summary-repos-per-language.svg
+          test -f assets/stats/summary-most-commit-language.svg
+          test -f assets/stats/summary-productive-time.svg
           test -f assets/snake/github-contribution-grid-snake-dark.svg
+
