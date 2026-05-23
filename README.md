@@ -179,21 +179,32 @@ Currently learning and exploring ML frameworks deeply.
 
 <div align="center">
 
-<a href="https://github.com/BhattAyush17/ProPhet_BnB">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=github_dark&hide_border=true"/>
-</a>
-
-<a href="https://github.com/BhattAyush17/DSA-with-C-">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=DSA-with-C-&theme=github_dark&hide_border=true"/>
-</a>
-
-<a href="https://github.com/BhattAyush17/Lane_Morph">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Lane_Morph&theme=github_dark&hide_border=true"/>
-</a>
-
-<a href="https://github.com/BhattAyush17/Greydge">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Greydge&theme=github_dark&hide_border=true"/>
-</a>
+<table width="100%">
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://github.com/BhattAyush17/ProPhet_BnB">
+        <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=github_dark&hide_border=true" width="95%"/>
+      </a>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://github.com/BhattAyush17/DSA-with-C-">
+        <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=DSA-with-C-&theme=github_dark&hide_border=true" width="95%"/>
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://github.com/BhattAyush17/Lane_Morph">
+        <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Lane_Morph&theme=github_dark&hide_border=true" width="95%"/>
+      </a>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://github.com/BhattAyush17/Greydge">
+        <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Greydge&theme=github_dark&hide_border=true" width="95%"/>
+      </a>
+    </td>
+  </tr>
+</table>
 
 </div>
 
@@ -206,4 +217,11 @@ Currently learning and exploring ML frameworks deeply.
   src="https://quotes-github-readme.vercel.app/api?type=horizontal&theme=dark"
 />
 
+</div>
+
+---
+
+<div align="center">
+  <h3>⭐ Thanks for visiting my profile!</h3>
+  <p><b>Open to groundbreaking projects and visionary collaborations.</b></p>
 </div>
