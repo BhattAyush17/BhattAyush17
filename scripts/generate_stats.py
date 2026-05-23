@@ -1,147 +1,55 @@
 import os
 import requests
-import matplotlib.pyplot as plt
-from datetime import datetime
-from matplotlib.patches import FancyBboxPatch
+import time
 
 USERNAME = "BhattAyush17"
-TOKEN = os.getenv("GH_STATS_TOKEN")
+ASSETS_DIR = "assets/stats"
 
-HEADERS = {
-    "Authorization": f"Bearer {TOKEN}",
-    "Content-Type": "application/json"
+# List of assets to fetch and their URLs (Enforcing a custom Premium Matte Black, White, and Silver Palette)
+URLS = {
+    "github-stats.svg": f"https://github-readme-stats.vercel.app/api?username={USERNAME}&show_icons=true&bg_color=121212&title_color=ffffff&text_color=e5e7eb&icon_color=a1a1aa&hide_border=true",
+    "languages.svg": f"https://github-readme-stats.vercel.app/api/top-langs/?username={USERNAME}&layout=compact&bg_color=121212&title_color=ffffff&text_color=e5e7eb&icon_color=a1a1aa&hide_border=true",
+    "contribution-graph.svg": f"https://github-readme-activity-graph.vercel.app/graph?username={USERNAME}&theme=github-dark&hide_border=true&bg_color=121212&color=ffffff&line=a1a1aa&point=ffffff&area=true",
+    "productive-time.svg": f"https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username={USERNAME}&theme=github_dark&utcOffset=5.5"
 }
 
-GRAPHQL_URL = "https://api.github.com/graphql"
-
-os.makedirs("assets/stats", exist_ok=True)
-
-
-def query_github():
-    query = """
-    query($login: String!) {
-      user(login: $login) {
-        repositories(first: 100, ownerAffiliations: OWNER) {
-          nodes {
-            name
-            stargazerCount
-            primaryLanguage {
-              name
-            }
-          }
-        }
-        contributionsCollection {
-          totalCommitContributions
-          totalPullRequestContributions
-          totalIssueContributions
-        }
-        followers {
-          totalCount
-        }
-      }
-    }
+def fetch_and_save(filename, url, retries=3):
     """
+    Safely fetches SVG from url and saves it. 
+    If it fails, it keeps the existing SVG (unbreakable self-healing).
+    """
+    filepath = os.path.join(ASSETS_DIR, filename)
+    
+    for attempt in range(retries):
+        try:
+            print(f"Fetching {filename} (Attempt {attempt+1}/{retries})...")
+            response = requests.get(url, timeout=15)
+            
+            # Check if successful and seems like a valid SVG
+            if response.status_code == 200 and "<svg" in response.text.lower():
+                with open(filepath, "w", encoding="utf-8") as f:
+                    f.write(response.text)
+                print(f"✅ Successfully updated {filename}")
+                return True
+            else:
+                print(f"⚠️ Failed to fetch {filename}. Status code: {response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ Error fetching {filename}: {e}")
+            
+        time.sleep(2)
+        
+    print(f"⏭️ Skipping {filename}. Kept existing file for self-healing.")
+    return False
 
-    response = requests.post(
-        GRAPHQL_URL,
-        json={"query": query, "variables": {"login": USERNAME}},
-        headers=HEADERS
-    )
-
-    return response.json()
-
-
-def make_stats_svg(data):
-    user = data["data"]["user"]
-
-    repos = user["repositories"]["nodes"]
-    stars = sum(repo["stargazerCount"] for repo in repos)
-
-    commits = user["contributionsCollection"]["totalCommitContributions"]
-    prs = user["contributionsCollection"]["totalPullRequestContributions"]
-    issues = user["contributionsCollection"]["totalIssueContributions"]
-    followers = user["followers"]["totalCount"]
-
-    fig = plt.figure(figsize=(6, 4))
-    ax = fig.add_axes([0, 0, 1, 1])
-    ax.axis("off")
-
-    fig.patch.set_facecolor("#111827")
-
-    box = FancyBboxPatch(
-        (0.05, 0.05),
-        0.9,
-        0.9,
-        boxstyle="round,pad=0.02",
-        edgecolor="#6B7280",
-        facecolor="#111827"
-    )
-    ax.add_patch(box)
-
-    stats = [
-        f"⭐ Total Stars: {stars}",
-        f"💻 Total Commits: {commits}",
-        f"🔀 Pull Requests: {prs}",
-        f"🐛 Issues: {issues}",
-        f"👥 Followers: {followers}"
-    ]
-
-    y = 0.8
-    for stat in stats:
-        ax.text(0.12, y, stat, fontsize=14, color="#E5E7EB")
-        y -= 0.14
-
-    plt.savefig("assets/stats/github-stats.svg", format="svg", transparent=True)
-    plt.close()
-
-
-def make_languages_svg(data):
-    repos = data["data"]["user"]["repositories"]["nodes"]
-
-    lang_counts = {}
-
-    for repo in repos:
-        lang = repo["primaryLanguage"]
-        if lang:
-            name = lang["name"]
-            lang_counts[name] = lang_counts.get(name, 0) + 1
-
-    labels = list(lang_counts.keys())[:6]
-    values = list(lang_counts.values())[:6]
-
-    fig = plt.figure(figsize=(6, 4))
-    fig.patch.set_facecolor("#111827")
-
-    plt.pie(values, labels=labels)
-    plt.savefig("assets/stats/languages.svg", format="svg", transparent=True)
-    plt.close()
-
-
-def make_productive_svg():
-    hours = [1, 2, 5, 7, 4, 8]
-
-    fig = plt.figure(figsize=(6, 4))
-    fig.patch.set_facecolor("#111827")
-
-    plt.bar(range(len(hours)), hours)
-    plt.savefig("assets/stats/productive-time.svg", format="svg", transparent=True)
-    plt.close()
-
-
-def make_graph_svg():
-    commits = [3, 4, 2, 7, 5, 8, 6]
-
-    fig = plt.figure(figsize=(8, 4))
-    fig.patch.set_facecolor("#111827")
-
-    plt.plot(commits)
-    plt.savefig("assets/stats/contribution-graph.svg", format="svg", transparent=True)
-    plt.close()
-
+def main():
+    print("🚀 Starting Modular & Self-Healing GitHub Stats Upgrader...")
+    os.makedirs(ASSETS_DIR, exist_ok=True)
+    
+    for filename, url in URLS.items():
+        fetch_and_save(filename, url)
+        
+    print("✨ Stats Upgrade Complete!")
 
 if __name__ == "__main__":
-    data = query_github()
-    make_stats_svg(data)
-    make_languages_svg(data)
-    make_productive_svg()
-    make_graph_svg()
+    main()

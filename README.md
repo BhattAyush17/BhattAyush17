@@ -63,58 +63,22 @@ Currently learning and exploring ML frameworks deeply.
 
 <div align="center">
 
+<!-- [ stats ] [ languages ] -->
 <table width="100%">
   <tr>
     <td width="50%" align="center">
-      <img
-        src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=BhattAyush17&theme=github_dark"
-        width="95%"
-      />
+      <img src="assets/stats/github-stats.svg" width="95%" alt="GitHub Stats" />
     </td>
-
     <td width="50%" align="center">
-      <img
-        src="https://streak-stats.demolab.com?user=BhattAyush17&theme=dark&hide_border=true&background=111827&stroke=9CA3AF&ring=D1D5DB&fire=E5E7EB"
-        width="95%"
-      />
-    </td>
-  </tr>
-
-  <tr>
-    <td width="50%" align="center">
-      <img
-        src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=BhattAyush17&theme=github_dark"
-        width="95%"
-      />
-    </td>
-
-    <td width="50%" align="center">
-      <img
-        src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=BhattAyush17&theme=github_dark&utcOffset=5.5"
-        width="95%"
-      />
+      <img src="assets/stats/languages.svg" width="95%" alt="Top Languages" />
     </td>
   </tr>
 </table>
 
-</div>
-
 <br>
 
-<div align="center">
-
-<img
-  width="100%"
-  src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true&bg_color=111827&color=D1D5DB&line=9CA3AF&point=E5E7EB&area=true"
-/>
-
-</div>
-
----
-
-# Languages Used
-
-<div align="center">
+<!-- [ language badges ] -->
+### Languages Used
 
 ![Python](https://img.shields.io/badge/Python-374151?style=for-the-badge&logo=python&logoColor=E5E7EB)
 ![C++](https://img.shields.io/badge/C++-374151?style=for-the-badge&logo=cplusplus&logoColor=E5E7EB)
@@ -123,6 +87,21 @@ Currently learning and exploring ML frameworks deeply.
 ![HTML5](https://img.shields.io/badge/HTML5-374151?style=for-the-badge&logo=html5&logoColor=E5E7EB)
 ![CSS3](https://img.shields.io/badge/CSS3-374151?style=for-the-badge&logo=css3&logoColor=E5E7EB)
 ![Shell](https://img.shields.io/badge/Shell-374151?style=for-the-badge&logo=gnu-bash&logoColor=E5E7EB)
+
+<br>
+
+<!-- [ snake ] -->
+<img src="assets/snake/github-contribution-grid-snake-dark.svg" width="100%" alt="Contribution Snake" />
+
+<br>
+
+<!-- [ contribution graph ] -->
+<img src="assets/stats/contribution-graph.svg" width="100%" alt="Contribution Graph" />
+
+<br>
+
+<!-- [ productivity ] -->
+<img src="assets/stats/productive-time.svg" width="100%" alt="Productivity Time" />
 
 </div>
 
