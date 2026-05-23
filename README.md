@@ -1,147 +1,201 @@
- <div align="left">
-  <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=48&pause=1200&color=ECECEC&vCenter=true&width=800&height=60&lines=Hi+there,+I'm+Ayush+%F0%9F%91%8B" alt="Typing SVG" />
-  
-  <br>
-  <span style="font-size:1.2em; font-weight:700; color:#ececec;">
+<div align="left">
+  <img
+    src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=46&pause=1200&color=D1D5DB&vCenter=true&width=780&height=60&lines=Hi+there,+I'm+Ayush+%F0%9F%91%8B"
+    alt="Typing SVG"
+  />
 
-  </span>
-  <br>
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17" alt="visitors"/>
+  <br><br>
+
+  <img
+    src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17&left_color=374151&right_color=6B7280"
+    alt="visitors"
+  />
 </div>
-
- <b>Transforming data into actionable insights to address real-world challenges.</b>
-
-<p align="center">
-  <a href="https://www.youtube.com/watch?v=VIDEO_ID" target="_blank">
-    <img src="2swA.gif" 
-         alt="Scenic View" 
-         style="width:100%; height:auto; display:block; margin:0;">
-  </a>
-</p>
-
-
-
-## **Intro**
-
-Following my curiosity into the world of Data Science and Machine Learning.
-I enjoy transforming Data into actionable insights, building intelligent systems, and collaborating on impactful projects.<br>
-My interests span **Machine Learning**, **Deep Learning**, **Computer Vision**, and **NLP**.<br>
-Currently Learning and exploring ML and its Frameworks. Diving deep into these. 
-
----
-
-## **About Me**
-
-- Strong foundation in Python, C++, and modern ML frameworks.
-- Love exploring new algorithms and staying updated with AI research.
-- Focused on making data science accessible and impactful.
-- Enjoys exploring and learning about ML and data driven projects and concepts.
-- Always open to collaboration on cool projects and innovative solutions.
-
----
-
-## **Languages Used**
-
-![Python](https://img.shields.io/badge/Python-222222?style=for-the-badge&logo=python&logoColor=white) 
-![C++](https://img.shields.io/badge/C++-222222?style=for-the-badge&logo=cplusplus&logoColor=white) 
-![Jupyter Notebook](https://img.shields.io/badge/Jupyter%20Notebook-222222?style=for-the-badge&logo=jupyter&logoColor=white) 
-![JavaScript](https://img.shields.io/badge/JavaScript-222222?style=for-the-badge&logo=javascript&logoColor=white) 
-![HTML](https://img.shields.io/badge/HTML-222222?style=for-the-badge&logo=html5&logoColor=white) 
-![CSS](https://img.shields.io/badge/CSS-222222?style=for-the-badge&logo=css3&logoColor=white) 
-![Shell](https://img.shields.io/badge/Shell-222222?style=for-the-badge&logo=gnu-bash&logoColor=white)
 
 <br>
 
-<!-- ------------------ GITHUB STATS HEADER ------------------ -->
-<div align="left">
-  <img src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=36&pause=1200&color=ECECEC&vCenter=true&width=350&height=50&lines=GitHub+Stats" alt="Typing SVG" />
-</div>
+<p>
+  <b>
+    <span style="color:#D1D5DB; font-size:16px;">
+      Transforming data into actionable insights to address real-world challenges.
+    </span>
+  </b>
+</p>
+
+<br>
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=VIDEO_ID">
+    <img
+      src="2swA.gif"
+      alt="Scenic View"
+      width="100%"
+    />
+  </a>
+</p>
+
+<p align="right">
+  <sub><i>— Giyu Tomioka</i></sub>
+</p>
+
+---
+
+# Intro
+
+Following my curiosity into the world of Data Science and Machine Learning.  
+I enjoy transforming data into actionable insights, building intelligent systems, and collaborating on impactful projects.  
+My interests span **Machine Learning**, **Deep Learning**, **Computer Vision**, and **NLP**.  
+Currently learning and exploring ML frameworks deeply.
+
+---
+
+# About Me
+
+- Strong foundation in Python, C++, and modern ML frameworks
+- Passionate about algorithms, intelligent systems, and AI research
+- Focused on building practical, impactful solutions
+- Enjoy exploring data-driven architectures and ML concepts
+- Open to innovative collaborations and research-oriented projects
+
+---
+
+# GitHub Analytics
 
 <div align="center">
-  <table>
-    <tr>
-      <td align="center" valign="top">
-        <b>GitHub Stats</b><br>
-        <img src="https://github-readme-stats.vercel.app/api?username=BhattAyush17&show_icons=true&theme=dark&hide_border=true&cache_seconds=1800" height="180"/>
-      </td>
-      <td align="center" valign="top">
-        <b>Current Streak</b><br>
-        <img src="https://github-readme-streak-stats.herokuapp.com/?user=BhattAyush17&theme=dark&hide_border=true" height="180"/>
-      </td>
-      <td align="center" valign="top">
-        <b>Top Languages</b><br>
-        <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=BhattAyush17&theme=dark&hide_border=true&layout=compact" height="180"/>
-      </td>
-    </tr>
-  </table>
-  <br>
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true" width="100%" />
+
+<table width="100%">
+  <tr>
+    <td width="50%" align="center">
+      <img
+        src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=BhattAyush17&theme=github_dark"
+        width="95%"
+      />
+    </td>
+
+    <td width="50%" align="center">
+      <img
+        src="https://streak-stats.demolab.com?user=BhattAyush17&theme=dark&hide_border=true&background=111827&stroke=9CA3AF&ring=D1D5DB&fire=E5E7EB"
+        width="95%"
+      />
+    </td>
+  </tr>
+
+  <tr>
+    <td width="50%" align="center">
+      <img
+        src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=BhattAyush17&theme=github_dark"
+        width="95%"
+      />
+    </td>
+
+    <td width="50%" align="center">
+      <img
+        src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=BhattAyush17&theme=github_dark&utcOffset=5.5"
+        width="95%"
+      />
+    </td>
+  </tr>
+</table>
+
 </div>
 
-## **GitHub Trophies**
+<br>
 
 <div align="center">
-  <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=darkhub&no-frame=true&no-bg=false&margin-w=4&column=6" />
-</div>
 
-## **GitHub Badges & Achievements**
+<img
+  width="100%"
+  src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true&bg_color=111827&color=D1D5DB&line=9CA3AF&point=E5E7EB&area=true"
+/>
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Arctic%20Code%20Vault%20Contributor-blue?logo=github&style=for-the-badge" alt="Arctic Code Vault Contributor" title="Arctic Code Vault Contributor"/>
-  <img src="https://img.shields.io/badge/Star%20Sponsor-yellow?logo=github&style=for-the-badge" alt="GitHub Star Sponsor" title="GitHub Star Sponsor"/>
-  <img src="https://img.shields.io/badge/Developer%20Program%20Member-green?logo=github&style=for-the-badge" alt="Developer Program Member" title="Developer Program Member"/>
 </div>
 
 ---
 
-## **Featured Projects**
+# Languages Used
 
-<div align="left">
+<div align="center">
+
+![Python](https://img.shields.io/badge/Python-374151?style=for-the-badge&logo=python&logoColor=E5E7EB)
+![C++](https://img.shields.io/badge/C++-374151?style=for-the-badge&logo=cplusplus&logoColor=E5E7EB)
+![Jupyter](https://img.shields.io/badge/Jupyter-374151?style=for-the-badge&logo=jupyter&logoColor=E5E7EB)
+![JavaScript](https://img.shields.io/badge/JavaScript-374151?style=for-the-badge&logo=javascript&logoColor=E5E7EB)
+![HTML5](https://img.shields.io/badge/HTML5-374151?style=for-the-badge&logo=html5&logoColor=E5E7EB)
+![CSS3](https://img.shields.io/badge/CSS3-374151?style=for-the-badge&logo=css3&logoColor=E5E7EB)
+![Shell](https://img.shields.io/badge/Shell-374151?style=for-the-badge&logo=gnu-bash&logoColor=E5E7EB)
+
+</div>
+
+---
+
+# GitHub Trophies
+
+<div align="center">
+
+<img
+  src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=flat&no-frame=true&margin-w=12&column=6"
+/>
+
+</div>
+
+---
+
+# GitHub Badges & Achievements
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Arctic%20Code%20Vault-4B5563?style=for-the-badge&logo=github&logoColor=E5E7EB"/>
+
+<img src="https://img.shields.io/badge/Star%20Sponsor-6B7280?style=for-the-badge&logo=github&logoColor=E5E7EB"/>
+
+<img src="https://img.shields.io/badge/Developer%20Program-9CA3AF?style=for-the-badge&logo=github&logoColor=111827"/>
+
+</div>
+
+---
+
+# Featured Projects
 
 | Repository | Description | Language | Stars | Forks |
 |------------|-------------|----------|-------|-------|
 | [ProPhet_BnB](https://github.com/BhattAyush17/ProPhet_BnB) | Airbnb price prediction | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/ProPhet_BnB?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/ProPhet_BnB?style=social) |
 | [Lane_Morph](https://github.com/BhattAyush17/Lane_Morph) | Lane detection & morphing | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Lane_Morph?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Lane_Morph?style=social) |
 | [DSA](https://github.com/BhattAyush17/DSA) | DSA implementations in C and C++ | C++ | ![Stars](https://img.shields.io/github/stars/BhattAyush17/DSA?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/DSA?style=social) |
-| [Greydge](https://github.com/BhattAyush17/Greydge) | Data pipeline for grey-scale image analysis | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Greydge?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Greydge?style=social) |
+| [Greydge](https://github.com/BhattAyush17/Greydge) | Grey-scale image analysis pipeline | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Greydge?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Greydge?style=social) |
 | [zavix-animegan-app](https://github.com/BhattAyush17/zavix-animegan-app) | AnimeGAN web app | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/zavix-animegan-app?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/zavix-animegan-app?style=social) |
-| [Loan-Dash-X](https://github.com/BhattAyush17/Loan-Dash-X) | Loan dashboard app | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Loan-Dash-X?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Loan-Dash-X?style=social) |
-
-</div>
+| [Loan-Dash-X](https://github.com/BhattAyush17/Loan-Dash-X) | Loan dashboard application | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Loan-Dash-X?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Loan-Dash-X?style=social) |
 
 ---
 
-## **Best Repositories**
+# Best Repositories
 
-<div align="left">
+<div align="center">
 
-  <a href="https://github.com/BhattAyush17/ProPhet_BnB">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=dark&hide_border=true" height="140"/>
-  </a>
-  <a href="https://github.com/BhattAyush17/DSA-with-C-">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=DSA-with-C-&theme=dark&hide_border=true" height="140"/>
-  </a>
-  <a href="https://github.com/BhattAyush17/Lane_Morph">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=Lane_Morph&theme=dark&hide_border=true" height="140"/>
-  </a>
-  <a href="https://github.com/BhattAyush17/Greydge">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=Greydge&theme=dark&hide_border=true" height="140"/>
-  </a>
-  <a href="https://github.com/BhattAyush17/zavix-animegan-app">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=zavix-animegan-app&theme=dark&hide_border=true" height="140"/>
-  </a>
-  <a href="https://github.com/BhattAyush17/Loan-Dash-X">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=BhattAyush17&repo=Loan-Dash-X&theme=dark&hide_border=true" height="140"/>
-  </a>
+<a href="https://github.com/BhattAyush17/ProPhet_BnB">
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=github_dark&hide_border=true"/>
+</a>
+
+<a href="https://github.com/BhattAyush17/DSA-with-C-">
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=DSA-with-C-&theme=github_dark&hide_border=true"/>
+</a>
+
+<a href="https://github.com/BhattAyush17/Lane_Morph">
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Lane_Morph&theme=github_dark&hide_border=true"/>
+</a>
+
+<a href="https://github.com/BhattAyush17/Greydge">
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Greydge&theme=github_dark&hide_border=true"/>
+</a>
+
 </div>
 
 ---
 
 <div align="center">
-  <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 20px; border-radius: 10px; border: 1px solid #334155; margin: 20px 0;">
-    <h3 style="color: #fbbf24; margin: 0;">⭐ Thanks for visiting my profile!</h3>
-    <p style="color: #e2e8f0; margin: 10px 0 0 0; font-size: 16px;">Open to groundbreaking projects and visionary collaborations. </p>
-  </div>
-</div>
 
-<!-- End of README -->
+<img
+  width="100%"
+  src="https://quotes-github-readme.vercel.app/api?type=horizontal&theme=dark"
+/>
+
+</div>
