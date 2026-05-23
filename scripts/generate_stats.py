@@ -1,9 +1,12 @@
 import os
 import requests
 import time
+import re
+from bs4 import BeautifulSoup
 
 USERNAME = "BhattAyush17"
 ASSETS_DIR = "assets/stats"
+BADGES_DIR = "assets/badges"
 
 # List of assets to fetch and their URLs (Enforcing custom Premium Matte Black, White, and Silver Monochrome Palette)
 URLS = {
@@ -51,14 +54,99 @@ def fetch_and_save(filename, url, retries=3):
     print(f"⏭️ Skipping {filename}. Kept existing file for self-healing.")
     return False
 
+def update_achievements():
+    """
+    Scrapes user's official achievements from their profile, downloads images locally,
+    and dynamically inserts them into the README between marker tags.
+    """
+    print("🏆 Fetching and Scraping GitHub Achievements...")
+    url = f"https://github.com/{USERNAME}"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+    
+    try:
+        response = requests.get(url, headers=headers, timeout=15)
+        if response.status_code != 200:
+            print("⚠️ Failed to fetch profile page for achievements.")
+            return
+            
+        soup = BeautifulSoup(response.text, 'html.parser')
+        badges = []
+        
+        # Scrape native GitHub achievements
+        # Typically native achievement links contain /achievements/ in their href
+        elements = soup.select('a[href*="/achievements/"]')
+        for el in elements:
+            img = el.find('img')
+            if img:
+                src = img.get('src')
+                alt = img.get('alt', 'GitHub Achievement')
+                if src and alt:
+                    badges.append((alt, src))
+                    
+        if not badges:
+            print("ℹ️ No achievements scraped. Keeping fallback/previous.")
+            return
+            
+        os.makedirs(BADGES_DIR, exist_ok=True)
+        
+        markdown_imgs = []
+        for alt, src in badges:
+            # Generate a safe filename
+            safe_name = re.sub(r'[^a-zA-Z0-9_-]', '', alt.lower().replace(' ', '_'))
+            ext = os.path.splitext(src.split('?')[0])[1] or '.png'
+            filename = f"{safe_name}{ext}"
+            filepath = os.path.join(BADGES_DIR, filename)
+            
+            try:
+                print(f"Downloading achievement badge: {alt}...")
+                img_res = requests.get(src, timeout=10)
+                if img_res.status_code == 200:
+                    with open(filepath, 'wb') as f:
+                        f.write(img_res.content)
+                    markdown_imgs.append(f'<img src="assets/badges/{filename}" width="75px" alt="{alt}" title="{alt}" />')
+                else:
+                    # Fallback to direct URL if download fails
+                    markdown_imgs.append(f'<img src="{src}" width="75px" alt="{alt}" title="{alt}" />')
+            except Exception as e:
+                print(f"Error downloading {alt}: {e}")
+                markdown_imgs.append(f'<img src="{src}" width="75px" alt="{alt}" title="{alt}" />')
+                
+        # Inject into README.md
+        readme_path = "README.md"
+        if os.path.exists(readme_path):
+            with open(readme_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                
+            start_marker = "<!-- START_SECTION:achievements -->"
+            end_marker = "<!-- END_SECTION:achievements -->"
+            
+            if start_marker in content and end_marker in content:
+                pattern = re.compile(rf"{start_marker}.*?{end_marker}", re.DOTALL)
+                replacement = f"{start_marker}\n" + " ".join(markdown_imgs) + f"\n{end_marker}"
+                new_content = pattern.sub(replacement, content)
+                
+                with open(readme_path, 'w', encoding='utf-8') as f:
+                    f.write(new_content)
+                print("✅ Successfully updated achievements in README.md!")
+            else:
+                print("⚠️ Achievement placeholders not found in README.md.")
+                
+    except Exception as e:
+        print(f"❌ Error updating achievements: {e}")
+
 def main():
     print("🚀 Starting Modular & Self-Healing GitHub Stats Upgrader...")
     os.makedirs(ASSETS_DIR, exist_ok=True)
     
+    # 1. Fetch SVGs
     for filename, url in URLS.items():
         fetch_and_save(filename, url)
+        
+    # 2. Scraping and updating native Achievements
+    update_achievements()
         
     print("✨ Stats Upgrade Complete!")
 
 if __name__ == "__main__":
     main()
+

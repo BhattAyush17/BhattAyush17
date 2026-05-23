@@ -26,7 +26,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests matplotlib cairosvg
+          pip install requests matplotlib cairosvg beautifulsoup4
+
 
       - name: Run generator
         env:
