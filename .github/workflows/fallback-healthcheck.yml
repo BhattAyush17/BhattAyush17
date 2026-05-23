@@ -1,0 +1,21 @@
+name: Fallback Health Check
+
+on:
+  schedule:
+    - cron: "30 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  verify-assets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify generated assets
+        run: |
+          test -f assets/stats/github-stats.svg
+          test -f assets/stats/languages.svg
+          test -f assets/stats/productive-time.svg
+          test -f assets/stats/contribution-graph.svg
+          test -f assets/snake/github-contribution-grid-snake-dark.svg
