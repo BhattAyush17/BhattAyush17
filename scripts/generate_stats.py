@@ -383,17 +383,51 @@ def update_achievements():
         soup = BeautifulSoup(response.text, 'html.parser')
         badges = []
         
-        # Scrape native GitHub achievements
-        # Typically native achievement links contain /achievements/ in their href
-        elements = soup.select('a[href*="/achievements/"]')
-        for el in elements:
-            img = el.find('img')
-            if img:
-                src = img.get('src')
-                alt = img.get('alt', 'GitHub Achievement')
-                if src and alt:
-                    badges.append((alt, src))
+        # 1. Semantic search for Achievements header
+        achievements_header = None
+        for tag in ['h2', 'h3', 'h4', 'span', 'div']:
+            found = soup.find(tag, string=lambda text: text and "achievements" in text.lower())
+            if found:
+                achievements_header = found
+                break
+                
+        # Extract from the semantic container
+        if achievements_header:
+            container = achievements_header.parent
+            for _ in range(3):
+                if container:
+                    imgs = container.find_all('img')
+                    for img in imgs:
+                        src = img.get('src')
+                        alt = img.get('alt', '')
+                        if src and ("badge" in src.lower() or "achievement" in src.lower() or "githubassets.com" in src.lower()):
+                            if alt and alt not in [b[0] for b in badges]:
+                                badges.append((alt, src))
+                    if len(badges) >= 1:
+                        break
+                    container = container.parent
                     
+        # 2. CSS link fallback
+        if not badges:
+            elements = soup.select('a[href*="/achievements/"]')
+            for el in elements:
+                img = el.find('img')
+                if img:
+                    src = img.get('src')
+                    alt = img.get('alt', '')
+                    if src and alt:
+                        badges.append((alt, src))
+                        
+        # 3. Known names alt fallback
+        if not badges:
+            achievement_names = ["pull shark", "yolo", "quickdraw", "galaxy brain", "starstruck", "pair extraordinaire", "public sponsor"]
+            for img in soup.find_all('img'):
+                alt = img.get('alt', '')
+                src = img.get('src', '')
+                if alt and any(name in alt.lower() for name in achievement_names):
+                    if src:
+                        badges.append((alt, src))
+                        
         if not badges:
             print("ℹ️ No achievements scraped. Keeping fallback/previous.")
             return
