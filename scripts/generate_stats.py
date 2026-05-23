@@ -346,49 +346,22 @@ def make_streak_svg(data):
 
 def make_graph_svg(data):
     """
-    Renders a stunning custom neon line chart of Contribution Graph.
+    Downloads and caches the premium neon Vercel Contribution Activity Graph.
     """
     try:
-        _, _, _, days = calculate_streak(data)
-        if not days:
-            days = [(f"2026-05-{i:02d}", i % 5) for i in range(1, 31)]
-            
-        counts = [count for date, count in days[-30:]]
-        
-        fig, ax = plt.subplots(figsize=(8, 4), dpi=100)
-        fig.patch.set_facecolor("#121212")
-        ax.set_facecolor("#121212")
-        
-        # Clean rounded border
-        box = FancyBboxPatch(
-            (0.01, 0.01), 0.98, 0.98,
-            boxstyle="round,pad=0.005",
-            edgecolor="#27272a",
-            facecolor="#121212",
-            linewidth=1.5,
-            transform=fig.transFigure
-        )
-        fig.patches.append(box)
-        
-        # Draw smooth neon line graph
-        ax.plot(counts, color="#ffffff", linewidth=2.5, marker="o", markersize=5, markerfacecolor="#a1a1aa", markeredgecolor="#121212")
-        ax.fill_between(range(len(counts)), counts, color="#a1a1aa", alpha=0.15)
-        
-        ax.spines['bottom'].set_color('#27272a')
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        ax.spines['left'].set_color('#27272a')
-        ax.tick_params(colors='white', which='both')
-        ax.grid(color='#27272a', linestyle='--', linewidth=0.5)
-        
-        ax.set_title("Contribution Activity Graph (Last 30 Days)", color="white", fontsize=12, fontweight="bold", pad=15)
-        
-        plt.tight_layout()
-        plt.savefig(os.path.join(ASSETS_DIR, "contribution-graph.svg"), format="svg", transparent=True, bbox_inches='tight', pad_inches=0.1)
-        plt.close()
-        print("✅ Successfully generated contribution-graph.svg")
+        url = f"https://github-readme-activity-graph.vercel.app/graph?username={USERNAME}&theme=github-dark&hide_border=true&point=58a6ff&area=true&area_color=1f6feb"
+        print(f"Downloading premium activity graph from {url}...")
+        res = requests.get(url, timeout=15)
+        if res.status_code == 200 and "<svg" in res.text.lower():
+            filepath = os.path.join(ASSETS_DIR, "contribution-graph.svg")
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(res.text)
+            print("✅ Successfully generated/downloaded contribution-graph.svg")
+        else:
+            print(f"⚠️ Failed to fetch premium activity graph. Status: {res.status_code}")
     except Exception as e:
-        print(f"❌ Error drawing graph: {e}")
+        print(f"❌ Error fetching premium activity graph: {e}")
+
 
 def update_achievements():
     """
