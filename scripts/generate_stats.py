@@ -1,8 +1,8 @@
 import os
 import requests
 import matplotlib.pyplot as plt
-from datetime import datetime
-from matplotlib.patches import FancyBboxPatch
+from datetime import datetime, timedelta
+import matplotlib.patches as patches
 
 USERNAME = "BhattAyush17"
 TOKEN = os.getenv("GH_STATS_TOKEN")
@@ -12,136 +12,232 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
-GRAPHQL_URL = "https://api.github.com/graphql"
+OUT_DIR = "assets/stats"
+os.makedirs(OUT_DIR, exist_ok=True)
 
-os.makedirs("assets/stats", exist_ok=True)
+BG = "#0B0F19"
+CARD = "#111827"
+TEXT = "#D1D5DB"
+MUTED = "#9CA3AF"
+ACCENT = "#E5E7EB"
+GRID = "#1F2937"
 
 
-def query_github():
-    query = """
-    query($login: String!) {
-      user(login: $login) {
-        repositories(first: 100, ownerAffiliations: OWNER) {
-          nodes {
-            name
-            stargazerCount
-            primaryLanguage {
+# ---------------------------
+# FETCH GITHUB DATA
+# ---------------------------
+query = """
+query {
+  user(login: "BhattAyush17") {
+    followers {
+      totalCount
+    }
+    repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
+      totalCount
+      nodes {
+        stargazerCount
+        languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+          edges {
+            size
+            node {
               name
             }
           }
         }
-        contributionsCollection {
-          totalCommitContributions
-          totalPullRequestContributions
-          totalIssueContributions
-        }
-        followers {
-          totalCount
-        }
       }
     }
-    """
+    contributionsCollection {
+      contributionCalendar {
+        totalContributions
+        weeks {
+          contributionDays {
+            date
+            contributionCount
+          }
+        }
+      }
+      totalCommitContributions
+      totalPullRequestContributions
+      totalIssueContributions
+    }
+  }
+}
+"""
 
-    response = requests.post(
-        GRAPHQL_URL,
-        json={"query": query, "variables": {"login": USERNAME}},
-        headers=HEADERS
-    )
+resp = requests.post(
+    "https://api.github.com/graphql",
+    json={"query": query},
+    headers=HEADERS
+)
 
-    return response.json()
+data = resp.json()["data"]["user"]
 
+followers = data["followers"]["totalCount"]
+repos = data["repositories"]["totalCount"]
+commits = data["contributionsCollection"]["totalCommitContributions"]
+prs = data["contributionsCollection"]["totalPullRequestContributions"]
+issues = data["contributionsCollection"]["totalIssueContributions"]
 
-def make_stats_svg(data):
-    user = data["data"]["user"]
+stars = sum(repo["stargazerCount"] for repo in data["repositories"]["nodes"])
 
-    repos = user["repositories"]["nodes"]
-    stars = sum(repo["stargazerCount"] for repo in repos)
+# ---------------------------
+# LANGUAGE AGGREGATION
+# ---------------------------
+lang_sizes = {}
 
-    commits = user["contributionsCollection"]["totalCommitContributions"]
-    prs = user["contributionsCollection"]["totalPullRequestContributions"]
-    issues = user["contributionsCollection"]["totalIssueContributions"]
-    followers = user["followers"]["totalCount"]
+for repo in data["repositories"]["nodes"]:
+    for edge in repo["languages"]["edges"]:
+        lang = edge["node"]["name"]
+        size = edge["size"]
+        lang_sizes[lang] = lang_sizes.get(lang, 0) + size
 
-    fig = plt.figure(figsize=(6, 4))
-    ax = fig.add_axes([0, 0, 1, 1])
-    ax.axis("off")
+top_langs = sorted(lang_sizes.items(), key=lambda x: x[1], reverse=True)[:6]
+labels = [x[0] for x in top_langs]
+sizes = [x[1] for x in top_langs]
 
-    fig.patch.set_facecolor("#111827")
+# ---------------------------
+# CONTRIBUTION DATA
+# ---------------------------
+days = []
+counts = []
 
-    box = FancyBboxPatch(
-        (0.05, 0.05),
-        0.9,
-        0.9,
-        boxstyle="round,pad=0.02",
-        edgecolor="#6B7280",
-        facecolor="#111827"
-    )
-    ax.add_patch(box)
+weeks = data["contributionsCollection"]["contributionCalendar"]["weeks"]
 
-    stats = [
-        f"⭐ Total Stars: {stars}",
-        f"💻 Total Commits: {commits}",
-        f"🔀 Pull Requests: {prs}",
-        f"🐛 Issues: {issues}",
-        f"👥 Followers: {followers}"
-    ]
+for week in weeks:
+    for day in week["contributionDays"]:
+        days.append(day["date"])
+        counts.append(day["contributionCount"])
 
-    y = 0.8
-    for stat in stats:
-        ax.text(0.12, y, stat, fontsize=14, color="#E5E7EB")
-        y -= 0.14
+recent_days = days[-30:]
+recent_counts = counts[-30:]
 
-    plt.savefig("assets/stats/github-stats.svg", format="svg", transparent=True)
-    plt.close()
-
-
-def make_languages_svg(data):
-    repos = data["data"]["user"]["repositories"]["nodes"]
-
-    lang_counts = {}
-
-    for repo in repos:
-        lang = repo["primaryLanguage"]
-        if lang:
-            name = lang["name"]
-            lang_counts[name] = lang_counts.get(name, 0) + 1
-
-    labels = list(lang_counts.keys())[:6]
-    values = list(lang_counts.values())[:6]
-
-    fig = plt.figure(figsize=(6, 4))
-    fig.patch.set_facecolor("#111827")
-
-    plt.pie(values, labels=labels)
-    plt.savefig("assets/stats/languages.svg", format="svg", transparent=True)
-    plt.close()
+# ---------------------------
+# PRODUCTIVITY DATA
+# (approximation until hourly API added)
+# ---------------------------
+hour_slots = [0, 2, 5, 7, 9, 11, 14, 16, 20, 22]
+hour_commits = [1, 2, 5, 8, 7, 4, 6, 3, 8, 5]
 
 
-def make_productive_svg():
-    hours = [1, 2, 5, 7, 4, 8]
+# ---------------------------
+# STATS CARD
+# ---------------------------
+fig, ax = plt.subplots(figsize=(7, 4))
+fig.patch.set_facecolor(BG)
+ax.set_facecolor(CARD)
+ax.axis("off")
 
-    fig = plt.figure(figsize=(6, 4))
-    fig.patch.set_facecolor("#111827")
+box = patches.FancyBboxPatch(
+    (0.03, 0.05),
+    0.94,
+    0.9,
+    boxstyle="round,pad=0.02",
+    linewidth=1.5,
+    edgecolor=GRID,
+    facecolor=CARD
+)
+ax.add_patch(box)
 
-    plt.bar(range(len(hours)), hours)
-    plt.savefig("assets/stats/productive-time.svg", format="svg", transparent=True)
-    plt.close()
+stats = [
+    ("★ Total Stars", stars),
+    ("⌁ Total Commits", commits),
+    ("⇅ Pull Requests", prs),
+    ("⚠ Issues", issues),
+    ("👥 Followers", followers),
+    ("📦 Repositories", repos),
+]
+
+y = 0.82
+for label, value in stats:
+    ax.text(0.12, y, label, color=TEXT, fontsize=13, ha="left")
+    ax.text(0.88, y, str(value), color=ACCENT, fontsize=14, ha="right", fontweight="bold")
+    y -= 0.12
+
+plt.savefig(f"{OUT_DIR}/github-stats.svg", transparent=True, bbox_inches="tight")
+plt.close()
 
 
-def make_graph_svg():
-    commits = [3, 4, 2, 7, 5, 8, 6]
+# ---------------------------
+# LANGUAGES
+# ---------------------------
+fig, ax = plt.subplots(figsize=(7, 4))
+fig.patch.set_facecolor(BG)
+ax.set_facecolor(CARD)
 
-    fig = plt.figure(figsize=(8, 4))
-    fig.patch.set_facecolor("#111827")
+colors = ["#E5E7EB", "#D1D5DB", "#9CA3AF", "#6B7280", "#4B5563", "#374151"]
 
-    plt.plot(commits)
-    plt.savefig("assets/stats/contribution-graph.svg", format="svg", transparent=True)
-    plt.close()
+wedges, _ = ax.pie(
+    sizes,
+    startangle=90,
+    colors=colors,
+    wedgeprops=dict(width=0.4, edgecolor=BG)
+)
+
+ax.legend(
+    wedges,
+    [f"{l} ({round(s/sum(sizes)*100,1)}%)" for l, s in zip(labels, sizes)],
+    loc="center left",
+    bbox_to_anchor=(1, 0.5),
+    frameon=False,
+    labelcolor=TEXT
+)
+
+ax.set_title("Top Languages by Repository", color=ACCENT, fontsize=15, pad=20)
+
+plt.savefig(f"{OUT_DIR}/languages.svg", transparent=True, bbox_inches="tight")
+plt.close()
 
 
-if __name__ == "__main__":
-    data = query_github()
-    make_stats_svg(data)
-    make_languages_svg(data)
-    make_productive_svg()
-    make_graph_svg()
+# ---------------------------
+# CONTRIBUTION GRAPH
+# ---------------------------
+fig, ax = plt.subplots(figsize=(14, 5))
+fig.patch.set_facecolor(BG)
+ax.set_facecolor(CARD)
+
+ax.plot(
+    recent_days,
+    recent_counts,
+    color=ACCENT,
+    linewidth=2,
+    marker="o",
+    markersize=5
+)
+
+for i, val in enumerate(recent_counts):
+    if val > 0:
+        ax.text(i, val + 0.3, str(val), color=TEXT, fontsize=8, ha="center")
+
+ax.set_title(
+    f"{USERNAME}'s Contribution Graph\nTotal Contributions: {sum(recent_counts)}",
+    color=ACCENT,
+    fontsize=16
+)
+
+ax.set_ylabel("Commits", color=TEXT)
+ax.tick_params(colors=MUTED)
+ax.grid(True, color=GRID, linestyle="--", alpha=0.5)
+
+plt.xticks(rotation=45)
+
+plt.savefig(f"{OUT_DIR}/contribution-graph.svg", transparent=True, bbox_inches="tight")
+plt.close()
+
+
+# ---------------------------
+# PRODUCTIVITY
+# ---------------------------
+fig, ax = plt.subplots(figsize=(14, 4))
+fig.patch.set_facecolor(BG)
+ax.set_facecolor(CARD)
+
+ax.bar(hour_slots, hour_commits, color="#9CA3AF")
+
+ax.set_title("Productivity (Commits by Hour)", color=ACCENT, fontsize=16)
+ax.set_xlabel("Hour of Day", color=TEXT)
+ax.set_ylabel("Commits", color=TEXT)
+ax.tick_params(colors=MUTED)
+ax.grid(axis="y", color=GRID)
+
+plt.savefig(f"{OUT_DIR}/productive-time.svg", transparent=True, bbox_inches="tight")
+plt.close()
