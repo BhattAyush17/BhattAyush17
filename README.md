@@ -27,7 +27,7 @@
 <p align="center">
   <a href="https://www.youtube.com/watch?v=VIDEO_ID">
     <img
-      src="2swA.gif"
+      src="assets/hero/banner.gif"
       alt="Scenic View"
       width="100%"
     />
@@ -35,7 +35,7 @@
 </p>
 
 <p align="right">
-  <sub><i>— Giyu Tomioka</i></sub>
+  <sub><i>— peace</i></sub>
 </p>
 
 ---
