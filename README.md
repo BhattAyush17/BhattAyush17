@@ -4,15 +4,11 @@
     alt="Typing SVG"
   />
 
-  <br><br>
-
   <img
     src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17&left_color=374151&right_color=6B7280"
     alt="visitors"
   />
 </div>
-
-<br>
 
 <p>
   <b>
@@ -22,7 +18,7 @@
   </b>
 </p>
 
-<br>
+
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=VIDEO_ID">
@@ -177,20 +173,28 @@ Currently learning and exploring ML frameworks deeply.
 
 <div align="center">
 
+<a href="https://github.com/BhattAyush17/AURA_CHAT">
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=AURA_CHAT&theme=github_dark&hide_border=true"/>
+</a>
+
 <a href="https://github.com/BhattAyush17/ProPhet_BnB">
   <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=github_dark&hide_border=true"/>
 </a>
 
-<a href="https://github.com/BhattAyush17/DSA-with-C-">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=DSA-with-C-&theme=github_dark&hide_border=true"/>
+<a href="https://github.com/BhattAyush17/Feature_Engineering_SandBox">
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Feature_Engineering_SandBox&theme=github_dark&hide_border=true"/>
 </a>
 
-<a href="https://github.com/BhattAyush17/Lane_Morph">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Lane_Morph&theme=github_dark&hide_border=true"/>
+<a href="https://github.com/BhattAyush17/Valora">
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Valora&theme=github_dark&hide_border=true"/>
 </a>
 
-<a href="https://github.com/BhattAyush17/Greydge">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Greydge&theme=github_dark&hide_border=true"/>
+<a href="https://github.com/BhattAyush17/Loan-Dash-X">
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Loan-Dash-X&theme=github_dark&hide_border=true"/>
+</a>
+
+<a href="https://github.com/BhattAyush17/FaunAnalyze">
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=FaunAnalyze&theme=github_dark&hide_border=true"/>
 </a>
 
 </div>
