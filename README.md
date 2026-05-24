@@ -84,29 +84,37 @@ Currently learning and exploring ML frameworks deeply.
 
 # GitHub Stats & Streak
 
-<div align="center">
-
 <table width="100%">
   <tr>
-    <td width="33%" align="center">
-      <img src="assets/stats/github-stats.svg" width="95%" alt="GitHub Stats" />
+    <td align="center" valign="top">
+      <b>GitHub Stats</b><br>
+      <img
+        src="https://github-readme-stats-sigma-five.vercel.app/api?username=BhattAyush17&show_icons=true&theme=github_dark&hide_border=true&include_all_commits=true&count_private=true&cache_seconds=1800&icon_color=58a6ff"
+        height="180"
+        alt="Ayush GitHub Stats"
+      />
     </td>
-    <td width="33%" align="center">
-      <img src="assets/stats/streak.svg" width="95%" alt="Current Streak" />
+    <td align="center" valign="top">
+      <b>🔥 Current Streak</b><br>
+      <img
+        src="https://streak-stats.demolab.com?user=BhattAyush17&theme=github-orange&hide_border=true"
+        height="180"
+        alt="Ayush Current Streak"
+      />
     </td>
-    <td width="33%" align="center">
-      <img src="assets/stats/languages.svg" width="95%" alt="Top Languages" />
+    <td align="center" valign="top">
+      <b>Top Languages</b><br>
+      <img
+        src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=BhattAyush17&layout=compact&theme=github_dark&hide_border=true&langs_count=8&cache_seconds=1800"
+        height="180"
+        alt="Top Languages"
+      />
     </td>
   </tr>
 </table>
 
-<br>
-
-<img src="assets/stats/contribution-graph.svg" width="100%" alt="Contribution Graph" />
-
-</div>
-
 ---
+
 
 # GitHub Analytics
 
@@ -200,6 +208,8 @@ Currently learning and exploring ML frameworks deeply.
 </div>
 
 ---
+
+# TL;DR
 
 <div align="center">
 
