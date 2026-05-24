@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="495" height="110" viewBox="0 0 495 110">
+  <rect width="495" height="110" rx="8" fill="#121212" />
+  <rect x="1" y="1" width="493" height="108" rx="7" fill="none" stroke="#333" stroke-width="1"/>
+  <text x="20" y="32" fill="#ffffff" font-family="Segoe UI, sans-serif" font-size="16" font-weight="600">
+    Achievements
+  </text>
+  
+    <rect x="20" y="55" width="130" height="34" rx="17" fill="#1f1f1f" stroke="#333" stroke-width="1"/>
+    <text x="85" y="77" text-anchor="middle" fill="#e5e7eb" font-family="Segoe UI, sans-serif" font-size="12">
+      🏆 Pull Shark
+    </text>
+    <rect x="164" y="55" width="120" height="34" rx="17" fill="#1f1f1f" stroke="#333" stroke-width="1"/>
+    <text x="224" y="77" text-anchor="middle" fill="#e5e7eb" font-family="Segoe UI, sans-serif" font-size="12">
+      🏆 Quickdraw
+    </text>
+    <rect x="298" y="55" width="90" height="34" rx="17" fill="#1f1f1f" stroke="#333" stroke-width="1"/>
+    <text x="343" y="77" text-anchor="middle" fill="#e5e7eb" font-family="Segoe UI, sans-serif" font-size="12">
+      🏆 YOLO
+    </text>
+</svg>

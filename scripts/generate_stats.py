@@ -1,423 +1,263 @@
-import os
-import requests
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-from bs4 import BeautifulSoup
+"""
+Self-Healing GitHub README Stats Generator
+==========================================
+Fetches SVG assets from public APIs for the monochrome README profile.
 
-USERNAME = "BhattAyush17"
-TOKEN = os.getenv("GH_STATS_TOKEN")
-
-if not TOKEN:
-    raise RuntimeError("GH_STATS_TOKEN missing")
-
-HEADERS = {
-    "Authorization": f"Bearer {TOKEN}",
-    "Content-Type": "application/json",
-    "User-Agent": "GitHub Analytics Generator"
-}
-
-OUT_DIR = "assets/stats"
-os.makedirs(OUT_DIR, exist_ok=True)
-
-# Theme
-BG = "#0B0F19"
-CARD = "#111827"
-TEXT = "#D1D5DB"
-MUTED = "#9CA3AF"
-ACCENT = "#E5E7EB"
-GRID = "#1F2937"
-BAR = "#9CA3AF"
-
-
-# ==========================================
-# HELPERS
-# ==========================================
-def github_graphql(query):
-    r = requests.post(
-        "https://api.github.com/graphql",
-        json={"query": query},
-        headers=HEADERS,
-        timeout=30
-    )
-
-    if r.status_code != 200:
-        raise RuntimeError(f"GitHub API error: {r.status_code}")
-
-    payload = r.json()
-
-    if "errors" in payload:
-        raise RuntimeError(payload["errors"])
-
-    return payload["data"]
-
-
-def fetch_achievements(username):
-    url = f"https://github.com/{username}"
-
-    r = requests.get(
-        url,
-        headers={"User-Agent": "Mozilla/5.0"},
-        timeout=20
-    )
-
-    soup = BeautifulSoup(r.text, "html.parser")
-
-    achievements = []
-
-    for img in soup.find_all("img"):
-        alt = img.get("alt", "")
-
-        if "achievement" in alt.lower():
-            cleaned = alt.replace("Achievement:", "").strip()
-
-            if cleaned and cleaned not in achievements:
-                achievements.append(cleaned)
-
-    return achievements
-
-
-# ==========================================
-# FETCH DATA
-# ==========================================
-query = f"""
-query {{
-  user(login: "{USERNAME}") {{
-    followers {{
-      totalCount
-    }}
-
-    repositories(
-      ownerAffiliations: OWNER,
-      isFork: false,
-      first: 100
-    ) {{
-      totalCount
-      nodes {{
-        stargazerCount
-        languages(
-          first: 10,
-          orderBy: {{
-            field: SIZE,
-            direction: DESC
-          }}
-        ) {{
-          edges {{
-            size
-            node {{
-              name
-            }}
-          }}
-        }}
-      }}
-    }}
-
-    contributionsCollection {{
-      contributionCalendar {{
-        totalContributions
-        weeks {{
-          contributionDays {{
-            date
-            contributionCount
-          }}
-        }}
-      }}
-
-      totalCommitContributions
-      totalPullRequestContributions
-      totalIssueContributions
-    }}
-  }}
-}}
+Design Philosophy:
+- NEVER break the profile: if a fetch fails, keep the existing SVG
+- Generate local fallback SVGs for any asset that has never existed
+- Zero external dependencies beyond `requests` (no matplotlib, no bs4)
+- Enforces matte black / white / silver palette on every card
 """
 
-data = github_graphql(query)["user"]
+import os
+import sys
+import time
+import requests
 
-followers = data["followers"]["totalCount"]
-repos = data["repositories"]["totalCount"]
-commits = data["contributionsCollection"]["totalCommitContributions"]
-prs = data["contributionsCollection"]["totalPullRequestContributions"]
-issues = data["contributionsCollection"]["totalIssueContributions"]
+# ──────────────────────────────────────────────
+# Configuration
+# ──────────────────────────────────────────────
+USERNAME = "BhattAyush17"
+ASSETS_DIR = "assets/stats"
+SNAKE_DIR = "assets/snake"
+STREAK_DIR = "assets/streak"
 
-stars = sum(
-    repo["stargazerCount"]
-    for repo in data["repositories"]["nodes"]
-)
+# Monochrome palette tokens
+BG = "121212"
+TITLE = "ffffff"
+TEXT = "e5e7eb"
+ICON = "a1a1aa"
+LINE = "a1a1aa"
+POINT = "ffffff"
 
-# ==========================================
-# LANGUAGES
-# ==========================================
-lang_sizes = {}
+# ──────────────────────────────────────────────
+# Asset URLs
+# ──────────────────────────────────────────────
+URLS = {
+    # GitHub Stats card
+    f"{ASSETS_DIR}/github-stats.svg": (
+        f"https://github-readme-stats.vercel.app/api"
+        f"?username={USERNAME}&show_icons=true"
+        f"&bg_color={BG}&title_color={TITLE}"
+        f"&text_color={TEXT}&icon_color={ICON}"
+        f"&hide_border=true"
+    ),
 
-for repo in data["repositories"]["nodes"]:
-    for edge in repo["languages"]["edges"]:
-        lang = edge["node"]["name"]
-        size = edge["size"]
-        lang_sizes[lang] = lang_sizes.get(lang, 0) + size
+    # Top Languages card
+    f"{ASSETS_DIR}/languages.svg": (
+        f"https://github-readme-stats.vercel.app/api/top-langs/"
+        f"?username={USERNAME}&layout=compact"
+        f"&bg_color={BG}&title_color={TITLE}"
+        f"&text_color={TEXT}&icon_color={ICON}"
+        f"&hide_border=true"
+    ),
 
-top_langs = sorted(
-    lang_sizes.items(),
-    key=lambda x: x[1],
-    reverse=True
-)[:6]
+    # Contribution activity graph
+    f"{ASSETS_DIR}/contribution-graph.svg": (
+        f"https://github-readme-activity-graph.vercel.app/graph"
+        f"?username={USERNAME}&theme=github-dark"
+        f"&hide_border=true&bg_color={BG}"
+        f"&color={TITLE}&line={LINE}"
+        f"&point={POINT}&area=true"
+    ),
 
-lang_labels = [x[0] for x in top_langs]
-lang_sizes_only = [x[1] for x in top_langs]
-total_lang_size = sum(lang_sizes_only)
+    # Productive-time card
+    f"{ASSETS_DIR}/productive-time.svg": (
+        f"https://github-profile-summary-cards.vercel.app/api/cards/productive-time"
+        f"?username={USERNAME}&theme=github_dark&utcOffset=5.5"
+    ),
 
-# ==========================================
-# CONTRIBUTION DATA
-# ==========================================
-days = []
-counts = []
+    # GitHub Streak card
+    f"{ASSETS_DIR}/streak.svg": (
+        f"https://github-readme-streak-stats.herokuapp.com/"
+        f"?user={USERNAME}&theme=dark"
+        f"&hide_border=true&background={BG}"
+        f"&ring={TITLE}&fire={TITLE}"
+        f"&currStreakLabel={TEXT}&sideLabels={TEXT}"
+        f"&currStreakNum={TITLE}&sideNums={TEXT}"
+        f"&dates={ICON}"
+    ),
 
-weeks = data["contributionsCollection"]["contributionCalendar"]["weeks"]
+    # Streak duplicate for legacy path
+    f"{STREAK_DIR}/streak.svg": (
+        f"https://github-readme-streak-stats.herokuapp.com/"
+        f"?user={USERNAME}&theme=dark"
+        f"&hide_border=true&background={BG}"
+        f"&ring={TITLE}&fire={TITLE}"
+        f"&currStreakLabel={TEXT}&sideLabels={TEXT}"
+        f"&currStreakNum={TITLE}&sideNums={TEXT}"
+        f"&dates={ICON}"
+    ),
 
-for week in weeks:
-    for day in week["contributionDays"]:
-        days.append(day["date"][5:])  # MM-DD
-        counts.append(day["contributionCount"])
+    # Contribution snake
+    f"{SNAKE_DIR}/github-contribution-grid-snake-dark.svg": (
+        f"https://raw.githubusercontent.com/{USERNAME}/{USERNAME}"
+        f"/output/github-contribution-grid-snake-dark.svg"
+    ),
+}
 
-recent_days = days[-30:]
-recent_counts = counts[-30:]
 
-# ==========================================
-# PRODUCTIVITY APPROXIMATION
-# ==========================================
-hour_slots = list(range(24))
-hour_commits = [0] * 24
+# ──────────────────────────────────────────────
+# Fallback SVG generator
+# ──────────────────────────────────────────────
+def generate_fallback_svg(label: str) -> str:
+    """
+    Creates a minimal SVG placeholder so the profile never shows a broken image.
+    Matches the monochrome palette.
+    """
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="495" height="195" viewBox="0 0 495 195">
+  <rect width="495" height="195" rx="8" fill="#{BG}" />
+  <rect x="1" y="1" width="493" height="193" rx="7" fill="none" stroke="#333" stroke-width="1"/>
+  <text x="247.5" y="90" text-anchor="middle" fill="#{TEXT}" font-family="Segoe UI, sans-serif" font-size="16">
+    {label}
+  </text>
+  <text x="247.5" y="115" text-anchor="middle" fill="#{ICON}" font-family="Segoe UI, sans-serif" font-size="11">
+    Data will refresh on next CI run
+  </text>
+</svg>"""
 
-for i, c in enumerate(recent_counts):
-    hour_commits[(i * 3) % 24] += c
 
-# ==========================================
-# STATS CARD
-# ==========================================
-fig, ax = plt.subplots(figsize=(7, 4))
-fig.patch.set_facecolor(BG)
-ax.set_facecolor(CARD)
-ax.axis("off")
+# ──────────────────────────────────────────────
+# Fetcher (with retry + self-healing)
+# ──────────────────────────────────────────────
+def fetch_and_save(filepath: str, url: str, retries: int = 3) -> bool:
+    """
+    Attempt to fetch an SVG from `url` and save it to `filepath`.
+    If all attempts fail AND no previous file exists, write a fallback SVG.
+    Returns True on success, False on failure.
+    """
+    filename = os.path.basename(filepath)
 
-card = patches.FancyBboxPatch(
-    (0.03, 0.05),
-    0.94,
-    0.9,
-    boxstyle="round,pad=0.02",
-    linewidth=1.2,
-    edgecolor=GRID,
-    facecolor=CARD
-)
-ax.add_patch(card)
+    for attempt in range(1, retries + 1):
+        try:
+            print(f"  [{attempt}/{retries}] Fetching {filename} ...")
+            resp = requests.get(url, timeout=20)
 
-stats = [
-    ("★ Total Stars", stars),
-    ("⌁ Total Commits", commits),
-    ("⇅ Pull Requests", prs),
-    ("⚠ Issues", issues),
-    ("👥 Followers", followers),
-    ("📦 Repositories", repos),
-]
+            # Validate: must be 200 and contain SVG content
+            if resp.status_code == 200 and "<svg" in resp.text.lower():
+                os.makedirs(os.path.dirname(filepath), exist_ok=True)
+                with open(filepath, "w", encoding="utf-8") as f:
+                    f.write(resp.text)
+                print(f"  ✅ {filename} updated ({len(resp.text)} bytes)")
+                return True
+            else:
+                print(f"  ⚠️  {filename}: HTTP {resp.status_code}, "
+                      f"SVG valid={'<svg' in resp.text.lower()}")
 
-y = 0.84
-for label, value in stats:
-    ax.text(
-        0.12,
-        y,
-        label,
-        color=TEXT,
-        fontsize=13,
-        ha="left"
-    )
+        except requests.exceptions.Timeout:
+            print(f"  ⏱️  {filename}: request timed out")
+        except requests.exceptions.ConnectionError:
+            print(f"  🔌 {filename}: connection failed")
+        except Exception as exc:
+            print(f"  ❌ {filename}: {exc}")
 
-    ax.text(
-        0.88,
-        y,
-        str(value),
-        color=ACCENT,
-        fontsize=14,
-        ha="right",
-        fontweight="bold"
-    )
+        if attempt < retries:
+            wait = 2 ** attempt
+            print(f"     Retrying in {wait}s ...")
+            time.sleep(wait)
 
-    y -= 0.12
+    # All retries exhausted
+    if os.path.isfile(filepath) and os.path.getsize(filepath) > 0:
+        print(f"  ⏭️  {filename}: keeping existing file (self-healing)")
+        return False
 
-plt.savefig(
-    f"{OUT_DIR}/github-stats.svg",
-    transparent=True,
-    bbox_inches="tight"
-)
-plt.close()
+    # No existing file → write fallback
+    label = filename.replace(".svg", "").replace("-", " ").title()
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(generate_fallback_svg(label))
+    print(f"  🛡️  {filename}: wrote fallback SVG")
+    return False
 
-# ==========================================
-# LANGUAGE CARD (PROGRESS BARS)
-# ==========================================
-fig, ax = plt.subplots(figsize=(7, 4))
-fig.patch.set_facecolor(BG)
-ax.set_facecolor(CARD)
 
-ax.set_xlim(0, 100)
-ax.set_ylim(0, len(lang_labels))
-ax.axis("off")
+# ──────────────────────────────────────────────
+# Achievement badges (pure SVG, no scraping)
+# ──────────────────────────────────────────────
+def generate_achievements_card() -> None:
+    """
+    Generate a local monochrome achievements card SVG.
+    Uses hardcoded badges since GitHub doesn't expose them via API,
+    and web scraping is fragile / breaks every few months.
+    """
+    badges = ["Pull Shark", "Quickdraw", "YOLO"]
+    filepath = f"{ASSETS_DIR}/achievements.svg"
 
-for i, (lang, size) in enumerate(top_langs):
-    pct = round(size / total_lang_size * 100, 1)
-    y = len(lang_labels) - i - 1
+    pills = ""
+    x = 20
+    for badge in badges:
+        w = max(90, len(badge) * 10 + 30)
+        pills += f"""
+    <rect x="{x}" y="55" width="{w}" height="34" rx="17" fill="#1f1f1f" stroke="#333" stroke-width="1"/>
+    <text x="{x + w // 2}" y="77" text-anchor="middle" fill="#{TEXT}" font-family="Segoe UI, sans-serif" font-size="12">
+      🏆 {badge}
+    </text>"""
+        x += w + 14
 
-    ax.barh(y, 100, color=GRID, height=0.5)
-    ax.barh(y, pct, color=BAR, height=0.5)
+    total_width = max(x + 20, 495)
+    svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="110" viewBox="0 0 {total_width} 110">
+  <rect width="{total_width}" height="110" rx="8" fill="#{BG}" />
+  <rect x="1" y="1" width="{total_width - 2}" height="108" rx="7" fill="none" stroke="#333" stroke-width="1"/>
+  <text x="20" y="32" fill="#{TITLE}" font-family="Segoe UI, sans-serif" font-size="16" font-weight="600">
+    Achievements
+  </text>
+  {pills}
+</svg>"""
 
-    ax.text(0, y + 0.28, lang, color=TEXT, fontsize=11)
-    ax.text(101, y, f"{pct}%", color=ACCENT, fontsize=10)
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(svg)
+    print(f"  ✅ achievements.svg generated locally")
 
-ax.set_title(
-    "Top Languages by Repository",
-    color=ACCENT,
-    fontsize=15,
-    pad=20
-)
 
-plt.savefig(
-    f"{OUT_DIR}/languages.svg",
-    transparent=True,
-    bbox_inches="tight"
-)
-plt.close()
+# ──────────────────────────────────────────────
+# Main
+# ──────────────────────────────────────────────
+def main() -> None:
+    print("🚀 Self-Healing GitHub Stats Generator")
+    print(f"   User: {USERNAME}")
+    print(f"   Assets: {ASSETS_DIR}")
+    print()
 
-# ==========================================
-# CONTRIBUTION GRAPH
-# ==========================================
-fig, ax = plt.subplots(figsize=(14, 5))
-fig.patch.set_facecolor(BG)
-ax.set_facecolor(CARD)
+    success = 0
+    total = len(URLS)
 
-ax.plot(
-    range(len(recent_counts)),
-    recent_counts,
-    color=ACCENT,
-    linewidth=2,
-    marker="o",
-    markersize=4
-)
+    for filepath, url in URLS.items():
+        if fetch_and_save(filepath, url):
+            success += 1
 
-for i, v in enumerate(recent_counts):
-    if v > 0:
-        ax.text(
-            i,
-            v + 0.2,
-            str(v),
-            color=TEXT,
-            fontsize=7,
-            ha="center"
-        )
+    print()
+    generate_achievements_card()
 
-tick_idx = list(range(0, len(recent_days), 4))
+    print()
+    print(f"✨ Done: {success}/{total} assets fetched fresh")
 
-ax.set_xticks(tick_idx)
-ax.set_xticklabels(
-    [recent_days[i] for i in tick_idx],
-    rotation=45,
-    color=MUTED
-)
+    # Verify all expected files exist
+    expected = [
+        f"{ASSETS_DIR}/github-stats.svg",
+        f"{ASSETS_DIR}/languages.svg",
+        f"{ASSETS_DIR}/contribution-graph.svg",
+        f"{ASSETS_DIR}/productive-time.svg",
+        f"{ASSETS_DIR}/streak.svg",
+        f"{ASSETS_DIR}/achievements.svg",
+        f"{STREAK_DIR}/streak.svg",
+        f"{SNAKE_DIR}/github-contribution-grid-snake-dark.svg",
+    ]
 
-ax.set_ylabel("Commits", color=TEXT)
-ax.set_title(
-    f"{USERNAME}'s Contribution Graph | Total: {sum(recent_counts)}",
-    color=ACCENT,
-    fontsize=15
-)
+    missing = [f for f in expected if not os.path.isfile(f)]
+    if missing:
+        print()
+        print("⚠️  Missing assets (will use fallback):")
+        for f in missing:
+            label = os.path.basename(f).replace(".svg", "").replace("-", " ").title()
+            os.makedirs(os.path.dirname(f), exist_ok=True)
+            with open(f, "w", encoding="utf-8") as fh:
+                fh.write(generate_fallback_svg(label))
+            print(f"   🛡️  {f} → fallback written")
 
-ax.grid(True, color=GRID, linestyle="--", alpha=0.5)
-ax.tick_params(axis="y", colors=MUTED)
+    print()
+    print("🔒 Profile is failproof. No broken images possible.")
 
-plt.savefig(
-    f"{OUT_DIR}/contribution-graph.svg",
-    transparent=True,
-    bbox_inches="tight"
-)
-plt.close()
 
-# ==========================================
-# PRODUCTIVITY
-# ==========================================
-fig, ax = plt.subplots(figsize=(14, 4))
-fig.patch.set_facecolor(BG)
-ax.set_facecolor(CARD)
-
-ax.bar(hour_slots, hour_commits, color=BAR)
-
-ax.set_title(
-    "Productive Time (Commit Activity Approximation)",
-    color=ACCENT,
-    fontsize=15
-)
-
-ax.set_xlabel("Hour of Day", color=TEXT)
-ax.set_ylabel("Commits", color=TEXT)
-
-ax.tick_params(colors=MUTED)
-ax.grid(axis="y", color=GRID)
-
-plt.savefig(
-    f"{OUT_DIR}/productive-time.svg",
-    transparent=True,
-    bbox_inches="tight"
-)
-plt.close()
-
-# ==========================================
-# ACHIEVEMENTS
-# ==========================================
-achievements = fetch_achievements(USERNAME)
-
-fig, ax = plt.subplots(figsize=(14, 2.2))
-fig.patch.set_facecolor(BG)
-ax.set_facecolor(CARD)
-ax.axis("off")
-
-box = patches.FancyBboxPatch(
-    (0.01, 0.05),
-    0.98,
-    0.9,
-    boxstyle="round,pad=0.02",
-    linewidth=1.2,
-    edgecolor=GRID,
-    facecolor=CARD
-)
-ax.add_patch(box)
-
-x = 0.04
-
-for badge in achievements:
-    width = min(0.18, 0.04 + len(badge) * 0.008)
-
-    pill = patches.FancyBboxPatch(
-        (x, 0.35),
-        width,
-        0.3,
-        boxstyle="round,pad=0.02",
-        linewidth=1,
-        edgecolor="#6B7280",
-        facecolor="#374151"
-    )
-    ax.add_patch(pill)
-
-    ax.text(
-        x + width / 2,
-        0.5,
-        badge,
-        ha="center",
-        va="center",
-        fontsize=9,
-        color=TEXT
-    )
-
-    x += width + 0.02
-
-    if x > 0.9:
-        break
-
-plt.savefig(
-    f"{OUT_DIR}/achievements.svg",
-    transparent=True,
-    bbox_inches="tight"
-)
-plt.close()
+if __name__ == "__main__":
+    main()

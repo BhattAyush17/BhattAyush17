@@ -2,11 +2,16 @@ name: Generate README Assets
 
 on:
   schedule:
-    - cron: "0 */6 * * *"
-  workflow_dispatch:
+    - cron: "0 */6 * * *"          # Every 6 hours
+  workflow_dispatch:                # Manual trigger
   push:
     branches:
       - main
+
+# Prevent overlapping runs
+concurrency:
+  group: readme-assets
+  cancel-in-progress: true
 
 jobs:
   build-assets:
@@ -25,20 +30,24 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: |
-          pip install requests matplotlib cairosvg beautifulsoup4
+        run: pip install requests
 
-      - name: Run generator
+      - name: Generate stats assets
+        run: python scripts/generate_stats.py
+
+      - name: Generate contribution snake
+        uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: BhattAyush17
+          outputs: assets/snake/github-contribution-grid-snake-dark.svg
         env:
-          GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
-        run: |
-          python scripts/generate_stats.py
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sync latest branch
-        run: |
-          git pull --rebase origin main
+        run: git pull --rebase origin main || true
 
       - name: Commit generated assets
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Update README analytics assets"
+          commit_message: "chore: update README analytics assets [skip ci]"
+          file_pattern: "assets/**/*.svg"

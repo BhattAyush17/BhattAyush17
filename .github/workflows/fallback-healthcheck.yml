@@ -2,7 +2,7 @@ name: Fallback Health Check
 
 on:
   schedule:
-    - cron: "30 */6 * * *"
+    - cron: "30 */6 * * *"          # 30 min after asset generation
   workflow_dispatch:
 
 jobs:
@@ -12,10 +12,52 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify generated assets
+      - name: Verify all README-referenced assets exist
         run: |
-          test -f assets/stats/github-stats.svg
-          test -f assets/stats/languages.svg
-          test -f assets/stats/productive-time.svg
-          test -f assets/stats/contribution-graph.svg
-          test -f assets/snake/github-contribution-grid-snake-dark.svg
+          echo "🔍 Checking all README-referenced local assets..."
+          FAIL=0
+
+          FILES=(
+            "assets/stats/github-stats.svg"
+            "assets/stats/languages.svg"
+            "assets/stats/streak.svg"
+            "assets/stats/productive-time.svg"
+            "assets/stats/contribution-graph.svg"
+            "assets/stats/achievements.svg"
+            "assets/snake/github-contribution-grid-snake-dark.svg"
+            "assets/hero/banner.gif"
+          )
+
+          for f in "${FILES[@]}"; do
+            if [ -f "$f" ]; then
+              SIZE=$(stat -c%s "$f" 2>/dev/null || echo 0)
+              echo "  ✅ $f ($SIZE bytes)"
+            else
+              echo "  ❌ MISSING: $f"
+              FAIL=1
+            fi
+          done
+
+          if [ "$FAIL" -eq 1 ]; then
+            echo ""
+            echo "⚠️  Some assets are missing! Run the generator workflow."
+            exit 1
+          fi
+
+          echo ""
+          echo "🔒 All assets verified. Profile is healthy."
+
+      - name: Verify SVGs contain valid content
+        run: |
+          echo "🔍 Validating SVG content..."
+          for f in assets/stats/*.svg assets/snake/*.svg assets/streak/*.svg; do
+            if [ -f "$f" ]; then
+              if grep -qi "<svg" "$f"; then
+                echo "  ✅ $f contains valid SVG"
+              else
+                echo "  ❌ $f does NOT contain valid SVG!"
+                exit 1
+              fi
+            fi
+          done
+          echo "🔒 All SVGs valid."

@@ -58,24 +58,26 @@ Currently learning and exploring ML frameworks deeply.
 <h2>GitHub Analytics</h2>
 
 <div align="center">
-<table>
-<tr>
-<td width="50%" align="center" valign="top">
-  <img src="./assets/stats/github-stats.svg" width="95%">
-</td>
 
-<td width="50%" align="center" valign="top">
-  <img src="./assets/stats/languages.svg" width="95%">
-</td>
-</tr>
+<!-- [ stats ] [ streak ] [ languages ] -->
+<table width="100%">
+  <tr>
+    <td width="33%" align="center">
+      <img src="assets/stats/github-stats.svg" width="100%" alt="GitHub Stats" />
+    </td>
+    <td width="34%" align="center">
+      <img src="assets/stats/streak.svg" width="100%" alt="GitHub Streak" />
+    </td>
+    <td width="33%" align="center">
+      <img src="assets/stats/languages.svg" width="100%" alt="Top Languages" />
+    </td>
+  </tr>
 </table>
-</div>
 
 <br>
 
-<h2>Languages Used</h2>
-
-<div align="center">
+<!-- [ language badges ] -->
+### Languages Used
 
 ![Python](https://img.shields.io/badge/Python-374151?style=for-the-badge&logo=python&logoColor=E5E7EB)
 ![C++](https://img.shields.io/badge/C++-374151?style=for-the-badge&logo=cplusplus&logoColor=E5E7EB)
@@ -85,25 +87,23 @@ Currently learning and exploring ML frameworks deeply.
 ![CSS3](https://img.shields.io/badge/CSS3-374151?style=for-the-badge&logo=css3&logoColor=E5E7EB)
 ![Shell](https://img.shields.io/badge/Shell-374151?style=for-the-badge&logo=gnu-bash&logoColor=E5E7EB)
 
-</div>
+<br>
+
+<!-- [ snake ] -->
+<img src="assets/snake/github-contribution-grid-snake-dark.svg" width="100%" alt="Contribution Snake" />
 
 <br>
 
-<div align="center">
-  <img src="./assets/snake/github-contribution-grid-snake-dark.svg" width="100%">
-</div>
+<!-- [ contribution graph ] -->
+<img src="assets/stats/contribution-graph.svg" width="100%" alt="Contribution Graph" />
 
 <br>
 
-<div align="center">
-  <img src="./assets/stats/contribution-graph.svg" width="100%">
+<!-- [ productivity ] -->
+<img src="assets/stats/productive-time.svg" width="100%" alt="Productivity Time" />
+
 </div>
 
-<br>
-
-<div align="center">
-  <img src="./assets/stats/productive-time.svg" width="100%">
-</div>
 ---
 
 # GitHub Trophies
@@ -121,7 +121,7 @@ Currently learning and exploring ML frameworks deeply.
 # GitHub Badges & Achievements
 
 <div align="center">
-<img src="./assets/stats/achievements.svg" width="100%">
+<img src="assets/stats/achievements.svg" width="100%" alt="Achievements" />
 </div>
 
 ---
@@ -147,8 +147,8 @@ Currently learning and exploring ML frameworks deeply.
   <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=github_dark&hide_border=true"/>
 </a>
 
-<a href="https://github.com/BhattAyush17/DSA-with-C-">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=DSA-with-C-&theme=github_dark&hide_border=true"/>
+<a href="https://github.com/BhattAyush17/DSA">
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=DSA&theme=github_dark&hide_border=true"/>
 </a>
 
 <a href="https://github.com/BhattAyush17/Lane_Morph">
