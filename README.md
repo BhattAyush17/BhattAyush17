@@ -112,8 +112,12 @@ Currently learning and exploring ML frameworks deeply.
     </td>
   </tr>
 </table>
+<br>
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true&point=58a6ff&area=true&area_color=1f6feb" width="100%" alt="Ayush Contribution Graph"/>
+</div>
 
 ---
+
 
 
 # GitHub Analytics
