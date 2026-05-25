@@ -135,6 +135,8 @@ def calculate_streak(data):
     Helper to calculate contribution streaks.
     """
     try:
+        from datetime import datetime, timezone
+        
         calendar = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]
         days = []
         for week in calendar["weeks"]:
@@ -143,6 +145,9 @@ def calculate_streak(data):
         
         days.sort()
         total = calendar["totalContributions"]
+        
+        # Get today's date in UTC
+        today = datetime.now(timezone.utc).date().isoformat()
         
         # Streak calculations
         max_streak = 0
@@ -156,11 +161,16 @@ def calculate_streak(data):
             else:
                 temp_streak = 0
                 
-        # Current streak counting backwards
-        for date_str, count in reversed(days):
-            if count > 0:
+        # Current streak counting backwards from today
+        # Include today even if it has 0 contributions (day not over yet)
+        for i, (date_str, count) in enumerate(reversed(days)):
+            if i == 0 and date_str == today:
+                # First day is today - include it regardless of count
                 current_streak += 1
-            elif current_streak > 0:
+            elif count > 0:
+                current_streak += 1
+            else:
+                # Hit a day with no contributions that's not today
                 break
                 
         return total, current_streak, max_streak, days
