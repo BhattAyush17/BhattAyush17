@@ -9,7 +9,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch
-from datetime import datetime
+from datetime import datetime, timezone
 
 USERNAME = "BhattAyush17"
 ASSETS_DIR = "assets/stats"
@@ -133,10 +133,9 @@ def query_github():
 def calculate_streak(data):
     """
     Helper to calculate contribution streaks.
+    Correctly handles current streak by including today even if it has 0 contributions.
     """
     try:
-        from datetime import datetime, timezone
-        
         calendar = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]
         days = []
         for week in calendar["weeks"]:
@@ -146,12 +145,19 @@ def calculate_streak(data):
         days.sort()
         total = calendar["totalContributions"]
         
-        # Get today's date in UTC
+        # Get today's date in UTC (GitHub uses UTC)
         today = datetime.now(timezone.utc).date().isoformat()
         
-        # Streak calculations
+        # DEBUG: Print last 10 days to help diagnose issues
+        print("\n=== DEBUG: Last 10 days of contributions ===")
+        for date_str, count in days[-10:]:
+            marker = " <- TODAY" if date_str == today else ""
+            print(f"{date_str}: {count} contributions{marker}")
+        print(f"Today's date (UTC): {today}")
+        print("=" * 45)
+        
+        # Max streak calculation
         max_streak = 0
-        current_streak = 0
         temp_streak = 0
         
         for date_str, count in days:
@@ -160,21 +166,35 @@ def calculate_streak(data):
                 max_streak = max(max_streak, temp_streak)
             else:
                 temp_streak = 0
-                
-        # Current streak counting backwards from today
-        # Include today even if it has 0 contributions (day not over yet)
+        
+        # Current streak counting backwards from the most recent day
+        current_streak = 0
+        
         for i, (date_str, count) in enumerate(reversed(days)):
-            if i == 0 and date_str == today:
-                # First day is today - include it regardless of count
+            is_today_or_future = (date_str >= today)
+            
+            if i == 0 and is_today_or_future and count == 0:
+                # First day is today/future with no contributions yet - include it
                 current_streak += 1
+                print(f"Including today ({date_str}) with 0 contributions")
             elif count > 0:
                 current_streak += 1
+                print(f"Day {date_str}: +1 (total streak: {current_streak})")
             else:
-                # Hit a day with no contributions that's not today
+                # Past day with 0 contributions - streak ends
+                print(f"Streak ended at {date_str} (0 contributions)")
                 break
-                
+        
+        print(f"\nFinal current_streak: {current_streak}")
+        print(f"Max streak: {max_streak}")
+        print(f"Total contributions: {total}\n")
+        
         return total, current_streak, max_streak, days
-    except Exception:
+        
+    except Exception as e:
+        print(f"Error in calculate_streak: {e}")
+        import traceback
+        traceback.print_exc()
         return 450, 15, 30, []
 
 def make_stats_svg(data):
