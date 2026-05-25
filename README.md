@@ -89,7 +89,7 @@ Currently learning and exploring ML frameworks deeply.
     <td align="center" valign="top">
       <b>GitHub Stats</b><br>
       <img
-        src="https://github-readme-stats-sigma-five.vercel.app/api?username=BhattAyush17&show_icons=true&theme=github_dark&hide_border=true&include_all_commits=true&count_private=true&cache_seconds=1800&icon_color=58a6ff"
+        src="https://github-readme-stats-sigma-five.vercel.app/api?username=BhattAyush17&show_icons=true&theme=github_dark&hide_border=true&include_all_commits=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged,prs_merged_percentage&icon_color=58a6ff&ring_color=FFA500&text_color=c9d1d9&bg_color=0d1117&title_color=58a6ff&cache_seconds=900&v=2"
         height="180"
         alt="Ayush GitHub Stats"
       />
@@ -97,7 +97,7 @@ Currently learning and exploring ML frameworks deeply.
     <td align="center" valign="top">
       <b>🔥 Current Streak</b><br>
       <img
-        src="https://streak-stats.demolab.com?user=BhattAyush17&theme=github-orange&hide_border=true"
+        src="https://streak-stats.demolab.com?user=BhattAyush17&theme=github-dark-blue&hide_border=true&date_format=M%20j%5B%2C%20Y%5D&ring=FFA500&fire=FFA500&currStreakLabel=FFA500&sideLabels=c9d1d9&currStreakNum=c9d1d9&dates=8b949e&sideNums=c9d1d9&background=0d1117&stroke=30363d&cache_seconds=900"
         height="180"
         alt="Ayush Current Streak"
       />
@@ -105,7 +105,7 @@ Currently learning and exploring ML frameworks deeply.
     <td align="center" valign="top">
       <b>Top Languages</b><br>
       <img
-        src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=BhattAyush17&layout=compact&theme=github_dark&hide_border=true&langs_count=8&cache_seconds=1800"
+        src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=BhattAyush17&layout=compact&theme=github_dark&hide_border=true&langs_count=8&card_width=320&title_color=58a6ff&text_color=c9d1d9&bg_color=0d1117&cache_seconds=900&v=2"
         height="180"
         alt="Top Languages"
       />
@@ -113,7 +113,7 @@ Currently learning and exploring ML frameworks deeply.
   </tr>
 </table>
 <br>
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true&point=58a6ff&area=true&area_color=1f6feb" width="100%" alt="Ayush Contribution Graph"/>
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true&bg_color=0d1117&color=58a6ff&line=58a6ff&point=c9d1d9&area=true&area_color=1f6feb&title_color=58a6ff&custom_title=Contribution%20Graph&height=300&cache_seconds=900" width="100%" alt="Ayush Contribution Graph"/>
 </div>
 
 ---
@@ -160,10 +160,7 @@ Currently learning and exploring ML frameworks deeply.
 
 <div align="center">
 
-<!-- START_SECTION:achievements -->
 <img src="assets/badges/achievement_pull_shark.png" width="75px" alt="Achievement: Pull Shark" title="Achievement: Pull Shark" /> <img src="assets/badges/achievement_yolo.png" width="75px" alt="Achievement: YOLO" title="Achievement: YOLO" /> <img src="assets/badges/achievement_quickdraw.png" width="75px" alt="Achievement: Quickdraw" title="Achievement: Quickdraw" />
-<!-- END_SECTION:achievements -->
-
 </div>
 
 ---
@@ -186,27 +183,27 @@ Currently learning and exploring ML frameworks deeply.
 <div align="center">
 
 <a href="https://github.com/BhattAyush17/AURA_CHAT">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=AURA_CHAT&theme=github_dark&hide_border=true"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=AURA_CHAT&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
 
 <a href="https://github.com/BhattAyush17/ProPhet_BnB">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=github_dark&hide_border=true"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
 
 <a href="https://github.com/BhattAyush17/Feature_Engineering_SandBox">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Feature_Engineering_SandBox&theme=github_dark&hide_border=true"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Feature_Engineering_SandBox&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
 
 <a href="https://github.com/BhattAyush17/Valora">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Valora&theme=github_dark&hide_border=true"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Valora&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
 
 <a href="https://github.com/BhattAyush17/Loan-Dash-X">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Loan-Dash-X&theme=github_dark&hide_border=true"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Loan-Dash-X&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
 
 <a href="https://github.com/BhattAyush17/FaunAnalyze">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=FaunAnalyze&theme=github_dark&hide_border=true"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=FaunAnalyze&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
 
 </div>
