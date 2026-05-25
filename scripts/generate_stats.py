@@ -167,24 +167,58 @@ def calculate_streak(data):
             else:
                 temp_streak = 0
         
-        # Current streak counting backwards from the most recent day
+        def calculate_streak(days, today):
+    """
+    Calculates the streak with strict rules: any day (before today) 
+    with 0 commits immediately breaks the streak.
+    
+    Args:
+        days: A list of tuples/lists like (date_str, count) sorted chronologically.
+        today: A string representing today's date in the same format as date_str.
+                           
+    Returns:
+        total, current_streak, max_streak, days
+    """
+    try:
+        total = sum(count for _, count in days)
+        max_streak = 0
         current_streak = 0
         
+        print("\n--- Calculating Strict Current Streak ---")
+        # Iterate backwards starting from the most recent day
         for i, (date_str, count) in enumerate(reversed(days)):
             is_today_or_future = (date_str >= today)
             
-            if i == 0 and is_today_or_future and count == 0:
-                # First day is today/future with no contributions yet - include it
-                current_streak += 1
-                print(f"Including today ({date_str}) with 0 contributions")
-            elif count > 0:
+            if count > 0:
+                # Commit found, add to current streak
                 current_streak += 1
                 print(f"Day {date_str}: +1 (total streak: {current_streak})")
+                
+            elif is_today_or_future:
+                # It's today and you haven't committed yet. 
+                # We don't break the streak, but we don't add to it either.
+                print(f"Day {date_str}: 0 commits (Today/Future - streak preserved)")
+                continue
+                
             else:
-                # Past day with 0 contributions - streak ends
-                print(f"Streak ended at {date_str} (0 contributions)")
+                # A past day with 0 commits. The streak breaks immediately.
+                print(f"Streak broken at {date_str} (0 contributions).")
                 break
-        
+
+        # --- Max Streak Logic ---
+        # Iterate forwards chronologically to find the absolute highest streak
+        temp_streak = 0
+        for date_str, count in days:
+            if count > 0:
+                temp_streak += 1
+                max_streak = max(max_streak, temp_streak)
+            else:
+                # Streak resets to 0 immediately on a missed day
+                temp_streak = 0
+
+        # Ensure max_streak is at least as high as the current_streak
+        max_streak = max(max_streak, current_streak)
+
         print(f"\nFinal current_streak: {current_streak}")
         print(f"Max streak: {max_streak}")
         print(f"Total contributions: {total}\n")
@@ -195,7 +229,7 @@ def calculate_streak(data):
         print(f"Error in calculate_streak: {e}")
         import traceback
         traceback.print_exc()
-        return 450, 15, 30, []
+        return 0, 0, 0, []
 
 def make_stats_svg(data):
     """
