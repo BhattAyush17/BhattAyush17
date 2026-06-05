@@ -140,8 +140,9 @@ Currently learning and exploring ML frameworks deeply.
 
 </div>
 
+
 <details open>
-  <summary><h2>🏆 GitHub Trophies</h2></summary>
+  <summary><h1>🏆 GitHub Trophies</h1></summary>
   
   <br>
   
