@@ -106,20 +106,23 @@ def query_github():
     raise Exception("Failed to fetch data")
 
 def calculate_streak(contribution_days):
+    from datetime import datetime, timezone
+    today = datetime.now(timezone.utc).date().isoformat()
+    
+    valid_days = [day for day in contribution_days if day["date"] <= today]
 
     current = 0
-
-    for day in reversed(contribution_days):
+    for day in reversed(valid_days):
         if day["contributionCount"] > 0:
             current += 1
+        elif day["date"] == today:
+            continue
         else:
             break
 
     longest = 0
     running = 0
-
-    for day in contribution_days:
-
+    for day in valid_days:
         if day["contributionCount"] > 0:
             running += 1
             longest = max(longest, running)
