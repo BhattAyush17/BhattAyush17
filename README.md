@@ -140,15 +140,17 @@ Currently learning and exploring ML frameworks deeply.
 
 </div>
 
-# GitHub Trophies
-
-<div align="center">
-
-<img
-  src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=flat&no-frame=true&margin-w=12&column=6"
-/>
-
-</div>
+<details open>
+  <summary><h2>🏆 GitHub Trophies</h2></summary>
+  
+  <br>
+  
+<p align="center">
+  <a href="https://github.com/BhattAyush17">
+    <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=flat&no-frame=true&margin-w=12&column=6" alt="GitHub Trophies" />
+  </a>
+</p>
+</details>
 
 ---
 
