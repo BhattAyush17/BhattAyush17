@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: github-analytics
+  cancel-in-progress: true
+
 jobs:
   build-assets:
     runs-on: ubuntu-latest

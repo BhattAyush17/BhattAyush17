@@ -96,11 +96,7 @@ Currently learning and exploring ML frameworks deeply.
     </td>
     <td align="center" valign="top">
       <b>🔥 Current Streak</b><br>
-      <img
-        src="https://streak-stats.demolab.com?user=BhattAyush17&theme=github-dark-blue&hide_border=true&date_format=M%20j%5B%2C%20Y%5D&ring=FFA500&fire=FFA500&currStreakLabel=FFA500&sideLabels=c9d1d9&currStreakNum=c9d1d9&dates=8b949e&sideNums=c9d1d9&background=0d1117&stroke=30363d&cache_seconds=900"
-        height="180"
-        alt="Ayush Current Streak"
-      />
+      <img src="./assets/stats/streak.svg" width="95%" alt="Ayush Current Streak" />
     </td>
     <td align="center" valign="top">
       <b>Top Languages</b><br>

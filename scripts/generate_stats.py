@@ -3,6 +3,7 @@ import requests
 import time
 import re
 from bs4 import BeautifulSoup
+import shutil
 
 
 import matplotlib
@@ -99,137 +100,33 @@ def query_github():
                 return data
         print(f"⚠️ GraphQL error: {res.text}. Falling back.")
     except Exception as e:
-        print(f"⚠️ API Connection failed: {e}. Using fallback data.")
+        print(f"⚠️ API Connection failed: {e}")
+        raise e
         
-    # Standard high-quality fallback data to keep it fully unbreakable
-    return {
-        "data": {
-            "user": {
-                "repositories": {
-                    "nodes": [
-                        {"name": "ProPhet_BnB", "stargazerCount": 5, "primaryLanguage": {"name": "Python", "color": "#3572A5"}},
-                        {"name": "Lane_Morph", "stargazerCount": 2, "primaryLanguage": {"name": "Python", "color": "#3572A5"}},
-                        {"name": "DSA", "stargazerCount": 1, "primaryLanguage": {"name": "C++", "color": "#f34b7d"}},
-                        {"name": "Greydge", "stargazerCount": 1, "primaryLanguage": {"name": "Python", "color": "#3572A5"}},
-                        {"name": "Loan-Dash-X", "stargazerCount": 1, "primaryLanguage": {"name": "JavaScript", "color": "#f1e05a"}}
-                    ]
-                },
-                "contributionsCollection": {
-                    "totalCommitContributions": 339,
-                    "totalPullRequestContributions": 12,
-                    "totalIssueContributions": 5,
-                    "contributionCalendar": {
-                        "totalContributions": 450,
-                        "weeks": [
-                            {"contributionDays": [{"date": f"2026-05-{i:02d}", "contributionCount": i % 3} for i in range(1, 8)]}
-                        ]
-                    }
-                },
-                "followers": {"totalCount": 30}
-            }
-        }
-    }
+    raise Exception("Failed to fetch data")
 
-def calculate_streak(data):
-    """
-    Helper to calculate contribution streaks.
-    Correctly handles current streak by including today even if it has 0 contributions.
-    """
-    try:
-        calendar = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]
-        days = []
-        for week in calendar["weeks"]:
-            for day in week["contributionDays"]:
-                days.append((day["date"], day["contributionCount"]))
-        
-        days.sort()
-        total = calendar["totalContributions"]
-        
-        # Get today's date in UTC (GitHub uses UTC)
-        today = datetime.now(timezone.utc).date().isoformat()
-        
-        # DEBUG: Print last 10 days to help diagnose issues
-        print("\n=== DEBUG: Last 10 days of contributions ===")
-        for date_str, count in days[-10:]:
-            marker = " <- TODAY" if date_str == today else ""
-            print(f"{date_str}: {count} contributions{marker}")
-        print(f"Today's date (UTC): {today}")
-        print("=" * 45)
-        
-        # Max streak calculation
-        max_streak = 0
-        temp_streak = 0
-        
-        for date_str, count in days:
-            if count > 0:
-                temp_streak += 1
-                max_streak = max(max_streak, temp_streak)
-            else:
-                temp_streak = 0
-        
-        def calculate_streak(days, today):
-    """
-    Calculates the streak with strict rules: any day (before today) 
-    with 0 commits immediately breaks the streak.
-    
-    Args:
-        days: A list of tuples/lists like (date_str, count) sorted chronologically.
-        today: A string representing today's date in the same format as date_str.
-                           
-    Returns:
-        total, current_streak, max_streak, days
-    """
-    try:
-        total = sum(count for _, count in days)
-        max_streak = 0
-        current_streak = 0
-        
-        print("\n--- Calculating Strict Current Streak ---")
-        # Iterate backwards starting from the most recent day
-        for i, (date_str, count) in enumerate(reversed(days)):
-            is_today_or_future = (date_str >= today)
-            
-            if count > 0:
-                # Commit found, add to current streak
-                current_streak += 1
-                print(f"Day {date_str}: +1 (total streak: {current_streak})")
-                
-            elif is_today_or_future:
-                # It's today and you haven't committed yet. 
-                # We don't break the streak, but we don't add to it either.
-                print(f"Day {date_str}: 0 commits (Today/Future - streak preserved)")
-                continue
-                
-            else:
-                # A past day with 0 commits. The streak breaks immediately.
-                print(f"Streak broken at {date_str} (0 contributions).")
-                break
+def calculate_streak(contribution_days):
 
-        # --- Max Streak Logic ---
-        # Iterate forwards chronologically to find the absolute highest streak
-        temp_streak = 0
-        for date_str, count in days:
-            if count > 0:
-                temp_streak += 1
-                max_streak = max(max_streak, temp_streak)
-            else:
-                # Streak resets to 0 immediately on a missed day
-                temp_streak = 0
+    current = 0
 
-        # Ensure max_streak is at least as high as the current_streak
-        max_streak = max(max_streak, current_streak)
+    for day in reversed(contribution_days):
+        if day["contributionCount"] > 0:
+            current += 1
+        else:
+            break
 
-        print(f"\nFinal current_streak: {current_streak}")
-        print(f"Max streak: {max_streak}")
-        print(f"Total contributions: {total}\n")
-        
-        return total, current_streak, max_streak, days
-        
-    except Exception as e:
-        print(f"Error in calculate_streak: {e}")
-        import traceback
-        traceback.print_exc()
-        return 0, 0, 0, []
+    longest = 0
+    running = 0
+
+    for day in contribution_days:
+
+        if day["contributionCount"] > 0:
+            running += 1
+            longest = max(longest, running)
+        else:
+            running = 0
+
+    return current, longest
 
 def make_stats_svg(data):
     """
@@ -366,22 +263,89 @@ def make_languages_svg(data):
         print(f"❌ Error drawing languages: {e}")
 
 def make_streak_svg(data):
-    """
-    Downloads and caches the premium demolab Streak Stats card with the flame ring.
-    """
     try:
-        url = f"https://streak-stats.demolab.com?user={USERNAME}&theme=dark&hide_border=true&background=121212&ring=3b82f6&fire=ff7300&stroke=27272a&currStreakNum=ffffff&sideNums=e5e7eb&currStreakLabel=a1a1aa&sideLabels=9ca3af"
-        print(f"Downloading premium streak card from {url}...")
-        res = requests.get(url, timeout=15)
-        if res.status_code == 200 and "<svg" in res.text.lower():
-            filepath = os.path.join(ASSETS_DIR, "streak.svg")
-            with open(filepath, "w", encoding="utf-8") as f:
-                f.write(res.text)
-            print("✅ Successfully generated/downloaded streak.svg")
-        else:
-            print(f"⚠️ Failed to fetch premium streak card. Status: {res.status_code}")
+        weeks = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
+        all_days = []
+        for week in weeks:
+            for day in week["contributionDays"]:
+                all_days.append(day)
+                
+        current_streak, longest_streak = calculate_streak(all_days)
+        
+        BG = "#121212"
+        CARD = "#121212"
+        GRID = "#27272a"
+        TEXT = "#e5e7eb"
+        ACCENT = "#3b82f6"
+        MUTED = "#9ca3af"
+        OUT_DIR = ASSETS_DIR
+        
+        fig, ax = plt.subplots(figsize=(7,4))
+
+        fig.patch.set_facecolor(BG)
+        ax.set_facecolor(CARD)
+        ax.axis("off")
+
+        from matplotlib.patches import FancyBboxPatch
+        box = FancyBboxPatch(
+            (0.05,0.05),
+            0.9,
+            0.9,
+            boxstyle="round,pad=0.02",
+            linewidth=1.2,
+            edgecolor=GRID,
+            facecolor=CARD
+        )
+
+        ax.add_patch(box)
+
+        ax.text(
+            0.5,
+            0.82,
+            "🔥 Current Streak",
+            color=TEXT,
+            fontsize=18,
+            ha="center"
+        )
+
+        ax.text(
+            0.5,
+            0.55,
+            str(current_streak),
+            color=ACCENT,
+            fontsize=36,
+            ha="center",
+            fontweight="bold"
+        )
+
+        ax.text(
+            0.5,
+            0.38,
+            "days",
+            color=MUTED,
+            fontsize=12,
+            ha="center"
+        )
+
+        ax.text(
+            0.5,
+            0.18,
+            f"Longest Streak: {longest_streak}",
+            color=TEXT,
+            fontsize=12,
+            ha="center"
+        )
+
+        plt.savefig(
+            f"{OUT_DIR}/streak.svg",
+            transparent=True,
+            bbox_inches="tight"
+        )
+
+        plt.close()
+        print("✅ Successfully generated streak.svg")
     except Exception as e:
-        print(f"❌ Error fetching premium streak card: {e}")
+        print(f"❌ Error generating streak card: {e}")
 
 def make_graph_svg(data):
     """
@@ -521,7 +485,18 @@ def main():
     os.makedirs(ASSETS_DIR, exist_ok=True)
     
     # 1. Query GitHub data
-    data = query_github()
+    try:
+        data = query_github()
+    except Exception as e:
+        print("GitHub API failure:", e)
+        try:
+            shutil.copy(
+                "assets/fallback/streak-fallback.svg",
+                "assets/stats/streak.svg"
+            )
+        except Exception as copy_err:
+            pass
+        raise
     
     # 2. Render cards using local Matplotlib (100% Offline-Resilient & Custom Styled)
     make_stats_svg(data)
