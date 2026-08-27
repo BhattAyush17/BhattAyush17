@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 202" width="620" height="202">
+  <defs>
+    <radialGradient id="badge" cx="35%" cy="28%" r="72%">
+      <stop offset="0%"   stop-color="#3c3c3c"/>
+      <stop offset="35%"  stop-color="#1f1f1f"/>
+      <stop offset="100%" stop-color="#090909"/>
+    </radialGradient>
+    <radialGradient id="rimHi" cx="30%" cy="25%" r="55%">
+      <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <!-- clip to badge shape for texture/highlight -->
+    <clipPath id="badgeClip">
+      <rect x="20" y="38" width="104" height="122" rx="28"/>
+    </clipPath>
+  </defs>
+
+  <!-- ── TERMINAL WINDOW ── -->
+  <rect width="620" height="202" rx="10" fill="#191919"/>
+  <rect width="620" height="27" rx="10" fill="#232323"/>
+  <rect y="15" width="620" height="12" fill="#232323"/>
+  <circle cx="16" cy="13.5" r="5" fill="#3d3d3d"/>
+  <circle cx="31" cy="13.5" r="5" fill="#3d3d3d"/>
+  <circle cx="46" cy="13.5" r="5" fill="#3d3d3d"/>
+  <text x="310" y="18" text-anchor="middle"
+    font-family="'SF Mono',Menlo,Consolas,monospace"
+    font-size="10.5" fill="#4f4f4f">ayush@github — neofetch</text>
+
+  <!-- ── FEDORA BADGE ── -->
+  <!-- Badge body -->
+  <rect x="20" y="38" width="104" height="122" rx="28" fill="url(#badge)"/>
+  <!-- Edge stroke for depth -->
+  <rect x="20" y="38" width="104" height="122" rx="28"
+    fill="none" stroke="#3a3a3a" stroke-width="1" opacity="0.7"/>
+  <!-- Rim highlight (clipped) -->
+  <rect x="20" y="38" width="104" height="122" rx="28"
+    fill="url(#rimHi)" clip-path="url(#badgeClip)"/>
+
+  <!-- OFFICIAL FEDORA LOGO -->
+  <!-- Drop shadow for the logo -->
+  <g transform="translate(34.8, 62.6) scale(3.2)" opacity="0.55">
+    <path fill="#000" d="M12.001 0C5.376 0 0.008 5.369 0.004 11.992H0.002v9.287h0.002A2.726 2.726 0 0 0 2.73 24h9.275c6.626 -0.004 11.993 -5.372 11.993 -11.997C23.998 5.375 18.628 0 12 0zm2.431 4.94c2.015 0 3.917 1.543 3.917 3.671 0 0.197 0.001 0.395 -0.03 0.619a1.002 1.002 0 0 1 -1.137 0.893 1.002 1.002 0 0 1 -0.842 -1.175 2.61 2.61 0 0 0 0.013 -0.337c0 -1.207 -0.987 -1.672 -1.92 -1.672 -0.934 0 -1.775 0.784 -1.777 1.672 0.016 1.027 0 2.046 0 3.07l1.732 -0.012c1.352 -0.028 1.368 2.009 0.016 1.998l-1.748 0.013c-0.004 0.826 0.006 0.677 0.002 1.093 0 0 0.015 1.01 -0.016 1.776 -0.209 2.25 -2.124 4.046 -4.424 4.046 -2.438 0 -4.448 -1.993 -4.448 -4.437 0.073 -2.515 2.078 -4.492 4.603 -4.469l1.409 -0.01v1.996l-1.409 0.013h-0.007c-1.388 0.04 -2.577 0.984 -2.6 2.47a2.438 2.438 0 0 0 2.452 2.439c1.356 0 2.441 -0.987 2.441 -2.437l-0.001 -7.557c0 -0.14 0.005 -0.252 0.02 -0.407 0.23 -1.848 1.883 -3.256 3.754 -3.256z"/>
+  </g>
+  <!-- Foreground logo path -->
+  <g transform="translate(33.6, 60.6) scale(3.2)">
+    <path fill="#cecece" d="M12.001 0C5.376 0 0.008 5.369 0.004 11.992H0.002v9.287h0.002A2.726 2.726 0 0 0 2.73 24h9.275c6.626 -0.004 11.993 -5.372 11.993 -11.997C23.998 5.375 18.628 0 12 0zm2.431 4.94c2.015 0 3.917 1.543 3.917 3.671 0 0.197 0.001 0.395 -0.03 0.619a1.002 1.002 0 0 1 -1.137 0.893 1.002 1.002 0 0 1 -0.842 -1.175 2.61 2.61 0 0 0 0.013 -0.337c0 -1.207 -0.987 -1.672 -1.92 -1.672 -0.934 0 -1.775 0.784 -1.777 1.672 0.016 1.027 0 2.046 0 3.07l1.732 -0.012c1.352 -0.028 1.368 2.009 0.016 1.998l-1.748 0.013c-0.004 0.826 0.006 0.677 0.002 1.093 0 0 0.015 1.01 -0.016 1.776 -0.209 2.25 -2.124 4.046 -4.424 4.046 -2.438 0 -4.448 -1.993 -4.448 -4.437 0.073 -2.515 2.078 -4.492 4.603 -4.469l1.409 -0.01v1.996l-1.409 0.013h-0.007c-1.388 0.04 -2.577 0.984 -2.6 2.47a2.438 2.438 0 0 0 2.452 2.439c1.356 0 2.441 -0.987 2.441 -2.437l-0.001 -7.557c0 -0.14 0.005 -0.252 0.02 -0.407 0.23 -1.848 1.883 -3.256 3.754 -3.256z"/>
+  </g>
+
+
+  <!-- ── NEOFETCH CONTENT ── -->
+  <!-- user@host -->
+  <text x="146" y="58"
+    font-family="'SF Mono',Menlo,Consolas,monospace"
+    font-size="13.5" font-weight="bold" fill="#e8e8e8">ayush@github</text>
+  <line x1="146" y1="63" x2="400" y2="63" stroke="#2e2e2e" stroke-width="1"/>
+
+  <!-- Keys (muted) -->
+  <text x="146" y="81"  font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#6b7280">OS</text>
+  <text x="146" y="97"  font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#6b7280">Kernel</text>
+  <text x="146" y="113" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#6b7280">Shell</text>
+  <text x="146" y="129" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#6b7280">WM</text>
+  <text x="146" y="145" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#6b7280">Editor</text>
+  <text x="146" y="161" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#6b7280">Terminal</text>
+
+  <!-- Arrows -->
+  <text x="197" y="81"  font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#404040">→</text>
+  <text x="197" y="97"  font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#404040">→</text>
+  <text x="197" y="113" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#404040">→</text>
+  <text x="197" y="129" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#404040">→</text>
+  <text x="197" y="145" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#404040">→</text>
+  <text x="197" y="161" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#404040">→</text>
+
+  <!-- Values -->
+  <text x="218" y="81"  font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#d1d5db">Fedora Linux 40 x86_64</text>
+  <text x="218" y="97"  font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#d1d5db">6.8.11-300.fc40.x86_64</text>
+  <text x="218" y="113" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#d1d5db">zsh 5.9</text>
+  <text x="218" y="129" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#d1d5db">Hyprland</text>
+  <text x="218" y="145" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#d1d5db">Neovim</text>
+  <text x="218" y="161" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#d1d5db">Kitty</text>
+
+  <!-- Focus column -->
+  <text x="414" y="81"  font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#4b5563">Focus</text>
+  <text x="414" y="97"  font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#9ca3af">Data Science · ML</text>
+  <text x="414" y="113" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#9ca3af">Python-first workflows</text>
+  <text x="414" y="129" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="11.5" fill="#9ca3af">Deep Learning research</text>
+
+  <!-- Swatches -->
+  <rect x="146" y="178" width="13" height="10" rx="2" fill="#191919" stroke="#3a3a3a" stroke-width="0.8"/>
+  <rect x="162" y="178" width="13" height="10" rx="2" fill="#374151"/>
+  <rect x="178" y="178" width="13" height="10" rx="2" fill="#4b5563"/>
+  <rect x="194" y="178" width="13" height="10" rx="2" fill="#6b7280"/>
+  <rect x="210" y="178" width="13" height="10" rx="2" fill="#9ca3af"/>
+  <rect x="226" y="178" width="13" height="10" rx="2" fill="#d1d5db"/>
+  <rect x="242" y="178" width="13" height="10" rx="2" fill="#f3f4f6"/>
+</svg>

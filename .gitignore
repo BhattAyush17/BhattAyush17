@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Cache — never commit, contains tokens/timestamps
+assets/cache/
+
+# Local run logs
+stats-run.log
+debug.log

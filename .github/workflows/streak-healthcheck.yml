@@ -1,0 +1,42 @@
+name: Streak Health Check
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: github-analytics
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate streak asset
+        run: |
+          if [ ! -f assets/stats/streak.svg ]; then
+            echo "BROKEN=1" >> $GITHUB_ENV
+          elif [ ! -s assets/stats/streak.svg ]; then
+            echo "BROKEN=1" >> $GITHUB_ENV
+          else
+            echo "BROKEN=0" >> $GITHUB_ENV
+          fi
+
+      - name: Regenerate analytics
+        if: env.BROKEN == '1'
+        env:
+          GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+        run: |
+          pip install requests matplotlib cairosvg beautifulsoup4
+          python scripts/generate_stats.py
+
+      - name: Commit repaired files
+        if: env.BROKEN == '1'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Self-heal streak asset"
