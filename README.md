@@ -97,11 +97,13 @@
 
 <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=13&pause=1000&color=E5E7EB&vCenter=true&width=800&height=30&lines=I'd+rather+explore+ten+wrong+directions+than+spend+my+life+wondering+about+one.;Observe.+Understand.+Adapt.+Repeat." alt="Typing SVG" /></a>
 
-> `$ echo "thanks for visiting — open to collabs that matter."`
+<div align="center">
 
 ```text
-thanks for visiting — open to collabs that matter.
+"Thanks for stopping by - there’s always another thing worth figuring out."
 ```
+
+</div>
 
 </div>
 </details>
