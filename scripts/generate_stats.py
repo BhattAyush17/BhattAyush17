@@ -120,13 +120,16 @@ query($login: String!) {
     name
     bio
     location
-    repositories(first: 100, ownerAffiliations: OWNER, privacy: PUBLIC) {
+    repositories(first: 100, ownerAffiliations: OWNER, privacy: PUBLIC, orderBy: {field: PUSHED_AT, direction: DESC}) {
       totalCount
       nodes {
         name
         stargazerCount
         forkCount
         primaryLanguage { name color }
+        pushedAt
+        description
+        url
       }
     }
     contributionsCollection {
@@ -627,7 +630,6 @@ def make_graph_svg(data: dict) -> None:
 def download_summary_cards() -> None:
     """Download GitHub Profile Summary Cards from Vercel; keep existing file on failure (never invent)."""
     cards = {
-        "summary-stats.svg":               f"https://github-profile-summary-cards.vercel.app/api/cards/stats?username={USERNAME}&theme=github_dark",
         "summary-repos-per-language.svg":  f"https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username={USERNAME}&theme=github_dark",
         "summary-most-commit-language.svg":f"https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username={USERNAME}&theme=github_dark",
         "summary-productive-time.svg":     f"https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username={USERNAME}&theme=github_dark&utcOffset=5.5",
@@ -755,6 +757,42 @@ def update_achievements() -> None:
         log.error("update_achievements failed: %s", exc)
 
 
+def update_recent_repos(data: dict) -> None:
+    """Inject most recently pushed repositories into README."""
+    log.info("📝 Updating recent repos in README…")
+    try:
+        r = requests.get(f"https://api.github.com/users/{USERNAME}/repos?sort=pushed&per_page=5", timeout=10)
+        r.raise_for_status()
+        repos = r.json()
+        recent = [r for r in repos if r["name"] != USERNAME][:3]
+        
+        md_lines = ["| `repo` | `description` | `last active` |", "|--------|---------------|---------------|"]
+        for r in recent:
+            name = r["name"]
+            url = r["html_url"]
+            desc = (r.get("description") or "No description").strip()
+            # truncate long descriptions
+            if len(desc) > 50:
+                desc = desc[:47] + "..."
+            pushed_dt = datetime.fromisoformat(r["pushed_at"].replace("Z", "+00:00"))
+            pushed_str = pushed_dt.strftime("%b %d, %Y")
+            md_lines.append(f"| [{name}]({url}) | {desc} | {pushed_str} |")
+        
+        readme = Path("README.md")
+        if not readme.exists():
+            return
+            
+        content = readme.read_text("utf-8")
+        start, end = "<!-- START_SECTION:recent_repos -->", "<!-- END_SECTION:recent_repos -->"
+        if start in content and end in content:
+            new_block = start + "\n" + "\n".join(md_lines) + "\n" + end
+            content = re.sub(rf"{re.escape(start)}.*?{re.escape(end)}", new_block, content, flags=re.DOTALL)
+            readme.write_text(content, encoding="utf-8")
+            log.info("✅ Recent repos injected into README.md.")
+    except Exception as exc:
+        log.error("update_recent_repos failed: %s", exc)
+
+
 # ─── Entry point ───────────────────────────────────────────────────────────────
 def main() -> None:
     log.info("🚀 Starting robust stats generator — %s", datetime.now(timezone.utc).isoformat())
@@ -783,6 +821,9 @@ def main() -> None:
 
     # 4. Update achievements in README
     update_achievements()
+
+    # 5. Update recent repos in README
+    update_recent_repos(data)
 
     log.info("✨ Stats generation complete. All SVGs contain REAL data or are preserved from the last successful run.")
 

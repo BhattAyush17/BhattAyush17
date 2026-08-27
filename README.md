@@ -58,8 +58,17 @@
 
 <br/><br/>
 
-<img src="assets/stats/summary-repos-per-language.svg" width="49%" alt="Repos per Language" /> <img src="assets/stats/summary-most-commit-language.svg" width="49%" alt="Most Commit Language" />
-<img src="assets/stats/summary-stats.svg" width="49%" alt="Stats Summary" /> <img src="assets/stats/summary-productive-time.svg" width="49%" alt="Productive Time" />
+<img src="assets/stats/summary-repos-per-language.svg" width="32%" alt="Repos per Language" /> <img src="assets/stats/summary-most-commit-language.svg" width="32%" alt="Most Commit Language" /> <img src="assets/stats/summary-productive-time.svg" width="32%" alt="Productive Time" />
+
+> `$ gh repo list --sort pushed --limit 3`
+
+<!-- START_SECTION:recent_repos -->
+| `repo` | `description` | `last active` |
+|--------|---------------|---------------|
+| [AURA_CHAT](https://github.com/BhattAyush17/AURA_CHAT) | conversations that feel alive, Built to underst... | Aug 26, 2026 |
+| [Basic-Chatbot](https://github.com/BhattAyush17/Basic-Chatbot) | No description | Aug 16, 2026 |
+| [Portfolio](https://github.com/BhattAyush17/Portfolio) | Minimal portfolio | Jul 21, 2026 |
+<!-- END_SECTION:recent_repos -->
 
 > `$ git log --graph --oneline --all   # contribution history`
 
