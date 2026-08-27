@@ -109,8 +109,7 @@ Currently learning and exploring ML frameworks deeply.
   </tr>
 </table>
 <br>
-  <img src="./assets/stats/contribution-graph.svg" width="100%" alt="Ayush Contribution Graph"/>
-</div>
+  
 
 ---
 
