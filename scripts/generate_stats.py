@@ -638,10 +638,26 @@ def download_summary_cards() -> None:
             r = _get(url, retries=3)
             if "<svg" not in r.text.lower():
                 raise ValueError("Not an SVG response")
+            
+            svg = r.text
+
+            def grayscale_match(match):
+                hex_col = match.group(0).lower()
+                if hex_col in ["#0d1117", "#161b22", "#30363d", "#27272a", "#8b949e", "#e6edf3", "#e5e7eb", "#ffffff", "#000000", "#121212"]:
+                    return hex_col
+                h = hex_col.lstrip('#')
+                if len(h) == 6:
+                    r_val, g_val, b_val = tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
+                    gray = max(int(0.299 * r_val + 0.587 * g_val + 0.114 * b_val), 100)
+                    return f"#{gray:02x}{gray:02x}{gray:02x}"
+                return hex_col
+
+            svg = re.sub(r'#[0-9a-fA-F]{6}', grayscale_match, svg)
+
             svg = re.sub(
                 r'(<text\s+x="30"\s+y="40"\s+style="font-size:\s*22px;\s*fill:\s*)[^;"]+',
                 r'\g<1>#ffffff',
-                r.text,
+                svg,
             )
             dest.write_text(svg, encoding="utf-8")
             log.info("✅ %s downloaded (real Vercel data).", fname)

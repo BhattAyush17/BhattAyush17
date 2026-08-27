@@ -1,5 +1,6 @@
-<div align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=20&pause=1000&color=E5E7EB&vCenter=true&width=400&height=40&lines=Hello+there...;Welcome+to+my+terminal." alt="Typing SVG" />
+<div align="left">
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=20&pause=1000&color=E5E7EB&vCenter=true&width=400&height=40&lines=Hello+there...;Welcome+to+my+GitHub." alt="Typing SVG" />
+</div>
 
 ```text
 ┌──────────────────────────────────────────────────────────────────────────┐
