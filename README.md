@@ -9,12 +9,12 @@
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │                                                                          │
-│   ████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗ █████╗ ██╗          │
-│      ██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██╔══██╗██║          │
-│      ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║███████║██║          │
-│      ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██╔══██║██║          │
-│      ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██║  ██║███████╗     │
-│      ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝     │
+│                 █████╗ ██╗   ██╗██╗   ██╗███████╗██╗  ██╗                │
+│                ██╔══██╗╚██╗ ██╔╝██║   ██║██╔════╝██║  ██║                │
+│                ███████║ ╚████╔╝ ██║   ██║███████╗███████║                │
+│                ██╔══██║  ╚██╔╝  ██║   ██║╚════██║██╔══██║                │
+│                ██║  ██║   ██║   ╚██████╔╝███████║██║  ██║                │
+│                ╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚══════╝╚═╝  ╚═╝                │
 │                                                                          │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
@@ -84,34 +84,20 @@ $ gh stats --user BhattAyush17
 <table width="100%" border="0" cellspacing="0" cellpadding="8">
   <tr>
     <td width="50%" align="center">
-      <!-- Primary: GitHub API (via github-readme-stats-sigma-five — own Vercel fork) -->
-      <!-- Failsafe: locally-generated assets/stats/github-stats.svg via workflow    -->
-      <picture>
-        <source
-          media="(prefers-color-scheme: dark)"
-          srcset="https://github-readme-stats-sigma-five.vercel.app/api?username=BhattAyush17&show_icons=true&theme=github_dark&hide_border=true&include_all_commits=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged,prs_merged_percentage&icon_color=9ca3af&ring_color=6b7280&text_color=d1d5db&bg_color=0d1117&title_color=f3f4f6&cache_seconds=900"
-        />
-        <img
-          src="assets/stats/github-stats.svg"
-          height="175"
-          alt="GitHub Stats"
-        />
-      </picture>
+      <!-- Primary: locally-generated assets/stats/github-stats.svg via workflow    -->
+      <img
+        src="assets/stats/github-stats.svg"
+        height="175"
+        alt="GitHub Stats"
+      />
     </td>
     <td width="50%" align="center">
-      <!-- Primary: GitHub top-langs via github-readme-stats-sigma-five               -->
-      <!-- Failsafe: locally-generated assets/stats/languages.svg via workflow        -->
-      <picture>
-        <source
-          media="(prefers-color-scheme: dark)"
-          srcset="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=BhattAyush17&layout=compact&theme=github_dark&hide_border=true&langs_count=8&card_width=320&title_color=f3f4f6&text_color=d1d5db&bg_color=0d1117&cache_seconds=900"
-        />
-        <img
-          src="assets/stats/languages.svg"
-          height="175"
-          alt="Top Languages"
-        />
-      </picture>
+      <!-- Primary: locally-generated assets/stats/languages.svg via workflow        -->
+      <img
+        src="assets/stats/languages.svg"
+        height="175"
+        alt="Top Languages"
+      />
     </td>
   </tr>
   <tr>
@@ -266,7 +252,9 @@ $ gh trophy --user BhattAyush17
 <div align="center">
 
 <a href="https://github.com/BhattAyush17">
-  <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=onestar&no-frame=true&no-bg=true&margin-w=6&column=7" alt="GitHub Trophies" />
+  <!-- <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=onestar&no-frame=true&no-bg=true&margin-w=6&column=7" alt="GitHub Trophies" /> -->
+  <!-- API is currently returning 402 Payment Required / Service Disabled -->
+  <code>[ERROR] API `github-profile-trophy` returned 402 (Service Disabled). Please try again later.</code>
 </a>
 
 </div>
