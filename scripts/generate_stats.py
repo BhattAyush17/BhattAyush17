@@ -776,7 +776,11 @@ def update_recent_repos(data: dict) -> None:
                 desc = desc[:47] + "..."
             pushed_dt = datetime.fromisoformat(r["pushed_at"].replace("Z", "+00:00"))
             pushed_str = pushed_dt.strftime("%b %d, %Y")
-            repo_col = f'<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light-32px.png" width="13" /> [{name}]({url})'
+            
+            # format name for shields.io (dashes to double dashes, underscores to double underscores)
+            shield_name = name.replace("-", "--").replace("_", "__").replace(" ", "_")
+            badge_url = f"https://img.shields.io/badge/{shield_name}-1a1a1a?style=flat-square&logo=github&logoColor=white"
+            repo_col = f"[![{name}]({badge_url})]({url})"
             md_lines.append(f"| {repo_col} | {desc} | {pushed_str} |")
         
         readme = Path("README.md")
