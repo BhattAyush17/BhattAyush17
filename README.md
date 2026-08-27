@@ -1,12 +1,6 @@
-<!--
-  ╔══════════════════════════════════════════════════════════════════════╗
-  ║              BhattAyush17 — Terminal-style GitHub README             ║
-  ╚══════════════════════════════════════════════════════════════════════╝
--->
-
 <div align="center">
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────────────────┐
 │                                                                          │
 │                 █████╗ ██╗   ██╗██╗   ██╗███████╗██╗  ██╗                │
@@ -19,27 +13,35 @@
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
+<div align="left">
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17&left_color=1a1a1a&right_color=374151&left_text=visitors" alt="visitors" />
 </div>
+
+<br/>
+
+<details>
+<summary><code>$ ./ayush --explore</code> <kbd>Click to expand</kbd></summary>
+<br/>
 
 <div align="left">
 
-```
+```bash
 $ whoami
 ```
 
-<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&pause=1200&color=E5E7EB&vCenter=true&width=600&height=40&lines=Ayush+Bhatt+%2F%2F+Data+Science+%26+ML;Turning+raw+data+into+decisions.;Exploring+the+limits+of+intelligence." alt="Typing SVG" />
+</div>
 
+<div align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&pause=1200&color=E5E7EB&vCenter=true&width=600&height=40&lines=Ayush+Bhatt+%2F%2F+Data+Science+%26+ML;Turning+raw+data+into+decisions.;Exploring+the+limits+of+intelligence." alt="Typing SVG" />
 </div>
 
 <div align="left">
 
-```
+```bash
 $ cat about.txt
 ```
 
-</div>
-
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │  role         →  ML Engineer & Data Science enthusiast          │
 │  focus        →  Machine Learning · Deep Learning · CV · NLP    │
@@ -50,30 +52,40 @@ $ cat about.txt
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-<div align="left">
-
-```
+```bash
 $ ls -la skills/
 ```
 
 </div>
 
 <div align="center">
-
-![Python](https://img.shields.io/badge/Python-1a1a1a?style=for-the-badge&logo=python&logoColor=E5E7EB)
-![C++](https://img.shields.io/badge/C++-1a1a1a?style=for-the-badge&logo=cplusplus&logoColor=E5E7EB)
-![Jupyter](https://img.shields.io/badge/Jupyter-1a1a1a?style=for-the-badge&logo=jupyter&logoColor=E5E7EB)
-![JavaScript](https://img.shields.io/badge/JavaScript-1a1a1a?style=for-the-badge&logo=javascript&logoColor=E5E7EB)
-![HTML5](https://img.shields.io/badge/HTML5-1a1a1a?style=for-the-badge&logo=html5&logoColor=E5E7EB)
-![Shell](https://img.shields.io/badge/Shell-1a1a1a?style=for-the-badge&logo=gnu-bash&logoColor=E5E7EB)
-
+  <img src="https://img.shields.io/badge/Python-1a1a1a?style=for-the-badge&logo=python&logoColor=E5E7EB" alt="Python">
+  <img src="https://img.shields.io/badge/C++-1a1a1a?style=for-the-badge&logo=cplusplus&logoColor=E5E7EB" alt="C++">
+  <img src="https://img.shields.io/badge/Jupyter-1a1a1a?style=for-the-badge&logo=jupyter&logoColor=E5E7EB" alt="Jupyter">
+  <img src="https://img.shields.io/badge/JavaScript-1a1a1a?style=for-the-badge&logo=javascript&logoColor=E5E7EB" alt="JavaScript">
+  <img src="https://img.shields.io/badge/HTML5-1a1a1a?style=for-the-badge&logo=html5&logoColor=E5E7EB" alt="HTML5">
+  <img src="https://img.shields.io/badge/Shell-1a1a1a?style=for-the-badge&logo=gnu-bash&logoColor=E5E7EB" alt="Shell">
+  <img src="https://img.shields.io/badge/PyTorch-1a1a1a?style=for-the-badge&logo=pytorch&logoColor=E5E7EB" alt="PyTorch">
+  <img src="https://img.shields.io/badge/scikit--learn-1a1a1a?style=for-the-badge&logo=scikit-learn&logoColor=E5E7EB" alt="scikit-learn">
+  <img src="https://img.shields.io/badge/Linux-1a1a1a?style=for-the-badge&logo=linux&logoColor=E5E7EB" alt="Linux">
+  <img src="https://img.shields.io/badge/Docker-1a1a1a?style=for-the-badge&logo=docker&logoColor=E5E7EB" alt="Docker">
 </div>
-
----
 
 <div align="left">
 
+```bash
+$ neofetch
 ```
+
+</div>
+
+<div align="center">
+  <img src="neofetch_card.svg" alt="Neofetch Card" width="80%">
+</div>
+
+<div align="left">
+
+```bash
 $ gh stats --user BhattAyush17
 ```
 
@@ -83,49 +95,17 @@ $ gh stats --user BhattAyush17
 
 <table width="100%" border="0" cellspacing="0" cellpadding="8">
   <tr>
-    <td width="50%" align="center">
-      <!-- Primary: locally-generated assets/stats/github-stats.svg via workflow    -->
-      <img
-        src="assets/stats/github-stats.svg"
-        height="175"
-        alt="GitHub Stats"
-      />
+    <td width="33%" align="center">
+      <img src="assets/stats/github-stats.svg" height="150" alt="GitHub Stats" />
     </td>
-    <td width="50%" align="center">
-      <!-- Primary: locally-generated assets/stats/languages.svg via workflow        -->
-      <img
-        src="assets/stats/languages.svg"
-        height="175"
-        alt="Top Languages"
-      />
+    <td width="33%" align="center">
+      <img src="assets/stats/languages.svg" height="150" alt="Top Languages" />
     </td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center">
-      <!-- Primary: locally-generated streak SVG (self-hosted, never goes down)  -->
-      <!-- Reason: streak.io is the most unreliable external service; self-host   -->
-      <img
-        src="assets/stats/streak.svg"
-        width="98%"
-        alt="GitHub Streak"
-      />
+    <td width="33%" align="center">
+      <img src="assets/stats/streak.svg" height="150" alt="GitHub Streak" />
     </td>
   </tr>
 </table>
-
-</div>
-
----
-
-<div align="left">
-
-```
-$ gh profile-summary --user BhattAyush17
-```
-
-</div>
-
-<div align="center">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="6">
   <tr>
@@ -148,29 +128,22 @@ $ gh profile-summary --user BhattAyush17
 
 </div>
 
----
-
 <div align="left">
 
-```
+```bash
 $ git log --graph --oneline --all   # contribution history
 ```
 
 </div>
 
 <div align="center">
-
-<!-- Snake generated every 12h by .github/workflows/generate-snake.yml (Platane/snk@v3) -->
-<img src="assets/snake/github-contribution-grid-snake-dark.svg" width="100%" alt="Contribution Snake" />
-
+  <img src="assets/snake/github-contribution-grid-snake-dark.svg" width="100%" alt="Contribution Snake" />
 </div>
-
----
 
 <div align="left">
 
-```
-$ cat projects/featured.md
+```bash
+$ gh repo list --pinned BhattAyush17
 ```
 
 </div>
@@ -188,32 +161,9 @@ $ cat projects/featured.md
 
 </div>
 
----
-
 <div align="left">
 
-```
-$ gh repo list --pinned BhattAyush17
-```
-
-</div>
-
-<div align="center">
-
-- [**AURA_CHAT**](https://github.com/BhattAyush17/AURA_CHAT)
-- [**ProPhet_BnB**](https://github.com/BhattAyush17/ProPhet_BnB)
-- [**Feature_Engineering_SandBox**](https://github.com/BhattAyush17/Feature_Engineering_SandBox)
-- [**Valora**](https://github.com/BhattAyush17/Valora)
-- [**Loan-Dash-X**](https://github.com/BhattAyush17/Loan-Dash-X)
-- [**FaunAnalyze**](https://github.com/BhattAyush17/FaunAnalyze)
-
-</div>
-
----
-
-<div align="left">
-
-```
+```bash
 $ gh achievement list --user BhattAyush17
 ```
 
@@ -231,39 +181,25 @@ $ gh achievement list --user BhattAyush17
 
 <div align="left">
 
+```bash
+$ cat quotes.txt
 ```
-$ gh trophy --user BhattAyush17
+
+```text
+"Currently exploring the intersection of 'this is interesting' and 'this is a terrible idea.'"
+"Exploring the stack one questionable decision at a time."
+"Building, breaking, learning ; occasionally in that order."
 ```
 
-</div>
-
-<div align="center">
-
-<a href="https://github.com/BhattAyush17">
-  <!-- <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=onestar&no-frame=true&no-bg=true&margin-w=6&column=7" alt="GitHub Trophies" /> -->
-  <!-- API is currently returning 402 Payment Required / Service Disabled -->
-  <code>[ERROR] API `github-profile-trophy` returned 402 (Service Disabled). Please try again later.</code>
-</a>
-
-</div>
-
----
-
-<div align="center">
-
-```
+```bash
 $ echo "thanks for visiting — open to collabs that matter."
 ```
 
-```
+```text
 thanks for visiting — open to collabs that matter.
 ```
 
-<br/>
-
-<img
-  src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17&left_color=1a1a1a&right_color=374151&left_text=visitors"
-  alt="visitors"
-/>
+</div>
+</details>
 
 </div>
