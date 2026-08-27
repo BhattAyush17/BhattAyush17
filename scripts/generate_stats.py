@@ -761,8 +761,11 @@ def update_recent_repos(data: dict) -> None:
     """Inject most recently pushed repositories into README."""
     log.info("📝 Updating recent repos in README…")
     try:
-        r = requests.get(f"https://api.github.com/users/{USERNAME}/repos?sort=pushed&per_page=5", timeout=10)
-        r.raise_for_status()
+        r = _get(
+            f"https://api.github.com/users/{USERNAME}/repos?sort=pushed&per_page=5",
+            headers={**HEADERS, "Cache-Control": "no-cache"},
+            timeout=10
+        )
         repos = r.json()
         recent = [r for r in repos if r["name"] != USERNAME][:3]
         
