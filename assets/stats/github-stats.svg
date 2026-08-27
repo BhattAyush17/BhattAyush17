@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
   <style>
-    .title { font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
-    .label { font: 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }
-    .value { font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
+    .title { font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }
+    .label { font: 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
+    .value { font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }
     .icon { fill: #8b949e; }
   </style>
   <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
@@ -24,7 +24,7 @@
         <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
       </svg>
       <text x="25" y="12.5" class="label">Total Commits:</text>
-      <text x="130" y="12.5" class="value">482</text>
+      <text x="130" y="12.5" class="value">484</text>
     </g>
 
     <!-- PRs -->
@@ -60,7 +60,7 @@
         <path fill-rule="evenodd" d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 100-6 3 3 0 000 6zm-5.784 6A2.24 2.24 0 015 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 005 9c-4 0-5 3-5 4 0 1 1 1 1 1h4.216zM4.5 8a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/>
       </svg>
       <text x="25" y="12.5" class="label">Followers:</text>
-      <text x="130" y="12.5" class="value">34</text>
+      <text x="130" y="12.5" class="value">35</text>
     </g>
   </g>
 

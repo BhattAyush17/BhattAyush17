@@ -311,9 +311,9 @@ def make_stats_svg(data: dict) -> None:
 
         svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
   <style>
-    .title {{ font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
-    .label {{ font: 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
-    .value {{ font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
+    .title {{ font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }}
+    .label {{ font: 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+    .value {{ font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }}
     .icon {{ fill: #8b949e; }}
   </style>
   <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
@@ -419,13 +419,26 @@ def make_languages_svg(data: dict) -> None:
 
         sorted_langs = sorted(lang_data.items(), key=lambda x: x[1]["count"], reverse=True)[:6]
 
+        # Convert hex color to grayscale
+        def hex_to_gray(hex_color):
+            try:
+                hex_color = hex_color.lstrip('#')
+                if len(hex_color) == 6:
+                    r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+                    gray = int(0.299 * r + 0.587 * g + 0.114 * b)
+                    gray = max(gray, 100)
+                    return f"#{gray:02x}{gray:02x}{gray:02x}"
+            except:
+                pass
+            return "#8b949e"
+
         # Calculate percentages
         languages_list = []
         for name, info in sorted_langs:
             pct = (info["count"] / total_repos_with_lang) * 100 if total_repos_with_lang > 0 else 0
             languages_list.append({
                 "name": name,
-                "color": info["color"],
+                "color": hex_to_gray(info["color"]),
                 "percentage": pct
             })
 
@@ -440,8 +453,8 @@ def make_languages_svg(data: dict) -> None:
 
         svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
   <style>
-    .title {{ font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
-    .lang-name {{ font: bold 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+    .title {{ font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }}
+    .lang-name {{ font: bold 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }}
     .lang-pct {{ font: 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
   </style>
   <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
@@ -502,13 +515,13 @@ def make_streak_svg(data: dict) -> None:
 
         svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
   <style>
-    .title {{ font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
-    .label {{ font: 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
-    .value {{ font: bold 36px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
+    .title {{ font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }}
+    .label {{ font: 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+    .value {{ font: bold 36px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }}
     .unit {{ font: 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
     .stat-label {{ font: 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
-    .stat-val {{ font: bold 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
-    .icon {{ fill: #f59e0b; }}
+    .stat-val {{ font: bold 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }}
+    .icon {{ fill: #8b949e; }}
   </style>
   <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
   

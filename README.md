@@ -200,24 +200,12 @@ $ gh repo list --pinned BhattAyush17
 
 <div align="center">
 
-<a href="https://github.com/BhattAyush17/AURA_CHAT">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=AURA_CHAT&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
-</a>
-<a href="https://github.com/BhattAyush17/ProPhet_BnB">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
-</a>
-<a href="https://github.com/BhattAyush17/Feature_Engineering_SandBox">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Feature_Engineering_SandBox&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
-</a>
-<a href="https://github.com/BhattAyush17/Valora">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Valora&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
-</a>
-<a href="https://github.com/BhattAyush17/Loan-Dash-X">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Loan-Dash-X&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
-</a>
-<a href="https://github.com/BhattAyush17/FaunAnalyze">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=FaunAnalyze&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
-</a>
+- [**AURA_CHAT**](https://github.com/BhattAyush17/AURA_CHAT)
+- [**ProPhet_BnB**](https://github.com/BhattAyush17/ProPhet_BnB)
+- [**Feature_Engineering_SandBox**](https://github.com/BhattAyush17/Feature_Engineering_SandBox)
+- [**Valora**](https://github.com/BhattAyush17/Valora)
+- [**Loan-Dash-X**](https://github.com/BhattAyush17/Loan-Dash-X)
+- [**FaunAnalyze**](https://github.com/BhattAyush17/FaunAnalyze)
 
 </div>
 

@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
   <style>
-    .title { font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
-    .label { font: 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }
-    .value { font: bold 36px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
+    .title { font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }
+    .label { font: 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
+    .value { font: bold 36px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }
     .unit { font: 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
     .stat-label { font: 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
-    .stat-val { font: bold 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }
-    .icon { fill: #f59e0b; }
+    .stat-val { font: bold 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }
+    .icon { fill: #8b949e; }
   </style>
   <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
   
@@ -30,6 +30,6 @@
     <text x="110" class="stat-val">40 days</text>
     
     <text x="220" class="stat-label">Total Contributions:</text>
-    <text x="350" class="stat-val">506</text>
+    <text x="350" class="stat-val">508</text>
   </g>
 </svg>
