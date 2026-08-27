@@ -100,7 +100,7 @@ $ gh achievement list --user BhattAyush17
 $ cat quotes.txt
 ```
 
-<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=13&pause=1000&color=E5E7EB&vCenter=true&width=800&height=30&lines=Currently+exploring+the+intersection+of+'this+is+interesting'+and+'this+is+a+terrible+idea.';Exploring+the+stack+one+questionable+decision+at+a+time.;Building,+breaking,+learning+;+occasionally+in+that+order." alt="Typing SVG" /></a>
+<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=13&pause=1000&color=E5E7EB&vCenter=true&width=800&height=30&lines=Currently+exploring+the+intersection+of+'this+is+interesting'+and+'this+is+a+terrible+idea.';Exploring+the+stack+one+questionable+decision+at+a+time.;Building,+breaking,+learning+;+occasionally+in+that+order.;I'd+rather+explore+ten+wrong+directions+than+spend+my+life+wondering+about+one.;Observe.+Understand.+Adapt.+Repeat." alt="Typing SVG" /></a>
 
 ```bash
 $ echo "thanks for visiting — open to collabs that matter."
