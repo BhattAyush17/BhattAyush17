@@ -89,19 +89,19 @@ Currently learning and exploring ML frameworks deeply.
     <td align="center" valign="top">
       <b>GitHub Stats</b><br>
       <img
-        src="https://github-readme-stats-sigma-five.vercel.app/api?username=BhattAyush17&show_icons=true&theme=github_dark&hide_border=true&include_all_commits=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged,prs_merged_percentage&icon_color=58a6ff&ring_color=FFA500&text_color=c9d1d9&bg_color=0d1117&title_color=58a6ff&cache_seconds=900&v=2"
+        src="./assets/stats/github-stats.svg"
         height="180"
         alt="Ayush GitHub Stats"
       />
     </td>
     <td align="center" valign="top">
       <b>🔥 Current Streak</b><br>
-      <img src="./assets/stats/streak.svg" width="95%" alt="Ayush Current Streak" />
+      <img src="./assets/stats/streak.svg" height="180" alt="Ayush Current Streak" />
     </td>
     <td align="center" valign="top">
       <b>Top Languages</b><br>
       <img
-        src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=BhattAyush17&layout=compact&theme=github_dark&hide_border=true&langs_count=8&card_width=320&title_color=58a6ff&text_color=c9d1d9&bg_color=0d1117&cache_seconds=900&v=2"
+        src="./assets/stats/languages.svg"
         height="180"
         alt="Top Languages"
       />
@@ -109,7 +109,7 @@ Currently learning and exploring ML frameworks deeply.
   </tr>
 </table>
 <br>
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=BhattAyush17&theme=github-dark&hide_border=true&bg_color=0d1117&color=58a6ff&line=58a6ff&point=c9d1d9&area=true&area_color=1f6feb&title_color=58a6ff&custom_title=Contribution%20Graph&height=300&cache_seconds=900" width="100%" alt="Ayush Contribution Graph"/>
+  <img src="./assets/stats/contribution-graph.svg" width="100%" alt="Ayush Contribution Graph"/>
 </div>
 
 ---
