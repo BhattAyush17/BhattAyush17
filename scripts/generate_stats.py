@@ -776,7 +776,8 @@ def update_recent_repos(data: dict) -> None:
                 desc = desc[:47] + "..."
             pushed_dt = datetime.fromisoformat(r["pushed_at"].replace("Z", "+00:00"))
             pushed_str = pushed_dt.strftime("%b %d, %Y")
-            md_lines.append(f"| [{name}]({url}) | {desc} | {pushed_str} |")
+            repo_col = f'<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light-32px.png" width="13" /> [{name}]({url})'
+            md_lines.append(f"| {repo_col} | {desc} | {pushed_str} |")
         
         readme = Path("README.md")
         if not readme.exists():

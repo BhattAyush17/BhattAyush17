@@ -65,9 +65,9 @@
 <!-- START_SECTION:recent_repos -->
 | `repo` | `description` | `last active` |
 |--------|---------------|---------------|
-| [AURA_CHAT](https://github.com/BhattAyush17/AURA_CHAT) | conversations that feel alive, Built to underst... | Aug 26, 2026 |
-| [Basic-Chatbot](https://github.com/BhattAyush17/Basic-Chatbot) | No description | Aug 16, 2026 |
-| [Portfolio](https://github.com/BhattAyush17/Portfolio) | Minimal portfolio | Jul 21, 2026 |
+| <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light-32px.png" width="13" /> [AURA_CHAT](https://github.com/BhattAyush17/AURA_CHAT) | conversations that feel alive, Built to underst... | Aug 26, 2026 |
+| <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light-32px.png" width="13" /> [Basic-Chatbot](https://github.com/BhattAyush17/Basic-Chatbot) | No description | Aug 16, 2026 |
+| <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light-32px.png" width="13" /> [Portfolio](https://github.com/BhattAyush17/Portfolio) | Minimal portfolio | Jul 21, 2026 |
 <!-- END_SECTION:recent_repos -->
 
 > `$ git log --graph --oneline --all   # contribution history`
@@ -78,12 +78,12 @@
 
 | `repo` | `description` | `lang` | `⭐` | `🍴` |
 |--------|---------------|--------|------|------|
-| [ProPhet_BnB](https://github.com/BhattAyush17/ProPhet_BnB) | Airbnb price prediction | Python | ![](https://img.shields.io/github/stars/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [Lane_Morph](https://github.com/BhattAyush17/Lane_Morph) | Lane detection & morphing | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Lane_Morph?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Lane_Morph?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [Greydge](https://github.com/BhattAyush17/Greydge) | Greyscale image analysis pipeline | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Greydge?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Greydge?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [zavix-animegan-app](https://github.com/BhattAyush17/zavix-animegan-app) | AnimeGAN web app | Python | ![](https://img.shields.io/github/stars/BhattAyush17/zavix-animegan-app?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/zavix-animegan-app?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [Loan-Dash-X](https://github.com/BhattAyush17/Loan-Dash-X) | Loan dashboard application | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [DSA](https://github.com/BhattAyush17/DSA) | Data structures & algorithms | C++ | ![](https://img.shields.io/github/stars/BhattAyush17/DSA?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/DSA?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light-32px.png" width="13" /> [ProPhet_BnB](https://github.com/BhattAyush17/ProPhet_BnB) | Airbnb price prediction | Python | ![](https://img.shields.io/github/stars/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light-32px.png" width="13" /> [Lane_Morph](https://github.com/BhattAyush17/Lane_Morph) | Lane detection & morphing | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Lane_Morph?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Lane_Morph?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light-32px.png" width="13" /> [Greydge](https://github.com/BhattAyush17/Greydge) | Greyscale image analysis pipeline | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Greydge?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Greydge?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light-32px.png" width="13" /> [zavix-animegan-app](https://github.com/BhattAyush17/zavix-animegan-app) | AnimeGAN web app | Python | ![](https://img.shields.io/github/stars/BhattAyush17/zavix-animegan-app?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/zavix-animegan-app?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light-32px.png" width="13" /> [Loan-Dash-X](https://github.com/BhattAyush17/Loan-Dash-X) | Loan dashboard application | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light-32px.png" width="13" /> [DSA](https://github.com/BhattAyush17/DSA) | Data structures & algorithms | C++ | ![](https://img.shields.io/github/stars/BhattAyush17/DSA?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/DSA?style=flat-square&color=6b7280&labelColor=1a1a1a) |
 
 > `$ gh achievement list --user BhattAyush17`
 
