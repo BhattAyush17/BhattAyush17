@@ -1,78 +1,26 @@
-name: Asset Health Check & Self-Heal
+name: Fallback Health Check
+
 on:
   schedule:
-    - cron: "30 */6 * * *"   # 30 min after generate-readme-assets runs
+    - cron: "30 */6 * * *"
   workflow_dispatch:
-concurrency:
-  group: github-analytics
-  cancel-in-progress: false   # health checks should never cancel each other
+
 jobs:
-  verify-and-heal:
+  verify-assets:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
+
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      # ── 1. Check every critical asset ─────────────────────────────────────────
-      - name: Audit assets
-        id: audit
+
+      - name: Verify generated assets
         run: |
-          BROKEN=0
-          for f in \
-            assets/stats/github-stats.svg \
-            assets/stats/languages.svg \
-            assets/stats/streak.svg \
-            assets/stats/contribution-graph.svg \
-            assets/stats/summary-stats.svg \
-            assets/stats/summary-repos-per-language.svg \
-            assets/stats/summary-most-commit-language.svg \
-            assets/stats/summary-productive-time.svg \
-            assets/snake/github-contribution-grid-snake-dark.svg; do
-            # Check 1: File exists and is not empty
-            if [ ! -f "$f" ] || [ ! -s "$f" ]; then
-              echo "::warning::BROKEN (missing/empty): $f"
-              BROKEN=$((BROKEN+1))
-            # Check 2: SVG contains PLACEHOLDER marker (temp failure, not real data)
-            elif grep -q "PLACEHOLDER: WILL_RETRY" "$f" 2>/dev/null; then
-              echo "::warning::BROKEN (placeholder, needs retry): $f"
-              BROKEN=$((BROKEN+1))
-            fi
-          done
-          echo "broken=$BROKEN" >> "$GITHUB_OUTPUT"
-          echo "Total broken/placeholder assets: $BROKEN"
-      # ── 2. Regenerate only when broken assets are found ───────────────────────
-      - name: Set up Python (if healing needed)
-        if: steps.audit.outputs.broken != '0'
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Install system deps (if healing needed)
-        if: steps.audit.outputs.broken != '0'
-        run: sudo apt-get install -y libcairo2 libcairo2-dev
-      - name: Install Python deps (if healing needed)
-        if: steps.audit.outputs.broken != '0'
-        run: pip install -r scripts/requirements.txt
-      - name: Regenerate assets (self-heal)
-        if: steps.audit.outputs.broken != '0'
-        env:
-          GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
-        run: |
-          mkdir -p assets/stats assets/snake assets/badges assets/streak assets/fallback assets/cache
-          python scripts/generate_stats.py
-      - name: Pull & commit healed assets
-        if: steps.audit.outputs.broken != '0'
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "fix: self-heal broken README assets [skip ci]"
-          file_pattern: "assets/**"
-      - name: Report status
-        run: |
-          if [ "${{ steps.audit.outputs.broken }}" == "0" ]; then
-            echo "✅ All assets healthy — no action needed."
-          else
-            echo "🔧 Self-heal triggered for ${{ steps.audit.outputs.broken }} broken asset(s)."
-          fi
+          test -f assets/stats/github-stats.svg
+          test -f assets/stats/languages.svg
+          test -f assets/stats/streak.svg
+          test -f assets/stats/contribution-graph.svg
+          test -f assets/stats/summary-stats.svg
+          test -f assets/stats/summary-repos-per-language.svg
+          test -f assets/stats/summary-most-commit-language.svg
+          test -f assets/stats/summary-productive-time.svg
+          test -f assets/snake/github-contribution-grid-snake-dark.svg
+

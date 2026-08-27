@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub README Previewer</title>
+  <!-- GitHub Markdown CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown-css.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --card-bg: #161b22;
+      --accent-color: #58a6ff;
+      --text-color: #c9d1d9;
+    }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      width: 100%;
+      background: rgba(22, 27, 34, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid #30363d;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px 24px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #58a6ff 0%, #bc8cff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge {
+      background-color: #21262d;
+      border: 1px solid #30363d;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #8b949e;
+      font-weight: 500;
+    }
+    main {
+      width: 100%;
+      max-width: 900px;
+      padding: 40px 20px 80px 20px;
+      box-sizing: border-box;
+    }
+    .preview-card {
+      background-color: var(--card-bg);
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+    .markdown-body {
+      background-color: transparent !important;
+      font-family: inherit;
+    }
+    /* Customize Github markdown CSS to match our card background */
+    .markdown-body table {
+      background-color: transparent;
+    }
+    .markdown-body tr {
+      background-color: transparent !important;
+      border-top: 1px solid #30363d;
+    }
+    .markdown-body td, .markdown-body th {
+      border: 1px solid #30363d !important;
+    }
+    .markdown-body pre {
+      background-color: #0d1117 !important;
+      border: 1px solid #30363d;
+    }
+    .markdown-body img {
+      background-color: transparent !important;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <svg height="24" viewBox="0 0 16 16" version="1.1" width="24" fill="currentColor" style="color: var(--accent-color);">
+        <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.35 3.12.88.01.64.01 1.24.01 1.37 0 .21-.15.46-.55.38A8.013 8.013 0 0 1 0 8c0-4.42 3.58-8 8-8z"></path>
+      </svg>
+      GitHub Profile README
+    </div>
+    <div class="badge">Local Preview</div>
+  </header>
+
+  <main>
+    <div class="preview-card">
+      <div id="content" class="markdown-body">
+        <p style="text-align: center; color: #8b949e;">Loading preview...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Marked.js for markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    async function loadReadme() {
+      try {
+        const response = await fetch('README.md');
+        if (!response.ok) {
+          throw new Error('Failed to fetch README.md');
+        }
+        const markdown = await response.text();
+        document.getElementById('content').innerHTML = marked.parse(markdown);
+      } catch (err) {
+        document.getElementById('content').innerHTML = `<p style="color: #f85149; text-align: center;">Error loading README: ${err.message}</p>`;
+      }
+    }
+    loadReadme();
+  </script>
+</body>
+</html>

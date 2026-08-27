@@ -1,153 +1,71 @@
-<!--
-  ╔══════════════════════════════════════════════════════════════════════╗
-  ║              BhattAyush17 — Terminal-style GitHub README             ║
-  ╚══════════════════════════════════════════════════════════════════════╝
--->
-
-<div align="center">
-
-```
-┌──────────────────────────────────────────────────────────────────────────┐
-│                                                                          │
-│   ████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗ █████╗ ██╗          │
-│      ██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██╔══██╗██║          │
-│      ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║███████║██║          │
-│      ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██╔══██║██║          │
-│      ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██║  ██║███████╗     │
-│      ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝     │
-│                                                                          │
-└──────────────────────────────────────────────────────────────────────────┘
-```
-
-</div>
-
 <div align="left">
+  <img
+    src="https://readme-typing-svg.demolab.com?font=Montserrat&weight=900&size=46&pause=1200&color=D1D5DB&vCenter=true&width=780&height=60&lines=Hi+there,+I'm+Ayush+%F0%9F%91%8B"
+    alt="Typing SVG"
+  />
 
-```
-$ whoami
-```
-
-<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&pause=1200&color=E5E7EB&vCenter=true&width=600&height=40&lines=Ayush+Bhatt+%2F%2F+Data+Science+%26+ML;Turning+raw+data+into+decisions.;Exploring+the+limits+of+intelligence." alt="Typing SVG" />
-
+  <img
+    src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17&left_color=374151&right_color=6B7280"
+    alt="visitors"
+  />
 </div>
 
-<div align="left">
+<p>
+  <b>
+    <span style="color:#D1D5DB; font-size:16px;">
+      Transforming data into actionable insights to address real-world challenges.
+    </span>
+  </b>
+</p>
 
-```
-$ cat about.txt
-```
 
-</div>
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  role         →  ML Engineer & Data Science enthusiast          │
-│  focus        →  Machine Learning · Deep Learning · CV · NLP    │
-│  stack        →  Python · C++ · PyTorch · scikit-learn          │
-│  status       →  Exploring ML frameworks deeply                  │
-│  interests    →  Intelligent systems · AI research · Data archi  │
-│  collab       →  Open to research-oriented, impactful projects   │
-└─────────────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=VIDEO_ID">
+    <img
+      src="assets/hero/banner.gif"
+      alt="Scenic View"
+      width="100%"
+    />
+  </a>
+</p>
 
-<div align="left">
-
-```
-$ ls -la skills/
-```
-
-</div>
-
-<div align="center">
-
-![Python](https://img.shields.io/badge/Python-1a1a1a?style=for-the-badge&logo=python&logoColor=E5E7EB)
-![C++](https://img.shields.io/badge/C++-1a1a1a?style=for-the-badge&logo=cplusplus&logoColor=E5E7EB)
-![Jupyter](https://img.shields.io/badge/Jupyter-1a1a1a?style=for-the-badge&logo=jupyter&logoColor=E5E7EB)
-![JavaScript](https://img.shields.io/badge/JavaScript-1a1a1a?style=for-the-badge&logo=javascript&logoColor=E5E7EB)
-![HTML5](https://img.shields.io/badge/HTML5-1a1a1a?style=for-the-badge&logo=html5&logoColor=E5E7EB)
-![Shell](https://img.shields.io/badge/Shell-1a1a1a?style=for-the-badge&logo=gnu-bash&logoColor=E5E7EB)
-
-</div>
+<p align="right">
+  <sub><i>— peace</i></sub>
+</p>
 
 ---
 
-<div align="left">
+# Intro
 
-```
-$ gh stats --user BhattAyush17
-```
-
-</div>
-
-<div align="center">
-
-<table width="100%" border="0" cellspacing="0" cellpadding="8">
-  <tr>
-    <td width="50%" align="center">
-      <!-- Primary: GitHub API (via github-readme-stats-sigma-five — own Vercel fork) -->
-      <!-- Failsafe: locally-generated assets/stats/github-stats.svg via workflow    -->
-      <picture>
-        <source
-          media="(prefers-color-scheme: dark)"
-          srcset="https://github-readme-stats-sigma-five.vercel.app/api?username=BhattAyush17&show_icons=true&theme=github_dark&hide_border=true&include_all_commits=true&count_private=true&rank_icon=percentile&show=reviews,prs_merged,prs_merged_percentage&icon_color=9ca3af&ring_color=6b7280&text_color=d1d5db&bg_color=0d1117&title_color=f3f4f6&cache_seconds=900"
-        />
-        <img
-          src="assets/stats/github-stats.svg"
-          height="175"
-          alt="GitHub Stats"
-        />
-      </picture>
-    </td>
-    <td width="50%" align="center">
-      <!-- Primary: GitHub top-langs via github-readme-stats-sigma-five               -->
-      <!-- Failsafe: locally-generated assets/stats/languages.svg via workflow        -->
-      <picture>
-        <source
-          media="(prefers-color-scheme: dark)"
-          srcset="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=BhattAyush17&layout=compact&theme=github_dark&hide_border=true&langs_count=8&card_width=320&title_color=f3f4f6&text_color=d1d5db&bg_color=0d1117&cache_seconds=900"
-        />
-        <img
-          src="assets/stats/languages.svg"
-          height="175"
-          alt="Top Languages"
-        />
-      </picture>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center">
-      <!-- Primary: locally-generated streak SVG (self-hosted, never goes down)  -->
-      <!-- Reason: streak.io is the most unreliable external service; self-host   -->
-      <img
-        src="assets/stats/streak.svg"
-        width="98%"
-        alt="GitHub Streak"
-      />
-    </td>
-  </tr>
-</table>
-
-</div>
+Following my curiosity into the world of Data Science and Machine Learning.  
+I enjoy transforming data into actionable insights, building intelligent systems, and collaborating on impactful projects.  
+My interests span **Machine Learning**, **Deep Learning**, **Computer Vision**, and **NLP**.  
+Currently learning and exploring ML frameworks deeply.
 
 ---
 
-<div align="left">
+# About Me
 
-```
-$ gh profile-summary --user BhattAyush17
-```
+- Strong foundation in Python, C++, and modern ML frameworks
+- Passionate about algorithms, intelligent systems, and AI research
+- Focused on building practical, impactful solutions
+- Enjoy exploring data-driven architectures and ML concepts
+- Open to innovative collaborations and research-oriented projects
 
-</div>
+---
+
+# GitHub Profile Summary
 
 <div align="center">
 
-<table width="100%" border="0" cellspacing="0" cellpadding="6">
+<table width="100%">
   <tr>
     <td width="50%" align="center">
-      <img src="assets/stats/summary-repos-per-language.svg" width="95%" alt="Repos per Language" />
+      <img src="assets/stats/summary-repos-per-language.svg" width="95%" alt="Top Languages by Repo" />
     </td>
     <td width="50%" align="center">
-      <img src="assets/stats/summary-most-commit-language.svg" width="95%" alt="Most Commit Language" />
+      <img src="assets/stats/summary-most-commit-language.svg" width="95%" alt="Top Languages by Commit" />
     </td>
   </tr>
   <tr>
@@ -155,7 +73,7 @@ $ gh profile-summary --user BhattAyush17
       <img src="assets/stats/summary-stats.svg" width="95%" alt="Stats Summary" />
     </td>
     <td width="50%" align="center">
-      <img src="assets/stats/summary-productive-time.svg" width="95%" alt="Productive Time" />
+      <img src="assets/stats/summary-productive-time.svg" width="95%" alt="Commits Time Distribution" />
     </td>
   </tr>
 </table>
@@ -164,130 +82,136 @@ $ gh profile-summary --user BhattAyush17
 
 ---
 
-<div align="left">
+# GitHub Stats & Streak
 
-```
-$ git log --graph --oneline --all   # contribution history
-```
+<table width="100%">
+  <tr>
+    <td align="center" valign="top">
+      <b>GitHub Stats</b><br>
+      <img
+        src="./assets/stats/github-stats.svg"
+        height="180"
+        alt="Ayush GitHub Stats"
+      />
+    </td>
+    <td align="center" valign="top">
+      <b>🔥 Current Streak</b><br>
+      <img src="./assets/stats/streak.svg" height="180" alt="Ayush Current Streak" />
+    </td>
+    <td align="center" valign="top">
+      <b>Top Languages</b><br>
+      <img
+        src="./assets/stats/languages.svg"
+        height="180"
+        alt="Top Languages"
+      />
+    </td>
+  </tr>
+</table>
+<br>
+  
 
-</div>
+---
+
+
+
+# GitHub Analytics
 
 <div align="center">
 
-<!-- Snake generated every 12h by .github/workflows/generate-snake.yml (Platane/snk@v3) -->
 <img src="assets/snake/github-contribution-grid-snake-dark.svg" width="100%" alt="Contribution Snake" />
 
 </div>
 
 ---
 
-<div align="left">
-
-```
-$ cat projects/featured.md
-```
-
-</div>
+# Languages Used
 
 <div align="center">
 
-| `repo` | `description` | `lang` | `⭐` | `🍴` |
-|--------|---------------|--------|------|------|
-| [ProPhet_BnB](https://github.com/BhattAyush17/ProPhet_BnB) | Airbnb price prediction | Python | ![](https://img.shields.io/github/stars/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [Lane_Morph](https://github.com/BhattAyush17/Lane_Morph) | Lane detection & morphing | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Lane_Morph?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Lane_Morph?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [Greydge](https://github.com/BhattAyush17/Greydge) | Greyscale image analysis pipeline | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Greydge?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Greydge?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [zavix-animegan-app](https://github.com/BhattAyush17/zavix-animegan-app) | AnimeGAN web app | Python | ![](https://img.shields.io/github/stars/BhattAyush17/zavix-animegan-app?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/zavix-animegan-app?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [Loan-Dash-X](https://github.com/BhattAyush17/Loan-Dash-X) | Loan dashboard application | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [DSA](https://github.com/BhattAyush17/DSA) | Data structures & algorithms | C++ | ![](https://img.shields.io/github/stars/BhattAyush17/DSA?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/DSA?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+![Python](https://img.shields.io/badge/Python-374151?style=for-the-badge&logo=python&logoColor=E5E7EB)
+![C++](https://img.shields.io/badge/C++-374151?style=for-the-badge&logo=cplusplus&logoColor=E5E7EB)
+![Jupyter](https://img.shields.io/badge/Jupyter-374151?style=for-the-badge&logo=jupyter&logoColor=E5E7EB)
+![JavaScript](https://img.shields.io/badge/JavaScript-374151?style=for-the-badge&logo=javascript&logoColor=E5E7EB)
+![HTML5](https://img.shields.io/badge/HTML5-374151?style=for-the-badge&logo=html5&logoColor=E5E7EB)
+![CSS3](https://img.shields.io/badge/CSS3-374151?style=for-the-badge&logo=css3&logoColor=E5E7EB)
+![Shell](https://img.shields.io/badge/Shell-374151?style=for-the-badge&logo=gnu-bash&logoColor=E5E7EB)
 
+</div>
+
+
+
+
+# GitHub Badges & Achievements
+
+<div align="center">
+
+<img src="assets/badges/achievement_pull_shark.png" width="75px" alt="Achievement: Pull Shark" title="Achievement: Pull Shark" /> <img src="assets/badges/achievement_yolo.png" width="75px" alt="Achievement: YOLO" title="Achievement: YOLO" /> <img src="assets/badges/achievement_quickdraw.png" width="75px" alt="Achievement: Quickdraw" title="Achievement: Quickdraw" />
 </div>
 
 ---
 
-<div align="left">
+# Featured Projects
 
-```
-$ gh repo list --pinned BhattAyush17
-```
+| Repository | Description | Language | Stars | Forks |
+|------------|-------------|----------|-------|-------|
+| [ProPhet_BnB](https://github.com/BhattAyush17/ProPhet_BnB) | Airbnb price prediction | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/ProPhet_BnB?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/ProPhet_BnB?style=social) |
+| [Lane_Morph](https://github.com/BhattAyush17/Lane_Morph) | Lane detection & morphing | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Lane_Morph?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Lane_Morph?style=social) |
+| [DSA](https://github.com/BhattAyush17/DSA) | DSA implementations in C and C++ | C++ | ![Stars](https://img.shields.io/github/stars/BhattAyush17/DSA?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/DSA?style=social) |
+| [Greydge](https://github.com/BhattAyush17/Greydge) | Grey-scale image analysis pipeline | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Greydge?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Greydge?style=social) |
+| [zavix-animegan-app](https://github.com/BhattAyush17/zavix-animegan-app) | AnimeGAN web app | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/zavix-animegan-app?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/zavix-animegan-app?style=social) |
+| [Loan-Dash-X](https://github.com/BhattAyush17/Loan-Dash-X) | Loan dashboard application | Python | ![Stars](https://img.shields.io/github/stars/BhattAyush17/Loan-Dash-X?style=social) | ![Forks](https://img.shields.io/github/forks/BhattAyush17/Loan-Dash-X?style=social) |
 
-</div>
+---
+
+# Best Repositories
 
 <div align="center">
 
 <a href="https://github.com/BhattAyush17/AURA_CHAT">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=AURA_CHAT&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=AURA_CHAT&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
+
 <a href="https://github.com/BhattAyush17/ProPhet_BnB">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=ProPhet_BnB&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
+
 <a href="https://github.com/BhattAyush17/Feature_Engineering_SandBox">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Feature_Engineering_SandBox&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Feature_Engineering_SandBox&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
+
 <a href="https://github.com/BhattAyush17/Valora">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Valora&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Valora&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
+
 <a href="https://github.com/BhattAyush17/Loan-Dash-X">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Loan-Dash-X&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=Loan-Dash-X&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
+
 <a href="https://github.com/BhattAyush17/FaunAnalyze">
-  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=FaunAnalyze&theme=github_dark&hide_border=true&title_color=f3f4f6&text_color=9ca3af&icon_color=6b7280&bg_color=0d1117&cache_seconds=1800"/>
+  <img src="https://github-readme-stats-sigma-five.vercel.app/api/pin/?username=BhattAyush17&repo=FaunAnalyze&theme=github_dark&hide_border=true&cache_seconds=1800"/>
 </a>
 
 </div>
 
 ---
 
-<div align="left">
-
-```
-$ gh achievement list --user BhattAyush17
-```
-
-</div>
+# TL;DR
 
 <div align="center">
-
-<img src="assets/badges/achievement_pull_shark.png" width="72px" title="Pull Shark" />
-&nbsp;&nbsp;
-<img src="assets/badges/achievement_yolo.png" width="72px" title="YOLO" />
-&nbsp;&nbsp;
-<img src="assets/badges/achievement_quickdraw.png" width="72px" title="Quickdraw" />
-
-</div>
-
-<div align="left">
-
-```
-$ gh trophy --user BhattAyush17
-```
-
-</div>
-
-<div align="center">
-
-<a href="https://github.com/BhattAyush17">
-  <img src="https://github-profile-trophy.vercel.app/?username=BhattAyush17&theme=onestar&no-frame=true&no-bg=true&margin-w=6&column=7" alt="GitHub Trophies" />
-</a>
-
-</div>
-
----
-
-<div align="center">
-
-```
-$ echo "thanks for visiting — open to collabs that matter."
-```
-
-```
-thanks for visiting — open to collabs that matter.
-```
-
-<br/>
 
 <img
-  src="https://visitor-badge.laobi.icu/badge?page_id=BhattAyush17.BhattAyush17&left_color=1a1a1a&right_color=374151&left_text=visitors"
-  alt="visitors"
+  width="100%"
+  src="https://quotes-github-readme.vercel.app/api?type=horizontal&theme=dark"
 />
 
+</div>
+
+---
+
+<div align="center" style="margin-top: 40px; padding: 20px;">
+  <h3>⭐ Thanks for visiting my profile!</h3>
+  <p style="color: #a1a1aa; font-size: 15px; font-style: italic;">
+    Open to groundbreaking projects and visionary collaborations.
+  </p>
 </div>

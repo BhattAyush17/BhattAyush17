@@ -302,42 +302,89 @@ def make_stats_svg(data: dict) -> None:
         stars = sum(r["stargazerCount"] for r in repos)
         forks = sum(r["forkCount"] for r in repos)
         cc    = user["contributionsCollection"]
+        commits = cc["totalCommitContributions"] + cc.get("restrictedContributionsCount", 0)
+        prs = cc["totalPullRequestContributions"]
+        issues = cc["totalIssueContributions"]
+        followers = user["followers"]["totalCount"]
 
-        # ✅ Log what we're rendering with real numbers for audit trail
-        log.info("Rendering stats with real data: %d stars, %d forks, %d commits", stars, forks, cc["totalCommitContributions"])
+        log.info("Rendering stats with real data: %d stars, %d forks, %d commits", stars, forks, commits)
 
-        fig = plt.figure(figsize=(6, 4), dpi=100)
-        ax  = fig.add_axes([0, 0, 1, 1])
-        ax.axis("off")
-        fig.patch.set_facecolor(BG)
+        svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
+  <style>
+    .title {{ font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
+    .label {{ font: 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+    .value {{ font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
+    .icon {{ fill: #8b949e; }}
+  </style>
+  <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  <text x="25" y="35" class="title">GitHub Stats</text>
+  
+  <g transform="translate(25, 55)">
+    <!-- Stars -->
+    <g transform="translate(0, 0)">
+      <svg class="icon" viewBox="0 0 16 16" width="16" height="16">
+        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
+      </svg>
+      <text x="25" y="12.5" class="label">Total Stars:</text>
+      <text x="130" y="12.5" class="value">{stars}</text>
+    </g>
 
-        ax.add_patch(_rounded_box(ax))
+    <!-- Commits -->
+    <g transform="translate(0, 22)">
+      <svg class="icon" viewBox="0 0 16 16" width="16" height="16">
+        <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
+      </svg>
+      <text x="25" y="12.5" class="label">Total Commits:</text>
+      <text x="130" y="12.5" class="value">{commits}</text>
+    </g>
 
-        items = [
-            ("⭐", "Total Stars",    stars),
-            ("💻", "Total Commits",  cc["totalCommitContributions"] + cc.get("restrictedContributionsCount", 0)),
-            ("🔀", "Pull Requests",  cc["totalPullRequestContributions"]),
-            ("🐛", "Issues Opened",  cc["totalIssueContributions"]),
-            ("🍴", "Total Forks",    forks),
-            ("👥", "Followers",      user["followers"]["totalCount"]),
-        ]
+    <!-- PRs -->
+    <g transform="translate(0, 44)">
+      <svg class="icon" viewBox="0 0 16 16" width="16" height="16">
+        <path fill-rule="evenodd" d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z"/>
+      </svg>
+      <text x="25" y="12.5" class="label">Pull Requests:</text>
+      <text x="130" y="12.5" class="value">{prs}</text>
+    </g>
 
-        y = 0.83
-        for emoji, label, val in items:
-            ax.text(0.08, y, f"{emoji}  {label}:", fontsize=11.5, color=MUTED,   fontfamily="sans-serif")
-            ax.text(0.72, y, str(val),             fontsize=11.5, color=ACCENT,  fontfamily="sans-serif", fontweight="bold", ha="right")
-            y -= 0.135
+    <!-- Issues -->
+    <g transform="translate(0, 66)">
+      <svg class="icon" viewBox="0 0 16 16" width="16" height="16">
+        <path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm9 3a1 1 0 11-2 0 1 1 0 012 0zm-.25-6.25a.75.75 0 00-1.5 0v3.5a.75.75 0 001.5 0v-3.5z"/>
+      </svg>
+      <text x="25" y="12.5" class="label">Issues Opened:</text>
+      <text x="130" y="12.5" class="value">{issues}</text>
+    </g>
 
-        logo = _get_github_logo()
-        if logo:
-            img = plt.imread(str(logo))
-            if img.ndim == 3 and img.shape[2] == 4:
-                img = img.copy(); img[:, :, :3] = 1.0   # white octocat
-            la = fig.add_axes([0.68, 0.30, 0.24, 0.36])
-            la.imshow(img); la.axis("off")
+    <!-- Forks -->
+    <g transform="translate(0, 88)">
+      <svg class="icon" viewBox="0 0 16 16" width="16" height="16">
+        <path fill-rule="evenodd" d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5A2.25 2.25 0 0012.5 6.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zM11 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm-3 9a.75.75 0 100-1.5.75.75 0 000 1.5z"/>
+      </svg>
+      <text x="25" y="12.5" class="label">Total Forks:</text>
+      <text x="130" y="12.5" class="value">{forks}</text>
+    </g>
 
-        _save_svg(fig, out)
-        log.info("✅ github-stats.svg written with real data.")
+    <!-- Followers -->
+    <g transform="translate(0, 110)">
+      <svg class="icon" viewBox="0 0 16 16" width="16" height="16">
+        <path fill-rule="evenodd" d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 100-6 3 3 0 000 6zm-5.784 6A2.24 2.24 0 015 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 005 9c-4 0-5 3-5 4 0 1 1 1 1 1h4.216zM4.5 8a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/>
+      </svg>
+      <text x="25" y="12.5" class="label">Followers:</text>
+      <text x="130" y="12.5" class="value">{followers}</text>
+    </g>
+  </g>
+
+  <!-- GitHub Logo Graphic -->
+  <g transform="translate(290, 42)">
+    <svg width="110" height="110" viewBox="0 0 16 16" style="fill: #30363d; opacity: 0.15;">
+      <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+    </svg>
+  </g>
+</svg>"""
+        ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+        out.write_text(svg_content, encoding="utf-8")
+        log.info("✅ github-stats.svg written with XML template.")
     except Exception as exc:
         log.error("make_stats_svg failed: %s", exc)
         # Only fall back if file doesn't exist or is empty
@@ -351,43 +398,90 @@ def make_languages_svg(data: dict) -> None:
     out = ASSETS_DIR / "languages.svg"
     try:
         repos = data["user"]["repositories"]["nodes"]
-        counts: dict[str, int] = {}
+        lang_data: dict[str, dict] = {}
+        total_repos_with_lang = 0
         for r in repos:
             if r.get("primaryLanguage"):
                 n = r["primaryLanguage"]["name"]
-                counts[n] = counts.get(n, 0) + 1
+                c = r["primaryLanguage"]["color"] or "#8b949e"
+                if n not in lang_data:
+                    lang_data[n] = {"count": 0, "color": c}
+                lang_data[n]["count"] += 1
+                total_repos_with_lang += 1
 
-        # ❌ NEVER invent data — if no real languages detected, skip rendering
-        if not counts:
+        # NEVER invent data — if no real languages detected, skip rendering
+        if not lang_data:
             log.warning("No language data detected in repositories — skipping languages.svg")
             # Keep existing file if it exists; don't replace with fake data
             if not out.exists():
                 _write_minimal_svg(out, "No language data available")
             return
 
-        labels = list(counts)[:6]
-        values = [counts[l] for l in labels]
+        sorted_langs = sorted(lang_data.items(), key=lambda x: x[1]["count"], reverse=True)[:6]
 
-        fig, ax = plt.subplots(figsize=(6, 4), dpi=100)
-        fig.patch.set_facecolor(BG); ax.set_facecolor(CARD)
+        # Calculate percentages
+        languages_list = []
+        for name, info in sorted_langs:
+            pct = (info["count"] / total_repos_with_lang) * 100 if total_repos_with_lang > 0 else 0
+            languages_list.append({
+                "name": name,
+                "color": info["color"],
+                "percentage": pct
+            })
 
-        box = _rounded_box(ax, fig)
-        box.set_transform(fig.transFigure)
-        fig.patches.append(box)
+        # Calculate remainder for Others if needed
+        top_pct_sum = sum(l["percentage"] for l in languages_list)
+        if top_pct_sum < 100.0 and len(lang_data) > 6:
+            languages_list.append({
+                "name": "Others",
+                "color": "#8b949e",
+                "percentage": 100.0 - top_pct_sum
+            })
 
-        wedges, texts, autotexts = ax.pie(
-            values, labels=labels, autopct="%1.0f%%", startangle=90,
-            colors=COLORS[: len(labels)], pctdistance=0.75,
-            textprops={"color": "white", "fontsize": 11, "fontweight": "bold", "fontfamily": "sans-serif"},
-        )
-        for at in autotexts:
-            at.set_color("#111827"); at.set_fontsize(9)
+        svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
+  <style>
+    .title {{ font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
+    .lang-name {{ font: bold 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+    .lang-pct {{ font: 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+  </style>
+  <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  <text x="25" y="35" class="title">Top Languages</text>
+  
+  <!-- Progress Bar -->
+  <clipPath id="bar-clip">
+    <rect x="25" y="55" width="400" height="10" rx="5" />
+  </clipPath>
+  <g clip-path="url(#bar-clip)">
+"""
+        current_x = 25
+        for lang in languages_list:
+            width = 400 * (lang["percentage"] / 100.0)
+            if width > 0:
+                svg_content += f'    <rect x="{current_x:.2f}" y="55" width="{width:.2f}" height="10" fill="{lang["color"]}" />\n'
+                current_x += width
 
-        ax.add_artist(plt.Circle((0, 0), 0.50, fc=CARD, ec=GRID, linewidth=1))
-        ax.axis("equal")
-        plt.tight_layout()
-        _save_svg(fig, out)
-        log.info("✅ languages.svg written with real data: %s", counts)
+        svg_content += """  </g>
+  
+  <!-- Legend Grid -->
+  <g transform="translate(25, 85)">
+"""
+        for i, lang in enumerate(languages_list[:6]):
+            col = i // 3
+            row = i % 3
+            x = col * 200
+            y = row * 24
+            svg_content += f"""    <g transform="translate({x}, {y})">
+      <circle cx="5" cy="8" r="5" fill="{lang["color"]}" />
+      <text x="18" y="12" class="lang-name">{lang["name"]}</text>
+      <text x="110" y="12" class="lang-pct">{lang["percentage"]:.1f}%</text>
+    </g>
+"""
+
+        svg_content += """  </g>
+</svg>"""
+        ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+        out.write_text(svg_content, encoding="utf-8")
+        log.info("✅ languages.svg written with XML template.")
     except Exception as exc:
         log.error("make_languages_svg failed: %s", exc)
         # Only fall back if file doesn't exist or is empty
@@ -406,22 +500,46 @@ def make_streak_svg(data: dict) -> None:
 
         log.info("Rendering streak with real data: current=%d, longest=%d, total=%d", current, longest, total)
 
-        fig, ax = plt.subplots(figsize=(7, 4), dpi=100)
-        fig.patch.set_facecolor(BG); ax.set_facecolor(CARD); ax.axis("off")
-
-        ax.add_patch(FancyBboxPatch((0.05, 0.05), 0.9, 0.9, boxstyle="round,pad=0.02",
-                                    linewidth=1.2, edgecolor=GRID, facecolor=CARD))
-
-        ax.text(0.5, 0.84, "🔥 Current Streak", color=TEXT, fontsize=17, ha="center")
-        ax.text(0.5, 0.55, str(current),         color=ACCENT, fontsize=36, ha="center", fontweight="bold")
-        ax.text(0.5, 0.40, "days",               color=MUTED, fontsize=12, ha="center")
-        ax.text(0.5, 0.24, f"Longest Streak : {longest}", color=TEXT, fontsize=11, ha="center")
-        ax.text(0.5, 0.10, f"Total Contributions : {total}", color=MUTED, fontsize=9, ha="center")
-
-        _save_svg(fig, out)
+        svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
+  <style>
+    .title {{ font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
+    .label {{ font: 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+    .value {{ font: bold 36px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
+    .unit {{ font: 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+    .stat-label {{ font: 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+    .stat-val {{ font: bold 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+    .icon {{ fill: #f59e0b; }}
+  </style>
+  <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  
+  <!-- Title with Fire Icon -->
+  <g transform="translate(25, 35)">
+    <svg class="icon" viewBox="0 0 16 16" width="20" height="20" style="vertical-align: middle;">
+      <path fill-rule="evenodd" d="M8.618.067a.75.75 0 00-.736.035C6.096 1.34 4 3.758 4 6.5c0 2.373 1.272 4.316 2.977 5.253C6.398 12.016 6 12.656 6 13.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5c0-.844-.398-1.484-.977-1.747 1.705-.937 2.977-2.88 2.977-5.253 0-2.742-2.096-5.16-3.882-6.398a.75.75 0 00-.502-.135zM8.5 14.5c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1"/>
+    </svg>
+    <text x="28" y="16" class="title">Current Streak</text>
+  </g>
+  
+  <!-- Big Streak Counter -->
+  <g transform="translate(225, 95)" text-anchor="middle">
+    <text class="value">{current}</text>
+    <text y="22" class="unit">days</text>
+  </g>
+  
+  <!-- Stats Footer -->
+  <g transform="translate(25, 155)">
+    <text class="stat-label">Longest Streak:</text>
+    <text x="110" class="stat-val">{longest} days</text>
+    
+    <text x="220" class="stat-label">Total Contributions:</text>
+    <text x="350" class="stat-val">{total}</text>
+  </g>
+</svg>"""
+        ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+        out.write_text(svg_content, encoding="utf-8")
         # Also write to assets/streak/ for legacy path used in README
-        (Path("assets/streak") / "streak.svg").write_text(out.read_text("utf-8"), encoding="utf-8")
-        log.info("✅ streak.svg written with real data.")
+        (Path("assets/streak") / "streak.svg").write_text(svg_content, encoding="utf-8")
+        log.info("✅ streak.svg written with XML template.")
     except Exception as exc:
         log.error("make_streak_svg failed: %s", exc)
         # Only fall back if file doesn't exist or is empty
@@ -493,52 +611,6 @@ def make_graph_svg(data: dict) -> None:
             log.info("Keeping existing contribution-graph.svg (error during re-render, but old file is valid)")
 
 
-# ─── Monochrome post-processor ────────────────────────────────────────────────
-def _apply_monochrome(svg_text: str) -> str:
-    """Inject an SVG grayscale filter into a downloaded SVG, wrapping all content."""
-    try:
-        from lxml import etree
-        NS = "http://www.w3.org/2000/svg"
-        root = etree.fromstring(svg_text.encode("utf-8"))
-
-        # Ensure <defs> exists at position 0
-        defs = root.find(f"{{{NS}}}defs")
-        if defs is None:
-            defs = etree.Element(f"{{{NS}}}defs")
-            root.insert(0, defs)
-
-        # Add luminance-weighted grayscale feColorMatrix filter
-        filt = etree.SubElement(defs, f"{{{NS}}}filter")
-        filt.set("id", "mono")
-        filt.set("x", "0")
-        filt.set("y", "0")
-        filt.set("width", "100%")
-        filt.set("height", "100%")
-        matrix = etree.SubElement(filt, f"{{{NS}}}feColorMatrix")
-        matrix.set("type", "matrix")
-        matrix.set("values",
-            "0.299 0.587 0.114 0 0 "
-            "0.299 0.587 0.114 0 0 "
-            "0.299 0.587 0.114 0 0 "
-            "0     0     0     1 0")
-
-        # Wrap all non-defs children in a <g filter="url(#mono)">
-        children = [c for c in root if c.tag != f"{{{NS}}}defs"]
-        if children:
-            g = etree.Element(f"{{{NS}}}g")
-            g.set("filter", "url(#mono)")
-            first_idx = list(root).index(children[0])
-            root.insert(first_idx, g)
-            for child in children:
-                root.remove(child)
-                g.append(child)
-
-        return etree.tostring(root, encoding="unicode", xml_declaration=False)
-    except Exception as exc:
-        log.warning("Monochrome conversion failed: %s — returning original SVG.", exc)
-        return svg_text
-
-
 def download_summary_cards() -> None:
     """Download GitHub Profile Summary Cards from Vercel; keep existing file on failure (never invent)."""
     cards = {
@@ -558,8 +630,8 @@ def download_summary_cards() -> None:
                 r'\g<1>#ffffff',
                 r.text,
             )
-            dest.write_text(_apply_monochrome(svg), encoding="utf-8")
-            log.info("✅ %s downloaded and converted to monochrome.", fname)
+            dest.write_text(svg, encoding="utf-8")
+            log.info("✅ %s downloaded (real Vercel data).", fname)
         except Exception as exc:
             if dest.exists():
                 log.warning("Download failed for %s: %s — keeping existing file (will retry next cycle).", fname, exc)
