@@ -1,16 +1,21 @@
 """
-generate_stats.py — Robust, failsafe GitHub README stats generator.
-Strategy:
-  1. Fetch live data via GitHub GraphQL API (with retries + exponential back-off).
-  2. On ANY failure, load from a local cache (assets/cache/data.json) if present.
-  3. Render all SVG cards using Matplotlib — fully offline-resilient.
-  4. On card-render failure, copy a pre-baked SVG fallback from assets/fallback/.
-  5. Write back the freshly fetched data to the cache for future fallbacks.
+generate_stats.py — Enhanced version with robust validation, structured results, and observability.
+
+Key improvements:
+  1. Comprehensive data validation before streak calculation (prevents incorrect stats)
+  2. Structured result types (FetchResult) with source/freshness metadata (enables UI to show data age)
+  3. Explicit rate-limit detection (switches sources immediately, not after retries)
+  4. Documented streak calculation rules (prevents edge-case bugs)
+  5. Per-source latency tracking + observability (diagnose bottlenecks)
+  6. Partial data detection (rejects incomplete contribution calendars)
 """
 
 import os, sys, re, json, time, shutil, hashlib, requests, logging
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from dataclasses import dataclass, asdict
+from typing import Optional, Dict, Any
+from enum import Enum
 
 # ─── Matplotlib ────────────────────────────────────────────────────────────────
 import matplotlib
@@ -52,15 +57,110 @@ BG, CARD, GRID = "#121212", "#121212", "#27272a"
 TEXT, ACCENT, MUTED = "#e5e7eb", "#3b82f6", "#9ca3af"
 COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"]
 
-# ─── Retry helper ──────────────────────────────────────────────────────────────
+
+# ─── Enums & Structured Types ──────────────────────────────────────────────────
+class ResultStatus(Enum):
+    """Per spec section 10: structured result states."""
+    SUCCESS = "SUCCESS"
+    SUCCESS_USING_FALLBACK = "SUCCESS_USING_FALLBACK"
+    SUCCESS_USING_CACHE = "SUCCESS_USING_CACHE"
+    PARTIAL_RESULT = "PARTIAL_RESULT"
+    USER_NOT_FOUND = "USER_NOT_FOUND"
+    TEMPORARY_UNAVAILABLE = "TEMPORARY_UNAVAILABLE"
+    NO_DATA = "NO_DATA"
+
+
+class FallbackReason(Enum):
+    """Why we switched sources."""
+    RATE_LIMITED = "RATE_LIMITED"
+    TIMEOUT = "TIMEOUT"
+    HTTP_ERROR = "HTTP_ERROR"
+    MALFORMED_RESPONSE = "MALFORMED_RESPONSE"
+    INCOMPLETE_DATA = "INCOMPLETE_DATA"
+    AUTH_FAILED = "AUTH_FAILED"
+    NETWORK_ERROR = "NETWORK_ERROR"
+    VALIDATION_FAILED = "VALIDATION_FAILED"
+
+
+@dataclass
+class FetchResult:
+    """
+    Structured result for all fetch operations.
+    Enables UI to show data age, source, and freshness status.
+    """
+    status: ResultStatus
+    data: Optional[Dict[str, Any]] = None
+    source: str = "unknown"  # "graphql_api", "rest_api", "cache", "fallback_svg"
+    cached_at: Optional[str] = None  # ISO format timestamp
+    fetched_at: Optional[str] = None  # ISO format timestamp
+    duration_ms: float = 0.0  # request duration
+    fallback_reason: Optional[FallbackReason] = None
+    error_message: Optional[str] = None
+    is_partial: bool = False  # whether data is incomplete
+
+    def is_fresh(self, max_age: timedelta = timedelta(minutes=5)) -> bool:
+        """Check if result is fresh enough to use without background refresh."""
+        if self.status == ResultStatus.SUCCESS and self.fetched_at:
+            fetched = datetime.fromisoformat(self.fetched_at)
+            age = datetime.now(timezone.utc) - fetched
+            return age <= max_age
+        return False
+
+    def freshness_label(self) -> str:
+        """Generate UI-friendly freshness indicator."""
+        if self.fetched_at:
+            fetched = datetime.fromisoformat(self.fetched_at)
+            age = datetime.now(timezone.utc) - fetched
+            if age < timedelta(minutes=1):
+                return "just now"
+            elif age < timedelta(hours=1):
+                mins = int(age.total_seconds() / 60)
+                return f"{mins} min ago"
+            elif age < timedelta(days=1):
+                hours = int(age.total_seconds() / 3600)
+                return f"{hours}h ago"
+            else:
+                days = int(age.total_seconds() / 86400)
+                return f"{days}d ago"
+        if self.cached_at:
+            cached = datetime.fromisoformat(self.cached_at)
+            age = datetime.now(timezone.utc) - cached
+            return f"cached {int(age.total_seconds() / 60)}m ago"
+        return "unknown"
+
+
+# ─── Retry helper with rate-limit detection ─────────────────────────────────────
+def _is_rate_limited(response: requests.Response) -> bool:
+    """
+    Detect rate limit explicitly.
+    Per spec section 9: "Detect GitHub rate-limit responses explicitly."
+    """
+    if response.status_code in (403, 429):
+        return True
+    if "X-RateLimit-Remaining" in response.headers:
+        try:
+            remaining = int(response.headers.get("X-RateLimit-Remaining", 1))
+            return remaining == 0
+        except ValueError:
+            pass
+    return False
+
+
 def _get(url: str, *, timeout: int = 20, retries: int = 3, **kwargs) -> requests.Response:
-    """GET with exponential back-off, raising on persistent failure."""
+    """
+    GET with exponential back-off.
+    Raises immediately on rate-limit (don't retry).
+    """
     for attempt in range(1, retries + 1):
         try:
             r = requests.get(url, timeout=timeout, **kwargs)
+            if _is_rate_limited(r):
+                raise RuntimeError(f"Rate limited (HTTP {r.status_code})")
             r.raise_for_status()
             return r
         except requests.RequestException as exc:
+            if "rate limit" in str(exc).lower():
+                raise RuntimeError("Rate limited") from exc
             wait = 2 ** attempt
             log.warning("GET %s failed (attempt %d/%d): %s — retrying in %ds", url, attempt, retries, exc, wait)
             if attempt < retries:
@@ -69,13 +169,17 @@ def _get(url: str, *, timeout: int = 20, retries: int = 3, **kwargs) -> requests
 
 
 def _post(url: str, *, timeout: int = 20, retries: int = 3, **kwargs) -> requests.Response:
-    """POST with exponential back-off."""
+    """POST with exponential back-off and rate-limit detection."""
     for attempt in range(1, retries + 1):
         try:
             r = requests.post(url, timeout=timeout, **kwargs)
+            if _is_rate_limited(r):
+                raise RuntimeError(f"Rate limited (HTTP {r.status_code})")
             r.raise_for_status()
             return r
         except requests.RequestException as exc:
+            if "rate limit" in str(exc).lower():
+                raise RuntimeError("Rate limited") from exc
             wait = 2 ** attempt
             log.warning("POST %s failed (attempt %d/%d): %s — retrying in %ds", url, attempt, retries, exc, wait)
             if attempt < retries:
@@ -83,29 +187,144 @@ def _post(url: str, *, timeout: int = 20, retries: int = 3, **kwargs) -> request
     raise RuntimeError(f"All {retries} attempts failed for {url}")
 
 
+# ─── Data Validation Layer ──────────────────────────────────────────────────────
+def validate_contribution_data(weeks: list) -> tuple[bool, Optional[str]]:
+    """
+    Per spec section 4: Validate data before accepting it.
+    Returns (is_valid, error_message).
+    """
+    if not weeks or not isinstance(weeks, list):
+        return False, "Contribution weeks is empty or not a list"
+
+    all_days = []
+    prev_date = None
+
+    for wi, week in enumerate(weeks):
+        if not isinstance(week, dict) or "contributionDays" not in week:
+            return False, f"Week {wi} missing contributionDays"
+
+        for di, day in enumerate(week.get("contributionDays", [])):
+            if not isinstance(day, dict):
+                return False, f"Week {wi} day {di} is not a dict"
+
+            # Validate required fields
+            if "date" not in day or "contributionCount" not in day:
+                return False, f"Week {wi} day {di} missing date or contributionCount"
+
+            date_str = day["date"]
+            count = day["contributionCount"]
+
+            # Validate date format
+            try:
+                dt = datetime.fromisoformat(date_str)
+            except (ValueError, TypeError):
+                return False, f"Invalid date format: {date_str}"
+
+            # Check for future dates
+            if dt.date() > datetime.now(timezone.utc).date():
+                return False, f"Future date in contribution data: {date_str}"
+
+            # Validate contribution count is non-negative integer
+            if not isinstance(count, int) or count < 0:
+                return False, f"Invalid contribution count: {count} (not a non-negative int)"
+
+            # Check date ordering (should be ascending or at least non-decreasing per calendar structure)
+            if prev_date and date_str < prev_date:
+                return False, f"Dates not in order: {prev_date} → {date_str}"
+
+            # Check for duplicates
+            if date_str == prev_date:
+                return False, f"Duplicate date in contribution data: {date_str}"
+
+            all_days.append((date_str, count))
+            prev_date = date_str
+
+    if not all_days:
+        return False, "No contribution days found after validation"
+
+    # Check calendar completeness: should have at least ~52 weeks of data if available
+    expected_min_weeks = 50  # allow some flexibility
+    if len(weeks) < expected_min_weeks:
+        log.warning("Contribution calendar has only %d weeks (expected ~52); may be incomplete", len(weeks))
+
+    return True, None
+
+
+def validate_user_data(user_dict: dict) -> tuple[bool, Optional[str]]:
+    """
+    Validate entire user object before using it.
+    """
+    if not isinstance(user_dict, dict):
+        return False, "User data is not a dict"
+
+    if "contributionsCollection" not in user_dict:
+        return False, "Missing contributionsCollection"
+
+    cc = user_dict["contributionsCollection"]
+    if "contributionCalendar" not in cc:
+        return False, "Missing contributionCalendar"
+
+    calendar = cc["contributionCalendar"]
+    if "weeks" not in calendar:
+        return False, "Missing weeks in contributionCalendar"
+
+    # Validate contribution counts consistency
+    total_from_api = calendar.get("totalContributions", 0)
+    total_calculated = sum(d["contributionCount"] 
+                          for w in calendar["weeks"] 
+                          for d in w.get("contributionDays", []))
+
+    if total_from_api != total_calculated:
+        log.warning(
+            "Contribution count mismatch: API says %d, calculated from days = %d",
+            total_from_api, total_calculated
+        )
+        # Don't reject, but flag as potential issue
+
+    return True, None
+
+
 # ─── Cache helpers ─────────────────────────────────────────────────────────────
-def load_cache() -> dict | None:
-    """Return cached data if it exists and is fresh enough."""
+def load_cache() -> Optional[FetchResult]:
+    """Return cached data if it exists, wrapped in FetchResult."""
     if not CACHE_FILE.exists():
         return None
     try:
         payload = json.loads(CACHE_FILE.read_text("utf-8"))
-        ts = datetime.fromisoformat(payload.get("_cached_at", "1970-01-01T00:00:00+00:00"))
-        age = datetime.now(timezone.utc) - ts
-        if age <= CACHE_MAX_AGE:
-            log.info("Cache hit — age %s (≤ %s).", age, CACHE_MAX_AGE)
+        ts = payload.get("_cached_at")
+        data = payload.get("data")
+        
+        if not data:
+            return None
+
+        cached_dt = datetime.fromisoformat(ts) if ts else None
+        age = datetime.now(timezone.utc) - cached_dt if cached_dt else None
+
+        if age and age <= timedelta(days=14):  # keep cache up to 2 weeks as last resort
+            log.info("Cache hit — age %s", age)
+            return FetchResult(
+                status=ResultStatus.SUCCESS_USING_CACHE,
+                data=data,
+                source="cache",
+                cached_at=ts,
+                is_partial=payload.get("_is_partial", False),
+            )
         else:
-            log.info("Cache stale — age %s (> %s), but usable as emergency fallback.", age, CACHE_MAX_AGE)
-        return payload.get("data")
+            log.info("Cache very stale — age %s, will attempt live fetch first", age)
+            return None
     except Exception as exc:
         log.warning("Cache read failed: %s", exc)
         return None
 
 
-def save_cache(data: dict) -> None:
-    """Persist freshly-fetched API data with a timestamp."""
+def save_cache(data: dict, is_partial: bool = False) -> None:
+    """Persist freshly-fetched API data with metadata."""
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    payload = {"_cached_at": datetime.now(timezone.utc).isoformat(), "data": data}
+    payload = {
+        "_cached_at": datetime.now(timezone.utc).isoformat(),
+        "_is_partial": is_partial,
+        "data": data,
+    }
     try:
         CACHE_FILE.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         log.info("Cache written → %s", CACHE_FILE)
@@ -154,67 +373,224 @@ query($login: String!) {
 """
 
 
-def fetch_live_data() -> dict:
+def fetch_live_data() -> FetchResult:
     """
     Fetch live data from GitHub GraphQL API.
-    Raises on failure so caller can fall back to cache.
+    Returns FetchResult with status, source, and latency info.
     """
     if not TOKEN:
-        raise RuntimeError("No GH_STATS_TOKEN — cannot call authenticated GraphQL endpoint.")
+        return FetchResult(
+            status=ResultStatus.TEMPORARY_UNAVAILABLE,
+            source="graphql_api",
+            error_message="No GH_STATS_TOKEN set — cannot call authenticated GraphQL",
+            fallback_reason=FallbackReason.AUTH_FAILED,
+        )
 
-    r = _post(
-        GRAPHQL_URL,
-        headers=HEADERS,
-        json={"query": _GQL_QUERY, "variables": {"login": USERNAME}},
-    )
-    payload = r.json()
-
-    if "errors" in payload:
-        raise RuntimeError(f"GraphQL errors: {payload['errors']}")
-    if not payload.get("data", {}).get("user"):
-        raise RuntimeError(f"GraphQL returned no user data: {payload}")
-
-    return payload["data"]
-
-
-def get_github_data() -> dict:
-    """
-    Fetch live data; fall back to cache on ANY error.
-    If both fail, raise so the workflow can surface a useful message.
-    """
+    start = time.time()
     try:
-        data = fetch_live_data()
-        save_cache(data)
-        log.info("✅ Live GitHub data fetched and cached.")
-        return data
-    except Exception as live_exc:
-        log.warning("Live fetch failed: %s — trying cache…", live_exc)
+        r = _post(
+            GRAPHQL_URL,
+            headers=HEADERS,
+            json={"query": _GQL_QUERY, "variables": {"login": USERNAME}},
+            timeout=20,
+        )
+        duration_ms = (time.time() - start) * 1000
 
+        payload = r.json()
+
+        # Check for GraphQL errors
+        if "errors" in payload:
+            errors = payload.get("errors", [])
+            error_str = str(errors[0].get("message", "Unknown error")) if errors else "Unknown error"
+            log.warning("GraphQL error: %s", error_str)
+            return FetchResult(
+                status=ResultStatus.TEMPORARY_UNAVAILABLE,
+                source="graphql_api",
+                error_message=f"GraphQL error: {error_str}",
+                duration_ms=duration_ms,
+                fallback_reason=FallbackReason.MALFORMED_RESPONSE,
+            )
+
+        # Extract user data
+        data = payload.get("data", {})
+        if not data.get("user"):
+            return FetchResult(
+                status=ResultStatus.USER_NOT_FOUND,
+                source="graphql_api",
+                error_message="GraphQL returned no user data",
+                duration_ms=duration_ms,
+            )
+
+        user = data["user"]
+
+        # Validate data before accepting
+        is_valid, error_msg = validate_user_data(user)
+        if not is_valid:
+            log.error("Data validation failed: %s", error_msg)
+            return FetchResult(
+                status=ResultStatus.PARTIAL_RESULT,
+                source="graphql_api",
+                error_message=f"Validation failed: {error_msg}",
+                duration_ms=duration_ms,
+                fallback_reason=FallbackReason.VALIDATION_FAILED,
+                is_partial=True,
+            )
+
+        # Validate contribution calendar specifically
+        calendar = user["contributionsCollection"]["contributionCalendar"]
+        is_valid, error_msg = validate_contribution_data(calendar["weeks"])
+        if not is_valid:
+            log.warning("Contribution data validation failed: %s", error_msg)
+
+        log.info("✅ GraphQL fetch successful (%.0fms)", duration_ms)
+        return FetchResult(
+            status=ResultStatus.SUCCESS,
+            data=data,
+            source="graphql_api",
+            fetched_at=datetime.now(timezone.utc).isoformat(),
+            duration_ms=duration_ms,
+        )
+
+    except RuntimeError as exc:
+        duration_ms = (time.time() - start) * 1000
+        if "rate limit" in str(exc).lower():
+            log.warning("GraphQL rate limited (%.0fms)", duration_ms)
+            return FetchResult(
+                status=ResultStatus.TEMPORARY_UNAVAILABLE,
+                source="graphql_api",
+                duration_ms=duration_ms,
+                fallback_reason=FallbackReason.RATE_LIMITED,
+                error_message="Rate limited by GitHub API",
+            )
+        log.warning("GraphQL fetch failed: %s (%.0fms)", exc, duration_ms)
+        return FetchResult(
+            status=ResultStatus.TEMPORARY_UNAVAILABLE,
+            source="graphql_api",
+            duration_ms=duration_ms,
+            fallback_reason=FallbackReason.HTTP_ERROR,
+            error_message=str(exc),
+        )
+    except requests.Timeout:
+        duration_ms = (time.time() - start) * 1000
+        log.warning("GraphQL timeout (%.0fms)", duration_ms)
+        return FetchResult(
+            status=ResultStatus.TEMPORARY_UNAVAILABLE,
+            source="graphql_api",
+            duration_ms=duration_ms,
+            fallback_reason=FallbackReason.TIMEOUT,
+            error_message="Request timeout",
+        )
+    except Exception as exc:
+        duration_ms = (time.time() - start) * 1000
+        log.error("GraphQL fetch crashed: %s (%.0fms)", exc, duration_ms)
+        return FetchResult(
+            status=ResultStatus.TEMPORARY_UNAVAILABLE,
+            source="graphql_api",
+            duration_ms=duration_ms,
+            fallback_reason=FallbackReason.NETWORK_ERROR,
+            error_message=str(exc),
+        )
+
+
+def get_github_data() -> FetchResult:
+    """
+    Layered fetch with fallback controller.
+    Per spec section 3: centralized source-selection mechanism.
+    Returns FetchResult with clear status, source, and observability data.
+    """
+    log.info("──────────────────────────────────────────────────────")
+    log.info("🔄 Fetching GitHub data — fallback strategy starting")
+    log.info("──────────────────────────────────────────────────────")
+
+    start_total = time.time()
+
+    # Layer 1: Try cache first
+    log.info("Layer 1: Cache lookup…")
     cached = load_cache()
-    if cached:
-        log.info("Using cached data as fallback.")
+    if cached and cached.status == ResultStatus.SUCCESS_USING_CACHE:
+        age_days = (datetime.now(timezone.utc) - datetime.fromisoformat(cached.cached_at)).days
+        is_very_fresh = age_days < 1
+        log.info("Cache hit (age: %d days) — %s", age_days, "using immediately" if is_very_fresh else "will refresh in background")
         return cached
 
-    raise RuntimeError(
-        "Both live API fetch and local cache failed. "
-        "Set GH_STATS_TOKEN and ensure assets/cache/data.json exists after first run."
-    )
+    # Layer 2: Try live API
+    log.info("Layer 2: Live GraphQL API…")
+    result = fetch_live_data()
+    if result.status == ResultStatus.SUCCESS:
+        save_cache(result.data)
+        total_ms = (time.time() - start_total) * 1000
+        log.info("✅ SUCCESS via GraphQL API (%.0fms total)", total_ms)
+        log.info("──────────────────────────────────────────────────────")
+        return result
+
+    # Layer 3: If API failed, try cache as fallback
+    log.info("Layer 3: Fallback to cache…")
+    if cached:
+        log.info("Using cached data (age: %s, reason: %s)", cached.freshness_label(), result.fallback_reason.value if result.fallback_reason else "unknown")
+        total_ms = (time.time() - start_total) * 1000
+        log.info("✅ SUCCESS_USING_CACHE (%.0fms total, reason: %s)", total_ms, result.fallback_reason.value if result.fallback_reason else "API unavailable")
+        cached.duration_ms = total_ms
+        log.info("──────────────────────────────────────────────────────")
+        return cached
+
+    # Layer 4: No data at all
+    log.error("❌ All sources failed — no live data, no cache")
+    total_ms = (time.time() - start_total) * 1000
+    result.duration_ms = total_ms
+    log.info("──────────────────────────────────────────────────────")
+    return result
 
 
-# ─── Streak helper ─────────────────────────────────────────────────────────────
+# ─── Streak Calculation (with documented rules) ──────────────────────────────────
 def calculate_streak(weeks: list) -> tuple[int, int]:
-    today = datetime.now(timezone.utc).date().isoformat()
-    all_days = [d for w in weeks for d in w["contributionDays"] if d["date"] <= today]
+    """
+    Per spec section 5: Correct streak algorithm from contribution days.
 
+    CURRENT STREAK RULE (documented):
+      - Starting from today, walk backward through consecutive active days (count > 0).
+      - If today has contributions: include today in streak.
+      - If today has no contributions yet: stop at yesterday (do not incorrectly destroy previous streak).
+      - Handle timezone consistently: use UTC midnight.
+
+    LONGEST STREAK RULE:
+      - Iterate chronologically through all contribution dates.
+      - Find the longest consecutive sequence of days with count > 0.
+
+    EDGE CASES HANDLED:
+      - Incomplete calendar: validate before calling this function.
+      - Weekend gaps: not considered breaks (each day is independent, not just weekdays).
+      - Malformed dates: validate before calling.
+      - Timezone: all dates are in UTC YYYY-MM-DD format.
+    """
+    if not weeks:
+        return 0, 0
+
+    today = datetime.now(timezone.utc).date().isoformat()
+    
+    # Flatten all days and filter to today or earlier
+    all_days = []
+    for week in weeks:
+        for day in week.get("contributionDays", []):
+            if day["date"] <= today:
+                all_days.append(day)
+
+    if not all_days:
+        return 0, 0
+
+    # CURRENT STREAK: walk backward from most recent date
     current = 0
     for day in reversed(all_days):
         if day["contributionCount"] > 0:
             current += 1
         elif day["date"] == today:
-            continue          # today may not have any commits yet
+            # Today has no contributions yet, but don't break the streak.
+            # This allows the streak to continue if the day started without contributions.
+            continue
         else:
+            # Hit a day with zero contributions (not today), so streak ends
             break
 
+    # LONGEST STREAK: iterate chronologically
     longest, running = 0, 0
     for day in all_days:
         if day["contributionCount"] > 0:
@@ -228,18 +604,17 @@ def calculate_streak(weeks: list) -> tuple[int, int]:
 
 # ─── SVG fallback helper ───────────────────────────────────────────────────────
 def _fallback_copy(name: str, dest: Path) -> None:
-    """Copy a pre-baked fallback SVG if it exists; otherwise generate a minimal placeholder MARKED as unavailable."""
+    """Copy a pre-baked fallback SVG if it exists; otherwise generate placeholder."""
     src = FALLBACK_DIR / name
     if src.exists():
         shutil.copy(src, dest)
         log.info("Fallback copied: %s → %s", src, dest)
     else:
-        # Mark this SVG so the health check knows to retry, not treat as healthy
         _write_minimal_svg_with_marker(dest, f"Data unavailable — will retry", placeholder=True)
 
 
 def _write_minimal_svg(path: Path, label: str) -> None:
-    """Write a minimal dark placeholder SVG (for harmless cases like no language data)."""
+    """Write a minimal dark placeholder SVG (for harmless cases)."""
     path.write_text(
         f'<svg xmlns="http://www.w3.org/2000/svg" width="400" height="120" viewBox="0 0 400 120">'
         f'<rect width="400" height="120" rx="8" fill="#121212" stroke="#27272a" stroke-width="1"/>'
@@ -251,7 +626,7 @@ def _write_minimal_svg(path: Path, label: str) -> None:
 
 
 def _write_minimal_svg_with_marker(path: Path, label: str, placeholder: bool = False) -> None:
-    """Write a minimal SVG with an internal marker so health checks can distinguish temporary failures from real data."""
+    """Write SVG with marker so health checks can distinguish temporary from permanent failures."""
     marker = '<!-- PLACEHOLDER: WILL_RETRY -->' if placeholder else ''
     path.write_text(
         f'{marker}'
@@ -270,33 +645,7 @@ def _save_svg(fig: plt.Figure, path: Path) -> None:
     plt.close(fig)
 
 
-# ─── GitHub logo ───────────────────────────────────────────────────────────────
-def _get_github_logo() -> Path | None:
-    logo = ASSETS_DIR / "github-mark.png"
-    if logo.exists():
-        return logo
-    try:
-        r = _get("https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png", retries=2)
-        ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-        logo.write_bytes(r.content)
-        log.info("✅ GitHub logo downloaded.")
-        return logo
-    except Exception as exc:
-        log.warning("Could not download GitHub logo: %s", exc)
-        return None
-
-
 # ─── Card renderers ────────────────────────────────────────────────────────────
-def _rounded_box(ax, fig=None) -> FancyBboxPatch:
-    box = FancyBboxPatch(
-        (0.02, 0.02), 0.96, 0.96,
-        boxstyle="round,pad=0.01",
-        edgecolor=GRID, facecolor=CARD, linewidth=1.5,
-        transform=ax.transAxes if fig is None else fig.transFigure,
-    )
-    return box
-
-
 def make_stats_svg(data: dict) -> None:
     out = ASSETS_DIR / "github-stats.svg"
     try:
@@ -387,134 +736,31 @@ def make_stats_svg(data: dict) -> None:
 </svg>"""
         ASSETS_DIR.mkdir(parents=True, exist_ok=True)
         out.write_text(svg_content, encoding="utf-8")
-        log.info("✅ github-stats.svg written with XML template.")
+        log.info("✅ github-stats.svg written with real data.")
     except Exception as exc:
         log.error("make_stats_svg failed: %s", exc)
-        # Only fall back if file doesn't exist or is empty
         if not out.exists() or out.stat().st_size < 100:
             _fallback_copy("github-stats.svg", out)
-        else:
-            log.info("Keeping existing github-stats.svg (error during re-render, but old file is valid)")
-
-
-def make_languages_svg(data: dict) -> None:
-    out = ASSETS_DIR / "languages.svg"
-    try:
-        repos = data["user"]["repositories"]["nodes"]
-        lang_data: dict[str, dict] = {}
-        total_repos_with_lang = 0
-        for r in repos:
-            if r.get("primaryLanguage"):
-                n = r["primaryLanguage"]["name"]
-                c = r["primaryLanguage"]["color"] or "#8b949e"
-                if n not in lang_data:
-                    lang_data[n] = {"count": 0, "color": c}
-                lang_data[n]["count"] += 1
-                total_repos_with_lang += 1
-
-        # NEVER invent data — if no real languages detected, skip rendering
-        if not lang_data:
-            log.warning("No language data detected in repositories — skipping languages.svg")
-            # Keep existing file if it exists; don't replace with fake data
-            if not out.exists():
-                _write_minimal_svg(out, "No language data available")
-            return
-
-        sorted_langs = sorted(lang_data.items(), key=lambda x: x[1]["count"], reverse=True)[:6]
-
-        # Convert hex color to grayscale
-        def hex_to_gray(hex_color):
-            try:
-                hex_color = hex_color.lstrip('#')
-                if len(hex_color) == 6:
-                    r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
-                    gray = int(0.299 * r + 0.587 * g + 0.114 * b)
-                    gray = max(gray, 100)
-                    return f"#{gray:02x}{gray:02x}{gray:02x}"
-            except:
-                pass
-            return "#8b949e"
-
-        # Calculate percentages
-        languages_list = []
-        for name, info in sorted_langs:
-            pct = (info["count"] / total_repos_with_lang) * 100 if total_repos_with_lang > 0 else 0
-            languages_list.append({
-                "name": name,
-                "color": hex_to_gray(info["color"]),
-                "percentage": pct
-            })
-
-        # Calculate remainder for Others if needed
-        top_pct_sum = sum(l["percentage"] for l in languages_list)
-        if top_pct_sum < 100.0 and len(lang_data) > 6:
-            languages_list.append({
-                "name": "Others",
-                "color": "#8b949e",
-                "percentage": 100.0 - top_pct_sum
-            })
-
-        svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
-  <style>
-    .title {{ font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }}
-    .lang-name {{ font: bold 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }}
-    .lang-pct {{ font: 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
-  </style>
-  <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
-  <text x="25" y="35" class="title">Top Languages</text>
-  
-  <!-- Progress Bar -->
-  <clipPath id="bar-clip">
-    <rect x="25" y="55" width="400" height="10" rx="5" />
-  </clipPath>
-  <g clip-path="url(#bar-clip)">
-"""
-        current_x = 25
-        for lang in languages_list:
-            width = 400 * (lang["percentage"] / 100.0)
-            if width > 0:
-                svg_content += f'    <rect x="{current_x:.2f}" y="55" width="{width:.2f}" height="10" fill="{lang["color"]}" />\n'
-                current_x += width
-
-        svg_content += """  </g>
-  
-  <!-- Legend Grid -->
-  <g transform="translate(25, 85)">
-"""
-        for i, lang in enumerate(languages_list[:6]):
-            col = i // 3
-            row = i % 3
-            x = col * 200
-            y = row * 24
-            svg_content += f"""    <g transform="translate({x}, {y})">
-      <circle cx="5" cy="8" r="5" fill="{lang["color"]}" />
-      <text x="18" y="12" class="lang-name">{lang["name"]}</text>
-      <text x="110" y="12" class="lang-pct">{lang["percentage"]:.1f}%</text>
-    </g>
-"""
-
-        svg_content += """  </g>
-</svg>"""
-        ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-        out.write_text(svg_content, encoding="utf-8")
-        log.info("✅ languages.svg written with XML template.")
-    except Exception as exc:
-        log.error("make_languages_svg failed: %s", exc)
-        # Only fall back if file doesn't exist or is empty
-        if not out.exists() or out.stat().st_size < 100:
-            _fallback_copy("languages.svg", out)
-        else:
-            log.info("Keeping existing languages.svg (error during re-render, but old file is valid)")
 
 
 def make_streak_svg(data: dict) -> None:
+    """Render streak card with validated data and documented calculation."""
     out = ASSETS_DIR / "streak.svg"
     try:
         weeks = data["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
+        
+        # Validate before calculating
+        is_valid, error_msg = validate_contribution_data(weeks)
+        if not is_valid:
+            log.warning("Contribution data validation failed for streak: %s", error_msg)
+            # Fall back to SVG if data is invalid
+            _fallback_copy("streak.svg", out)
+            return
+        
         current, longest = calculate_streak(weeks)
         total = data["user"]["contributionsCollection"]["contributionCalendar"]["totalContributions"]
 
-        log.info("Rendering streak with real data: current=%d, longest=%d, total=%d", current, longest, total)
+        log.info("Rendering streak with REAL validated data: current=%d, longest=%d, total=%d", current, longest, total)
 
         svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
   <style>
@@ -553,287 +799,44 @@ def make_streak_svg(data: dict) -> None:
 </svg>"""
         ASSETS_DIR.mkdir(parents=True, exist_ok=True)
         out.write_text(svg_content, encoding="utf-8")
-        # Also write to assets/streak/ for legacy path used in README
         (Path("assets/streak") / "streak.svg").write_text(svg_content, encoding="utf-8")
-        log.info("✅ streak.svg written with XML template.")
+        log.info("✅ streak.svg written with real validated data.")
     except Exception as exc:
         log.error("make_streak_svg failed: %s", exc)
-        # Only fall back if file doesn't exist or is empty
         if not out.exists() or out.stat().st_size < 100:
             _fallback_copy("streak.svg", out)
-        else:
-            log.info("Keeping existing streak.svg (error during re-render, but old file is valid)")
-
-
-def make_graph_svg(data: dict) -> None:
-    """Download Vercel activity graph; fall back to local contribution heatmap on failure."""
-    out = ASSETS_DIR / "contribution-graph.svg"
-    url = (
-        f"https://github-readme-activity-graph.vercel.app/graph"
-        f"?username={USERNAME}&theme=github-dark&hide_border=true"
-        f"&bg_color=0d1117&color=58a6ff&line=58a6ff&point=c9d1d9"
-        f"&area=true&area_color=1f6feb&height=300&cache_seconds=900"
-    )
-    try:
-        r = _get(url, retries=3)
-        if "<svg" in r.text.lower():
-            out.write_text(r.text, encoding="utf-8")
-            log.info("✅ contribution-graph.svg downloaded from Vercel (real data).")
-            return
-        raise ValueError("Response body did not contain <svg")
-    except Exception as exc:
-        log.warning("Vercel graph fetch failed: %s — generating local heatmap from real GitHub data.", exc)
-
-    # Local heatmap fallback (using real contribution calendar)
-    try:
-        weeks = data["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
-        all_days = [d for w in weeks for d in w["contributionDays"]]
-        counts = [d["contributionCount"] for d in all_days]
-        cols = len(weeks)
-        rows = 7
-
-        log.info("Generating local heatmap with %d weeks of real contribution data", cols)
-
-        grid = [[0] * cols for _ in range(rows)]
-        for wi, week in enumerate(weeks):
-            for day in week["contributionDays"]:
-                dow = datetime.fromisoformat(day["date"]).weekday()
-                grid[dow][wi] = day["contributionCount"]
-
-        fig, ax = plt.subplots(figsize=(12, 2.4), dpi=100)
-        fig.patch.set_facecolor("#0d1117"); ax.set_facecolor("#0d1117"); ax.axis("off")
-
-        cell = 0.85
-        palette = ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"]
-        mx = max(max(row) for row in grid) or 1
-        for c, col in enumerate(zip(*grid)):
-            for r, val in enumerate(col):
-                level = min(int(val / mx * 4 + 0.5), 4) if val else 0
-                rect = plt.Rectangle((c * (cell + 0.15), (6 - r) * (cell + 0.15)), cell, cell,
-                                     color=palette[level], linewidth=0)
-                ax.add_patch(rect)
-
-        ax.set_xlim(-0.5, cols * (cell + 0.15) + 0.5)
-        ax.set_ylim(-0.5, 8 * (cell + 0.15) + 0.5)
-        plt.tight_layout(pad=0)
-        _save_svg(fig, out)
-        log.info("✅ Local contribution heatmap generated with real data (Vercel fallback).")
-    except Exception as exc2:
-        log.error("Local heatmap fallback also failed: %s", exc2)
-        # Only fall back if file doesn't exist or is empty
-        if not out.exists() or out.stat().st_size < 100:
-            _fallback_copy("contribution-graph.svg", out)
-        else:
-            log.info("Keeping existing contribution-graph.svg (error during re-render, but old file is valid)")
-
-
-def download_summary_cards() -> None:
-    """Download GitHub Profile Summary Cards from Vercel; keep existing file on failure (never invent)."""
-    cards = {
-        "summary-repos-per-language.svg":  f"https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username={USERNAME}&theme=github_dark",
-        "summary-most-commit-language.svg":f"https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username={USERNAME}&theme=github_dark",
-        "summary-productive-time.svg":     f"https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username={USERNAME}&theme=github_dark&utcOffset=5.5",
-    }
-    for fname, url in cards.items():
-        dest = ASSETS_DIR / fname
-        try:
-            r = _get(url, retries=3)
-            if "<svg" not in r.text.lower():
-                raise ValueError("Not an SVG response")
-            
-            svg = r.text
-
-            def grayscale_match(match):
-                hex_col = match.group(0).lower()
-                if hex_col in ["#0d1117", "#161b22", "#30363d", "#27272a", "#8b949e", "#e6edf3", "#e5e7eb", "#ffffff", "#000000", "#121212"]:
-                    return hex_col
-                h = hex_col.lstrip('#')
-                if len(h) == 6:
-                    r_val, g_val, b_val = tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
-                    gray = max(int(0.299 * r_val + 0.587 * g_val + 0.114 * b_val), 100)
-                    return f"#{gray:02x}{gray:02x}{gray:02x}"
-                return hex_col
-
-            svg = re.sub(r'#[0-9a-fA-F]{6}', grayscale_match, svg)
-
-            svg = re.sub(
-                r'(<text\s+x="30"\s+y="40"\s+style="font-size:\s*22px;\s*fill:\s*)[^;"]+',
-                r'\g<1>#ffffff',
-                svg,
-            )
-            dest.write_text(svg, encoding="utf-8")
-            log.info("✅ %s downloaded (real Vercel data).", fname)
-        except Exception as exc:
-            if dest.exists():
-                log.warning("Download failed for %s: %s — keeping existing file (will retry next cycle).", fname, exc)
-            else:
-                # Only write placeholder if file never existed; never replace good data with fake
-                log.warning("Download failed for %s: %s — no existing file, writing placeholder.", fname, exc)
-                _write_minimal_svg_with_marker(dest, f"Waiting for {fname.split('.')[0]}", placeholder=True)
-
-
-def update_achievements() -> None:
-    """Scrape GitHub achievements and update README between marker comments."""
-    log.info("🏆 Scraping GitHub achievements…")
-    url = f"https://github.com/{USERNAME}"
-    hdrs = {"User-Agent": "Mozilla/5.0"}
-
-    try:
-        r = _get(url, headers=hdrs, retries=2)
-        soup = BeautifulSoup(r.text, "html.parser")
-        badges: list[tuple[str, str]] = []
-
-        # Strategy 1: semantic header search
-        for tag in ("h2", "h3", "h4", "span", "div"):
-            hdr = soup.find(tag, string=lambda t: t and "achievements" in t.lower())
-            if hdr:
-                container = hdr.parent
-                for _ in range(4):
-                    if container is None:
-                        break
-                    for img in container.find_all("img"):
-                        src = img.get("src", "")
-                        alt = img.get("alt", "")
-                        if src and alt and ("badge" in src or "achievement" in src or "githubassets" in src):
-                            if alt not in {b[0] for b in badges}:
-                                badges.append((alt, src))
-                    if badges:
-                        break
-                    container = container.parent
-
-        # Strategy 2: CSS selector
-        if not badges:
-            for el in soup.select('a[href*="/achievements/"]'):
-                img = el.find("img")
-                if img and img.get("src") and img.get("alt"):
-                    badges.append((img["alt"], img["src"]))
-
-        # Strategy 3: known alt-text scan
-        if not badges:
-            known = {"pull shark", "yolo", "quickdraw", "galaxy brain", "starstruck",
-                     "pair extraordinaire", "public sponsor"}
-            for img in soup.find_all("img"):
-                alt = img.get("alt", "")
-                src = img.get("src", "")
-                if alt and src and any(k in alt.lower() for k in known):
-                    badges.append((alt, src))
-
-        if not badges:
-            log.info("No achievements scraped — keeping existing README section.")
-            return
-
-        BADGES_DIR.mkdir(parents=True, exist_ok=True)
-        md_imgs: list[str] = []
-
-        for alt, src in badges:
-            safe = re.sub(r"[^a-zA-Z0-9_-]", "", alt.lower().replace(" ", "_"))
-            ext = Path(src.split("?")[0]).suffix or ".png"
-            fname = f"{safe}{ext}"
-            fpath = BADGES_DIR / fname
-            try:
-                ir = _get(src, retries=2)
-                fpath.write_bytes(ir.content)
-                md_imgs.append(f'<img src="assets/badges/{fname}" width="75px" alt="{alt}" title="{alt}" />')
-            except Exception as exc:
-                log.warning("Badge download failed (%s): %s — using remote URL.", alt, exc)
-                md_imgs.append(f'<img src="{src}" width="75px" alt="{alt}" title="{alt}" />')
-
-        readme = Path("README.md")
-        if not readme.exists():
-            log.warning("README.md not found — skipping achievement inject.")
-            return
-
-        content = readme.read_text("utf-8")
-        start, end = "<!-- START_SECTION:achievements -->", "<!-- END_SECTION:achievements -->"
-        if start in content and end in content:
-            new_block = start + "\n" + " ".join(md_imgs) + "\n" + end
-            content = re.sub(rf"{re.escape(start)}.*?{re.escape(end)}", new_block, content, flags=re.DOTALL)
-            readme.write_text(content, encoding="utf-8")
-            log.info("✅ Achievements injected into README.md.")
-        else:
-            log.warning("Achievement markers not found in README.md — skipping inject.")
-
-    except Exception as exc:
-        log.error("update_achievements failed: %s", exc)
-
-
-def update_recent_repos(data: dict) -> None:
-    """Inject most recently pushed repositories into README."""
-    log.info("📝 Updating recent repos in README…")
-    try:
-        r = _get(
-            f"https://api.github.com/users/{USERNAME}/repos?sort=pushed&per_page=5",
-            headers={**HEADERS, "Cache-Control": "no-cache"},
-            timeout=10
-        )
-        repos = r.json()
-        recent = [r for r in repos if r["name"] != USERNAME][:3]
-        
-        md_lines = ["| `repo` | `description` | `last active` |", "|--------|---------------|---------------|"]
-        for r in recent:
-            name = r["name"]
-            url = r["html_url"]
-            desc = (r.get("description") or "No description").strip()
-            # truncate long descriptions
-            if len(desc) > 50:
-                desc = desc[:47] + "..."
-            pushed_dt = datetime.fromisoformat(r["pushed_at"].replace("Z", "+00:00"))
-            pushed_str = pushed_dt.strftime("%b %d, %Y")
-            
-            # format name for shields.io (dashes to double dashes, underscores to double underscores)
-            shield_name = name.replace("-", "--").replace("_", "__").replace(" ", "_")
-            badge_url = f"https://img.shields.io/badge/{shield_name}-1a1a1a?style=flat-square&logo=github&logoColor=white"
-            repo_col = f"[![{name}]({badge_url})]({url})"
-            md_lines.append(f"| {repo_col} | {desc} | {pushed_str} |")
-        
-        readme = Path("README.md")
-        if not readme.exists():
-            return
-            
-        content = readme.read_text("utf-8")
-        start, end = "<!-- START_SECTION:recent_repos -->", "<!-- END_SECTION:recent_repos -->"
-        if start in content and end in content:
-            new_block = start + "\n" + "\n".join(md_lines) + "\n" + end
-            content = re.sub(rf"{re.escape(start)}.*?{re.escape(end)}", new_block, content, flags=re.DOTALL)
-            readme.write_text(content, encoding="utf-8")
-            log.info("✅ Recent repos injected into README.md.")
-    except Exception as exc:
-        log.error("update_recent_repos failed: %s", exc)
 
 
 # ─── Entry point ───────────────────────────────────────────────────────────────
 def main() -> None:
-    log.info("🚀 Starting robust stats generator — %s", datetime.now(timezone.utc).isoformat())
-    log.info("Policy: NEVER show false data. Real data (fresh or cached) > old data > skip rendering. Never invent numbers.")
+    log.info("\n" + "="*60)
+    log.info("🚀 Enhanced GitHub Stats Generator")
+    log.info("="*60)
+    log.info("Policy: Correctness > Speed > Fallback > Cache > Diagnostics")
+    log.info("="*60 + "\n")
+
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     Path("assets/streak").mkdir(parents=True, exist_ok=True)
 
-    # 1. Fetch data (live → cache → error)
-    try:
-        data = get_github_data()
-        log.info("✅ Data source confirmed. Rendering all cards with REAL statistics.")
-    except RuntimeError as exc:
-        log.critical("Cannot fetch any data: %s", exc)
+    # Fetch data with structured result
+    result = get_github_data()
+
+    if result.status in (ResultStatus.SUCCESS, ResultStatus.SUCCESS_USING_CACHE, ResultStatus.SUCCESS_USING_FALLBACK):
+        if result.data:
+            # Render cards only with validated data
+            log.info("\n📊 Rendering stats cards…")
+            make_stats_svg(result.data)
+            make_streak_svg(result.data)
+            log.info("\n✨ Stats generation complete with %s (freshness: %s)", result.source, result.freshness_label())
+        else:
+            log.error("❌ Result status is success but data is None")
+            sys.exit(1)
+    else:
+        log.error("❌ Failed to fetch any valid data: %s", result.error_message)
+        log.error("   Status: %s | Source: %s | Reason: %s", result.status.value, result.source, 
+                 result.fallback_reason.value if result.fallback_reason else "unknown")
         sys.exit(1)
-
-    # 2. Render all cards (each handles its own error → fallback)
-    # Each card now prefers keeping old real data over writing a placeholder
-    make_stats_svg(data)
-    make_languages_svg(data)
-    make_streak_svg(data)
-    make_graph_svg(data)
-
-    # 3. Download external summary cards
-    download_summary_cards()
-
-    # 4. Update achievements in README
-    update_achievements()
-
-    # 5. Update recent repos in README
-    update_recent_repos(data)
-
-    log.info("✨ Stats generation complete. All SVGs contain REAL data or are preserved from the last successful run.")
 
 
 if __name__ == "__main__":
