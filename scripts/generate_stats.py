@@ -8,6 +8,9 @@ Key improvements:
   4. Documented streak calculation rules (prevents edge-case bugs)
   5. Per-source latency tracking + observability (diagnose bottlenecks)
   6. Partial data detection (rejects incomplete contribution calendars)
+  7. Live-first fetch strategy with a hard latency budget (real-time / low-latency updates)
+  8. Visible on-card freshness indicator (live / cached Xm ago / stale), so a viewer can
+     always tell how current the streak they're looking at actually is
 """
 
 import os, sys, re, json, time, shutil, hashlib, requests, logging
@@ -32,6 +35,8 @@ logging.basicConfig(
 )
 log = logging.getLogger("stats")
 
+SEP = "─" * 56
+
 # ─── Paths & constants ─────────────────────────────────────────────────────────
 USERNAME     = "BhattAyush17"
 ASSETS_DIR   = Path("assets/stats")
@@ -40,7 +45,28 @@ SNAKE_DIR    = Path("assets/snake")
 FALLBACK_DIR = Path("assets/fallback")
 CACHE_DIR    = Path("assets/cache")
 CACHE_FILE   = CACHE_DIR / "data.json"
-CACHE_MAX_AGE = timedelta(hours=6)           # fresh-enough threshold
+
+# ── Freshness / latency tuning ──────────────────────────────────────────────
+# HOT_CACHE_TTL:     if the cache was written more recently than this, skip the
+#                     live network round-trip entirely (protects against hammering
+#                     the API on rapid successive runs; keeps latency near-zero).
+# CACHE_STALE_AFTER:  cosmetic threshold — cache older than this is still USABLE
+#                     as a fallback, but the on-card badge will flag it as stale
+#                     so a viewer knows the number may be out of date.
+# CACHE_HARD_EXPIRY:  absolute cutoff — cache older than this is never used at all.
+HOT_CACHE_TTL     = timedelta(seconds=90)
+CACHE_STALE_AFTER = timedelta(hours=6)
+CACHE_HARD_EXPIRY = timedelta(days=14)
+
+# ── Live-fetch tuning ───────────────────────────────────────────────────────
+# Kept deliberately tight: this is a "live-first" strategy (see get_github_data),
+# so a slow/hanging request must fail fast and hand off to cache rather than
+# stall the whole pipeline.
+LIVE_FETCH_TIMEOUT   = 10     # seconds per HTTP attempt (was 20)
+LIVE_FETCH_RETRIES   = 2      # attempts before giving up (was 3)
+BACKOFF_BASE_SECONDS = 1      # backoff schedule: 1s, 2s, ... (was 2s, 4s, 8s...)
+OVERALL_BUDGET_SECONDS = 12   # hard wall-clock budget for the live layer before
+                               # get_github_data() gives up and falls back to cache
 
 TOKEN        = os.getenv("GH_STATS_TOKEN", "")
 GRAPHQL_URL  = "https://api.github.com/graphql"
@@ -56,6 +82,12 @@ else:
 BG, CARD, GRID = "#121212", "#121212", "#27272a"
 TEXT, ACCENT, MUTED = "#e5e7eb", "#3b82f6", "#9ca3af"
 COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"]
+
+# Freshness badge colours
+COLOR_LIVE   = "#3fb950"  # green — fetched this run
+COLOR_FRESH  = "#d29922"  # amber — cached, but within CACHE_STALE_AFTER
+COLOR_STALE  = "#f85149"  # red   — cached and past CACHE_STALE_AFTER
+COLOR_UNKNOWN = "#8b949e"  # grey  — no metadata available
 
 
 # ─── Enums & Structured Types ──────────────────────────────────────────────────
@@ -80,6 +112,7 @@ class FallbackReason(Enum):
     AUTH_FAILED = "AUTH_FAILED"
     NETWORK_ERROR = "NETWORK_ERROR"
     VALIDATION_FAILED = "VALIDATION_FAILED"
+    BUDGET_EXCEEDED = "BUDGET_EXCEEDED"
 
 
 @dataclass
@@ -128,6 +161,26 @@ class FetchResult:
             return f"cached {int(age.total_seconds() / 60)}m ago"
         return "unknown"
 
+    def badge(self) -> "tuple[str, str]":
+        """
+        (dot_color, label) for the on-card freshness indicator.
+        Lets a viewer see at a glance whether they're looking at a live
+        number or a cached/stale fallback, instead of silently guessing.
+        """
+        if self.status == ResultStatus.SUCCESS:
+            label = "live" + (" · partial" if self.is_partial else "")
+            return COLOR_LIVE, label
+
+        if self.status == ResultStatus.SUCCESS_USING_CACHE:
+            stale = False
+            if self.cached_at:
+                age = datetime.now(timezone.utc) - datetime.fromisoformat(self.cached_at)
+                stale = age > CACHE_STALE_AFTER
+            label = self.freshness_label() + (" · partial" if self.is_partial else "")
+            return (COLOR_STALE if stale else COLOR_FRESH), label
+
+        return COLOR_UNKNOWN, (self.status.value.lower() if self.status else "unknown")
+
 
 # ─── Retry helper with rate-limit detection ─────────────────────────────────────
 def _is_rate_limited(response: requests.Response) -> bool:
@@ -146,12 +199,27 @@ def _is_rate_limited(response: requests.Response) -> bool:
     return False
 
 
-def _get(url: str, *, timeout: int = 20, retries: int = 3, **kwargs) -> requests.Response:
+def _backoff_wait(attempt: int, deadline: Optional[float]) -> float:
+    """Exponential backoff, clipped to whatever time remains in the budget."""
+    wait = BACKOFF_BASE_SECONDS * (2 ** (attempt - 1))
+    if deadline is not None:
+        remaining = deadline - time.time()
+        wait = max(0.0, min(wait, remaining - 0.05))
+    return wait
+
+
+def _get(url: str, *, timeout: int = LIVE_FETCH_TIMEOUT, retries: int = LIVE_FETCH_RETRIES,
+         deadline: Optional[float] = None, **kwargs) -> requests.Response:
     """
     GET with exponential back-off.
     Raises immediately on rate-limit (don't retry).
+    If `deadline` (an absolute time.time() value) is given, stops retrying —
+    and shrinks the sleep between attempts — once the budget is used up, so a
+    slow endpoint can't blow past the caller's latency target.
     """
     for attempt in range(1, retries + 1):
+        if deadline is not None and time.time() >= deadline:
+            raise RuntimeError("Time budget exceeded before request could complete")
         try:
             r = requests.get(url, timeout=timeout, **kwargs)
             if _is_rate_limited(r):
@@ -161,16 +229,19 @@ def _get(url: str, *, timeout: int = 20, retries: int = 3, **kwargs) -> requests
         except requests.RequestException as exc:
             if "rate limit" in str(exc).lower():
                 raise RuntimeError("Rate limited") from exc
-            wait = 2 ** attempt
-            log.warning("GET %s failed (attempt %d/%d): %s — retrying in %ds", url, attempt, retries, exc, wait)
-            if attempt < retries:
+            wait = _backoff_wait(attempt, deadline)
+            log.warning("GET %s failed (attempt %d/%d): %s — retrying in %.1fs", url, attempt, retries, exc, wait)
+            if attempt < retries and wait > 0:
                 time.sleep(wait)
     raise RuntimeError(f"All {retries} attempts failed for {url}")
 
 
-def _post(url: str, *, timeout: int = 20, retries: int = 3, **kwargs) -> requests.Response:
-    """POST with exponential back-off and rate-limit detection."""
+def _post(url: str, *, timeout: int = LIVE_FETCH_TIMEOUT, retries: int = LIVE_FETCH_RETRIES,
+          deadline: Optional[float] = None, **kwargs) -> requests.Response:
+    """POST with exponential back-off, rate-limit detection, and an optional deadline."""
     for attempt in range(1, retries + 1):
+        if deadline is not None and time.time() >= deadline:
+            raise RuntimeError("Time budget exceeded before request could complete")
         try:
             r = requests.post(url, timeout=timeout, **kwargs)
             if _is_rate_limited(r):
@@ -180,9 +251,9 @@ def _post(url: str, *, timeout: int = 20, retries: int = 3, **kwargs) -> request
         except requests.RequestException as exc:
             if "rate limit" in str(exc).lower():
                 raise RuntimeError("Rate limited") from exc
-            wait = 2 ** attempt
-            log.warning("POST %s failed (attempt %d/%d): %s — retrying in %ds", url, attempt, retries, exc, wait)
-            if attempt < retries:
+            wait = _backoff_wait(attempt, deadline)
+            log.warning("POST %s failed (attempt %d/%d): %s — retrying in %.1fs", url, attempt, retries, exc, wait)
+            if attempt < retries and wait > 0:
                 time.sleep(wait)
     raise RuntimeError(f"All {retries} attempts failed for {url}")
 
@@ -270,8 +341,8 @@ def validate_user_data(user_dict: dict) -> tuple[bool, Optional[str]]:
 
     # Validate contribution counts consistency
     total_from_api = calendar.get("totalContributions", 0)
-    total_calculated = sum(d["contributionCount"] 
-                          for w in calendar["weeks"] 
+    total_calculated = sum(d["contributionCount"]
+                          for w in calendar["weeks"]
                           for d in w.get("contributionDays", []))
 
     if total_from_api != total_calculated:
@@ -286,22 +357,22 @@ def validate_user_data(user_dict: dict) -> tuple[bool, Optional[str]]:
 
 # ─── Cache helpers ─────────────────────────────────────────────────────────────
 def load_cache() -> Optional[FetchResult]:
-    """Return cached data if it exists, wrapped in FetchResult."""
+    """Return cached data if it exists and isn't past CACHE_HARD_EXPIRY, wrapped in FetchResult."""
     if not CACHE_FILE.exists():
         return None
     try:
         payload = json.loads(CACHE_FILE.read_text("utf-8"))
         ts = payload.get("_cached_at")
         data = payload.get("data")
-        
+
         if not data:
             return None
 
         cached_dt = datetime.fromisoformat(ts) if ts else None
         age = datetime.now(timezone.utc) - cached_dt if cached_dt else None
 
-        if age and age <= timedelta(days=14):  # keep cache up to 2 weeks as last resort
-            log.info("Cache hit — age %s", age)
+        if age and age <= CACHE_HARD_EXPIRY:
+            log.info("Cache available — age %s", age)
             return FetchResult(
                 status=ResultStatus.SUCCESS_USING_CACHE,
                 data=data,
@@ -310,7 +381,7 @@ def load_cache() -> Optional[FetchResult]:
                 is_partial=payload.get("_is_partial", False),
             )
         else:
-            log.info("Cache very stale — age %s, will attempt live fetch first", age)
+            log.info("Cache past hard expiry (%s) — age %s, ignoring", CACHE_HARD_EXPIRY, age)
             return None
     except Exception as exc:
         log.warning("Cache read failed: %s", exc)
@@ -373,10 +444,12 @@ query($login: String!) {
 """
 
 
-def fetch_live_data() -> FetchResult:
+def fetch_live_data(deadline: Optional[float] = None) -> FetchResult:
     """
     Fetch live data from GitHub GraphQL API.
     Returns FetchResult with status, source, and latency info.
+    `deadline` is an absolute time.time() value; the request (and its retries)
+    will bail out early rather than exceed it.
     """
     if not TOKEN:
         return FetchResult(
@@ -392,7 +465,9 @@ def fetch_live_data() -> FetchResult:
             GRAPHQL_URL,
             headers=HEADERS,
             json={"query": _GQL_QUERY, "variables": {"login": USERNAME}},
-            timeout=20,
+            timeout=LIVE_FETCH_TIMEOUT,
+            retries=LIVE_FETCH_RETRIES,
+            deadline=deadline,
         )
         duration_ms = (time.time() - start) * 1000
 
@@ -453,7 +528,8 @@ def fetch_live_data() -> FetchResult:
 
     except RuntimeError as exc:
         duration_ms = (time.time() - start) * 1000
-        if "rate limit" in str(exc).lower():
+        msg = str(exc).lower()
+        if "rate limit" in msg:
             log.warning("GraphQL rate limited (%.0fms)", duration_ms)
             return FetchResult(
                 status=ResultStatus.TEMPORARY_UNAVAILABLE,
@@ -461,6 +537,15 @@ def fetch_live_data() -> FetchResult:
                 duration_ms=duration_ms,
                 fallback_reason=FallbackReason.RATE_LIMITED,
                 error_message="Rate limited by GitHub API",
+            )
+        if "budget exceeded" in msg:
+            log.warning("GraphQL fetch aborted — latency budget exceeded (%.0fms)", duration_ms)
+            return FetchResult(
+                status=ResultStatus.TEMPORARY_UNAVAILABLE,
+                source="graphql_api",
+                duration_ms=duration_ms,
+                fallback_reason=FallbackReason.BUDGET_EXCEEDED,
+                error_message="Live fetch exceeded latency budget",
             )
         log.warning("GraphQL fetch failed: %s (%.0fms)", exc, duration_ms)
         return FetchResult(
@@ -494,50 +579,74 @@ def fetch_live_data() -> FetchResult:
 
 def get_github_data() -> FetchResult:
     """
-    Layered fetch with fallback controller.
-    Per spec section 3: centralized source-selection mechanism.
-    Returns FetchResult with clear status, source, and observability data.
+    Live-first fetch controller.
+
+    Ordering (this is the actual fix for real-time freshness):
+      0. Hot cache  — only if it's younger than HOT_CACHE_TTL (~90s). Protects
+         against back-to-back runs hammering the API; otherwise skipped.
+      1. Live API   — always attempted, with a hard OVERALL_BUDGET_SECONDS budget,
+         so the card reflects the current state as closely as latency allows.
+      2. Cache       — used only if live fails, regardless of age up to
+         CACHE_HARD_EXPIRY. The on-card badge will mark it stale if it's past
+         CACHE_STALE_AFTER, so this is a safety net, not a silent substitute.
+      3. Nothing     — both live and cache are unavailable.
+
+    Previously cache was checked *before* live and accepted for up to 14 days
+    with no distinction from a genuinely fresh fetch — meaning the card could
+    silently go two weeks without updating even though live fetches would have
+    succeeded. That's fixed here: live is always tried first.
     """
-    log.info("──────────────────────────────────────────────────────")
-    log.info("🔄 Fetching GitHub data — fallback strategy starting")
-    log.info("──────────────────────────────────────────────────────")
+    log.info(SEP)
+    log.info("🔄 Fetching GitHub data — live-first strategy")
+    log.info(SEP)
 
     start_total = time.time()
+    deadline = start_total + OVERALL_BUDGET_SECONDS
 
-    # Layer 1: Try cache first
-    log.info("Layer 1: Cache lookup…")
+    # Layer 0: hot-cache micro-optimization.
     cached = load_cache()
-    if cached and cached.status == ResultStatus.SUCCESS_USING_CACHE:
-        age_days = (datetime.now(timezone.utc) - datetime.fromisoformat(cached.cached_at)).days
-        is_very_fresh = age_days < 1
-        log.info("Cache hit (age: %d days) — %s", age_days, "using immediately" if is_very_fresh else "will refresh in background")
-        return cached
+    if cached and cached.cached_at:
+        age = datetime.now(timezone.utc) - datetime.fromisoformat(cached.cached_at)
+        if age <= HOT_CACHE_TTL:
+            log.info("Layer 0: Hot cache (age %.0fs) — skipping live call this run", age.total_seconds())
+            cached.duration_ms = (time.time() - start_total) * 1000
+            log.info(SEP)
+            return cached
 
-    # Layer 2: Try live API
-    log.info("Layer 2: Live GraphQL API…")
-    result = fetch_live_data()
+    # Layer 1: Live API, always tried first.
+    log.info("Layer 1: Live GraphQL API (budget: %ds)…", OVERALL_BUDGET_SECONDS)
+    result = fetch_live_data(deadline=deadline)
     if result.status == ResultStatus.SUCCESS:
         save_cache(result.data)
         total_ms = (time.time() - start_total) * 1000
         log.info("✅ SUCCESS via GraphQL API (%.0fms total)", total_ms)
-        log.info("──────────────────────────────────────────────────────")
+        log.info(SEP)
         return result
 
-    # Layer 3: If API failed, try cache as fallback
-    log.info("Layer 3: Fallback to cache…")
+    # Layer 2: live failed — fall back to cache, whatever age it is.
+    log.info(
+        "Layer 2: Live fetch failed (%s) — falling back to cache…",
+        result.fallback_reason.value if result.fallback_reason else "unknown",
+    )
     if cached:
-        log.info("Using cached data (age: %s, reason: %s)", cached.freshness_label(), result.fallback_reason.value if result.fallback_reason else "unknown")
+        stale = False
+        if cached.cached_at:
+            age = datetime.now(timezone.utc) - datetime.fromisoformat(cached.cached_at)
+            stale = age > CACHE_STALE_AFTER
+        if stale:
+            log.warning("Cache is stale (older than %s) — using anyway as last resort", CACHE_STALE_AFTER)
         total_ms = (time.time() - start_total) * 1000
-        log.info("✅ SUCCESS_USING_CACHE (%.0fms total, reason: %s)", total_ms, result.fallback_reason.value if result.fallback_reason else "API unavailable")
         cached.duration_ms = total_ms
-        log.info("──────────────────────────────────────────────────────")
+        cached.fallback_reason = result.fallback_reason
+        log.info("✅ SUCCESS_USING_CACHE (%.0fms total, freshness: %s)", total_ms, cached.freshness_label())
+        log.info(SEP)
         return cached
 
-    # Layer 4: No data at all
+    # Layer 3: no data at all.
     log.error("❌ All sources failed — no live data, no cache")
     total_ms = (time.time() - start_total) * 1000
     result.duration_ms = total_ms
-    log.info("──────────────────────────────────────────────────────")
+    log.info(SEP)
     return result
 
 
@@ -566,7 +675,7 @@ def calculate_streak(weeks: list) -> tuple[int, int]:
         return 0, 0
 
     today = datetime.now(timezone.utc).date().isoformat()
-    
+
     # Flatten all days and filter to today or earlier
     all_days = []
     for week in weeks:
@@ -645,8 +754,29 @@ def _save_svg(fig: plt.Figure, path: Path) -> None:
     plt.close(fig)
 
 
+def _freshness_badge_markup(meta: Optional[FetchResult], x: int = 424, y: int = 20) -> str:
+    """
+    Small top-right dot + label ('live', 'cached 3m ago', 'stale', ...) embedded
+    directly in the card SVG. This is what makes the fallback chain "robust to
+    display": a viewer never has to guess whether a number is current — it's on
+    the card itself, updated every render.
+    """
+    if meta is None:
+        return ""
+    color, label = meta.badge()
+    if not label:
+        return ""
+    return (
+        f'<g transform="translate({x - len(label) * 5}, {y})">'
+        f'<circle cx="-8" cy="-4" r="3.5" fill="{color}"/>'
+        f'<text x="0" y="0" text-anchor="end" font-family="Segoe UI, Ubuntu, Sans-Serif" '
+        f'font-size="10" fill="#8b949e">{label}</text>'
+        f'</g>'
+    )
+
+
 # ─── Card renderers ────────────────────────────────────────────────────────────
-def make_stats_svg(data: dict) -> None:
+def make_stats_svg(data: dict, meta: Optional[FetchResult] = None) -> None:
     out = ASSETS_DIR / "github-stats.svg"
     try:
         user  = data["user"]
@@ -660,6 +790,7 @@ def make_stats_svg(data: dict) -> None:
         followers = user["followers"]["totalCount"]
 
         log.info("Rendering stats with real data: %d stars, %d forks, %d commits", stars, forks, commits)
+        badge = _freshness_badge_markup(meta, x=424, y=22)
 
         svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
   <style>
@@ -670,7 +801,8 @@ def make_stats_svg(data: dict) -> None:
   </style>
   <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
   <text x="25" y="35" class="title">GitHub Stats</text>
-  
+  {badge}
+
   <g transform="translate(25, 55)">
     <!-- Stars -->
     <g transform="translate(0, 0)">
@@ -743,12 +875,12 @@ def make_stats_svg(data: dict) -> None:
             _fallback_copy("github-stats.svg", out)
 
 
-def make_streak_svg(data: dict) -> None:
-    """Render streak card with validated data and documented calculation."""
+def make_streak_svg(data: dict, meta: Optional[FetchResult] = None) -> None:
+    """Render streak card with validated data, documented calculation, and a freshness badge."""
     out = ASSETS_DIR / "streak.svg"
     try:
         weeks = data["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
-        
+
         # Validate before calculating
         is_valid, error_msg = validate_contribution_data(weeks)
         if not is_valid:
@@ -756,11 +888,12 @@ def make_streak_svg(data: dict) -> None:
             # Fall back to SVG if data is invalid
             _fallback_copy("streak.svg", out)
             return
-        
+
         current, longest = calculate_streak(weeks)
         total = data["user"]["contributionsCollection"]["contributionCalendar"]["totalContributions"]
 
         log.info("Rendering streak with REAL validated data: current=%d, longest=%d, total=%d", current, longest, total)
+        badge = _freshness_badge_markup(meta, x=424, y=22)
 
         svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
   <style>
@@ -773,7 +906,8 @@ def make_streak_svg(data: dict) -> None:
     .icon {{ fill: #8b949e; }}
   </style>
   <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
-  
+  {badge}
+
   <!-- Title with Fire Icon -->
   <g transform="translate(25, 35)">
     <svg class="icon" viewBox="0 0 16 16" width="20" height="20" style="vertical-align: middle;">
@@ -781,18 +915,18 @@ def make_streak_svg(data: dict) -> None:
     </svg>
     <text x="28" y="16" class="title">Current Streak</text>
   </g>
-  
+
   <!-- Big Streak Counter -->
   <g transform="translate(225, 95)" text-anchor="middle">
     <text class="value">{current}</text>
     <text y="22" class="unit">days</text>
   </g>
-  
+
   <!-- Stats Footer -->
   <g transform="translate(25, 155)">
     <text class="stat-label">Longest Streak:</text>
     <text x="110" class="stat-val">{longest} days</text>
-    
+
     <text x="220" class="stat-label">Total Contributions:</text>
     <text x="350" class="stat-val">{total}</text>
   </g>
@@ -812,7 +946,7 @@ def main() -> None:
     log.info("\n" + "="*60)
     log.info("🚀 Enhanced GitHub Stats Generator")
     log.info("="*60)
-    log.info("Policy: Correctness > Speed > Fallback > Cache > Diagnostics")
+    log.info("Policy: Live-first > Correctness > Cache fallback > Diagnostics")
     log.info("="*60 + "\n")
 
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
@@ -824,17 +958,18 @@ def main() -> None:
 
     if result.status in (ResultStatus.SUCCESS, ResultStatus.SUCCESS_USING_CACHE, ResultStatus.SUCCESS_USING_FALLBACK):
         if result.data:
-            # Render cards only with validated data
+            # Render cards only with validated data; pass `result` through so
+            # each card can show its own live/cached/stale freshness badge.
             log.info("\n📊 Rendering stats cards…")
-            make_stats_svg(result.data)
-            make_streak_svg(result.data)
+            make_stats_svg(result.data, result)
+            make_streak_svg(result.data, result)
             log.info("\n✨ Stats generation complete with %s (freshness: %s)", result.source, result.freshness_label())
         else:
             log.error("❌ Result status is success but data is None")
             sys.exit(1)
     else:
         log.error("❌ Failed to fetch any valid data: %s", result.error_message)
-        log.error("   Status: %s | Source: %s | Reason: %s", result.status.value, result.source, 
+        log.error("   Status: %s | Source: %s | Reason: %s", result.status.value, result.source,
                  result.fallback_reason.value if result.fallback_reason else "unknown")
         sys.exit(1)
 
