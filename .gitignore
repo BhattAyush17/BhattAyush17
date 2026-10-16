@@ -1,4 +1,9 @@
-assets/cache/
+# Cache: keep the last-known-good cache committed so CI can fall back to it
+# when the live GitHub API is unavailable; ignore everything else in the dir.
+# Filename matches CACHE_FILE in scripts/generate_stats.py
+# (f"{USERNAME.lower()}-github.json").
+assets/cache/*
+!assets/cache/bhattayush17-github.json
 __pycache__/
 *.pyc
 .DS_Store

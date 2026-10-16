@@ -2,41 +2,51 @@ name: Streak Health Check
 
 on:
   schedule:
-    - cron: "0 */6 * * *"
+    # Staggered 15m after the generator so the two never start together.
+    - cron: "15 */6 * * *"
   workflow_dispatch:
 
 concurrency:
+  # Same group as the other asset workflows so runs queue instead of
+  # cancelling each other mid-flight (cancel-in-progress was killing self-heals).
   group: github-analytics
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  verify:
+  refresh:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate streak asset
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Report current streak state
         run: |
-          if [ ! -f assets/stats/streak.svg ]; then
-            echo "BROKEN=1" >> $GITHUB_ENV
-          elif [ ! -s assets/stats/streak.svg ]; then
-            echo "BROKEN=1" >> $GITHUB_ENV
+          if [ ! -s assets/stats/streak.svg ]; then
+            echo "streak.svg missing/empty"
+          elif grep -q "GitHub data unavailable" assets/stats/streak.svg; then
+            echo "streak.svg is the unavailable placeholder"
           else
-            echo "BROKEN=0" >> $GITHUB_ENV
+            echo "streak.svg present ($(wc -c < assets/stats/streak.svg) bytes)"
           fi
 
-      - name: Regenerate analytics
-        if: env.BROKEN == '1'
+      # Always refresh, not just when broken — this is the reliable updater.
+      # generate_stats.py fetches live data (USE_HOT_CACHE=False) and falls back
+      # to the committed cache when the live API is unavailable.
+      - name: Refresh streak counter
         env:
           GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
         run: |
-          pip install requests matplotlib cairosvg beautifulsoup4
+          pip install requests
           python scripts/generate_stats.py
 
-      - name: Commit repaired files
-        if: env.BROKEN == '1'
+      - name: Commit refreshed streak
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Self-heal streak asset"
+          commit_message: "Refresh streak counter"
+          file_pattern: "assets/stats/streak.svg assets/stats/github-stats.svg assets/streak/streak.svg assets/cache/bhattayush17-github.json"

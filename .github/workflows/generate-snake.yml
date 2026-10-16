@@ -9,8 +9,9 @@ on:
       - main
 
 concurrency:
+  # Queue with the other asset workflows instead of cancelling them.
   group: github-analytics
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   generate:

@@ -9,8 +9,9 @@ on:
       - main
 
 concurrency:
+  # Queue with the other asset workflows instead of cancelling them.
   group: github-analytics
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build-assets:
@@ -29,8 +30,9 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
+        # scripts/generate_stats.py now only needs requests (stdlib for the rest)
         run: |
-          pip install requests matplotlib cairosvg beautifulsoup4
+          pip install requests
 
 
       - name: Run generator

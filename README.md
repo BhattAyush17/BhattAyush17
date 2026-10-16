@@ -87,15 +87,17 @@
 
 > `$ gh achievement list --user BhattAyush17`
 
-<img src="assets/badges/achievement_pull_shark.png" width="72px" title="Pull Shark" /> &nbsp;&nbsp; <img src="assets/badges/achievement_yolo.png" width="72px" title="YOLO" /> &nbsp;&nbsp; <img src="assets/badges/achievement_quickdraw.png" width="72px" title="Quickdraw" />
+<!-- START_SECTION:achievements -->
+<img src="assets/badges/achievement_pull_shark.png" width="72px" alt="Pull Shark" title="Pull Shark" /> &nbsp;&nbsp; <img src="assets/badges/achievement_yolo.png" width="72px" alt="YOLO" title="YOLO" /> &nbsp;&nbsp; <img src="assets/badges/achievement_quickdraw.png" width="72px" alt="Quickdraw" title="Quickdraw" />
+<!-- END_SECTION:achievements -->
 
 > `$ cat quotes.txt`
 
-<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=13&pause=1000&color=E5E7EB&vCenter=true&width=800&height=30&lines=Currently+exploring+the+intersection+of+'this+is+interesting'+and+'this+is+a+terrible+idea.';Exploring+the+stack+one+questionable+decision+at+a+time.;Building,+breaking,+learning+;+occasionally+in+that+order." alt="Typing SVG" /></a>
+<a href="https://github.com/DenverCoder1/readme-typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=13&pause=1000&color=E5E7EB&vCenter=true&width=800&height=30&lines=Currently+exploring+the+intersection+of+'this+is+interesting'+and+'this+is+a+terrible+idea.';Exploring+the+stack+one+questionable+decision+at+a+time.;Building,+breaking,+learning+;+occasionally+in+that+order." alt="Typing SVG" /></a>
 
 > `$ cat ideology.txt`
 
-<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=13&pause=1000&color=E5E7EB&vCenter=true&width=800&height=30&lines=I'd+rather+explore+ten+wrong+directions+than+spend+my+life+wondering+about+one.;Observe.+Understand.+Adapt.+Repeat." alt="Typing SVG" /></a>
+<a href="https://github.com/DenverCoder1/readme-typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=13&pause=1000&color=E5E7EB&vCenter=true&width=800&height=30&lines=I'd+rather+explore+ten+wrong+directions+than+spend+my+life+wondering+about+one.;Observe.+Understand.+Adapt.+Repeat." alt="Typing SVG" /></a>
 
 <div align="center">
 
