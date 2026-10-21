@@ -69,6 +69,14 @@ CACHE_STALE_AFTER = timedelta(hours=6)
 # Hard wall-clock budget for the live request.
 OVERALL_BUDGET_SECONDS = 8.0
 
+# Separate budget for the secondary (non critical) request that feeds
+# the languages card. The streak data must never wait for it.
+SECONDARY_BUDGET_SECONDS = 6.0
+
+# Every stats card uses the same canvas so the row lines up perfectly.
+CARD_WIDTH = 450
+CARD_HEIGHT = 228
+
 # Maximum socket timeout.
 MAX_REQUEST_TIMEOUT = 7.0
 
@@ -1381,9 +1389,9 @@ def make_streak_svg(
 
     svg = f"""<svg
 xmlns="http://www.w3.org/2000/svg"
-width="450"
-height="228"
-viewBox="0 0 450 228">
+width="{CARD_WIDTH}"
+height="{CARD_HEIGHT}"
+viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 
 <style>
 .title {{
@@ -1415,8 +1423,8 @@ viewBox="0 0 450 228">
 <rect
     x="0.5"
     y="0.5"
-    width="449"
-    height="227"
+    width="{CARD_WIDTH - 1}"
+    height="{CARD_HEIGHT - 1}"
     rx="7"
     fill="#0d1117"
     stroke="#30363d"
@@ -1501,11 +1509,11 @@ viewBox="0 0 450 228">
     {("Since " + streak_start) if streak_start else "No active streak"}
 </text>
 
-<text x="170" y="198" class="small-label">
+<text x="225" y="198" class="small-label">
     Last: {last_date or "none"}
 </text>
 
-<text x="170" y="212" class="small-label">
+<text x="225" y="212" class="small-label">
     As of: {reference_date_value}
 </text>
 
@@ -1571,15 +1579,30 @@ def make_stats_svg(
         0,
     )
 
-    current = contribution_data.get(
-        "current_streak",
-        0,
+    current = int(
+        contribution_data.get(
+            "current_streak",
+            0,
+        )
     )
 
-    longest = contribution_data.get(
-        "longest_streak",
-        0,
+    longest = int(
+        contribution_data.get(
+            "longest_streak",
+            0,
+        )
     )
+
+    active_days = int(
+        contribution_data.get(
+            "active_days",
+            0,
+        )
+    )
+
+    reference_date_value = contribution_data.get(
+        "reference_date"
+    ) or reference_date().isoformat()
 
     badge = freshness_badge(
         meta
@@ -1588,8 +1611,8 @@ def make_stats_svg(
     svg = f"""<svg
 xmlns="http://www.w3.org/2000/svg"
 width="450"
-height="195"
-viewBox="0 0 450 195">
+height="{CARD_HEIGHT}"
+viewBox="0 0 450 {CARD_HEIGHT}">
 
 <style>
 .title {{
@@ -1598,13 +1621,23 @@ viewBox="0 0 450 195">
 }}
 
 .label {{
-    font: 14px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: 13px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #8b949e;
 }}
 
 .value {{
-    font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: bold 34px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #e6edf3;
+}}
+
+.small-value {{
+    font: bold 12px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}}
+
+.small-label {{
+    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
 }}
 </style>
 
@@ -1612,56 +1645,97 @@ viewBox="0 0 450 195">
     x="0.5"
     y="0.5"
     width="449"
-    height="194"
+    height="{CARD_HEIGHT - 1}"
     rx="7"
     fill="#0d1117"
     stroke="#30363d"
+    stroke-width="1"
 />
-
-<text x="25" y="35" class="title">
-    GitHub Stats
-</text>
 
 {badge}
 
-<text x="25" y="65" class="label">
-    Contributions
-</text>
+<g transform="translate(25,20)">
+    <svg
+        viewBox="0 0 16 16"
+        width="19"
+        height="19"
+    >
+        <path
+            fill="#e6edf3"
+            fill-rule="evenodd"
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+        />
+    </svg>
+    <text x="27" y="15" class="title">
+        GitHub Stats
+    </text>
+</g>
 
-<text x="170" y="65" class="value">
+<text
+    x="225"
+    y="98"
+    text-anchor="middle"
+    class="value"
+>
     {total}
 </text>
 
-<text x="25" y="90" class="label">
+<text
+    x="225"
+    y="120"
+    text-anchor="middle"
+    class="label"
+>
+    contributions in the last year
+</text>
+
+<line
+    x1="25"
+    y1="138"
+    x2="425"
+    y2="138"
+    stroke="#27272a"
+    stroke-width="1"
+/>
+
+<text x="25" y="158" class="small-label">
     Commits
 </text>
 
-<text x="170" y="90" class="value">
+<text x="25" y="176" class="small-value">
     {commits}
 </text>
 
-<text x="25" y="115" class="label">
+<text x="155" y="158" class="small-label">
     Pull Requests
 </text>
 
-<text x="170" y="115" class="value">
+<text x="155" y="176" class="small-value">
     {prs}
 </text>
 
-<text x="25" y="140" class="label">
+<text x="280" y="158" class="small-label">
     Issues
 </text>
 
-<text x="170" y="140" class="value">
+<text x="280" y="176" class="small-value">
     {issues}
 </text>
 
-<text x="25" y="165" class="label">
-    Current Streak
+<text x="25" y="198" class="small-label">
+    Current Streak: {current} days
 </text>
 
-<text x="170" y="165" class="value">
-    {current} days
+<text x="25" y="212" class="small-label">
+    Longest Streak: {longest} days
+</text>
+
+<text x="225" y="198" class="small-label">
+    Active Days: {active_days}
+</text>
+
+<text x="225" y="212" class="small-label">
+    As of: {reference_date_value}
 </text>
 
 </svg>
@@ -1670,6 +1744,306 @@ viewBox="0 0 450 195">
     output.write_text(
         svg,
         encoding="utf-8",
+    )
+
+
+# ============================================================================
+# LANGUAGES SVG
+# ============================================================================
+
+# Grayscale ramp for the language bar. The profile is monochrome, so the
+# languages are not painted in their own brand colors.
+LANGUAGE_GRAYSCALE = [
+    "#e6edf3",
+    "#c9d1d9",
+    "#adbac7",
+    "#8b949e",
+    "#6e7681",
+    "#484f58",
+]
+
+MAX_LEGEND_ENTRIES = 6
+
+
+def fetch_repo_languages(
+    deadline: float,
+) -> tuple[Optional[list[dict[str, Any]]], FetchResult]:
+
+    """
+    Fetch the primary language of every public repository.
+
+    This is a SECONDARY request: the streak data must never wait for it.
+    On failure the caller keeps the previously rendered card.
+    """
+
+    result = graphql_request(
+        STATS_GRAPHQL_QUERY,
+        deadline,
+    )
+
+    if result.status != ResultStatus.SUCCESS or not result.data:
+        return None, result
+
+    user = result.data.get("user")
+
+    if not isinstance(user, dict):
+        return None, result
+
+    repositories = user.get("repositories")
+
+    if not isinstance(repositories, dict):
+        return None, result
+
+    nodes = repositories.get("nodes")
+
+    if not isinstance(nodes, list):
+        return None, result
+
+    counts: dict[str, int] = {}
+
+    for repo in nodes:
+
+        if not isinstance(repo, dict):
+            continue
+
+        language = repo.get("primaryLanguage")
+
+        name = None
+
+        if isinstance(language, dict):
+            name = language.get("name")
+
+        if not isinstance(name, str) or not name:
+            name = "Other"
+
+        counts[name] = counts.get(name, 0) + 1
+
+    total = sum(counts.values())
+
+    if not total:
+        return None, result
+
+    languages = [
+        {
+            "name": name,
+            "count": count,
+            "percent": round(count / total * 100, 1),
+        }
+        for name, count in sorted(
+            counts.items(),
+            key=lambda item: (-item[1], item[0]),
+        )
+    ]
+
+    return languages, result
+
+
+def make_languages_svg(
+    languages: list[dict[str, Any]],
+    meta: FetchResult,
+) -> None:
+
+    output = ASSETS_DIR / "languages.svg"
+
+    output.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    total_repos = sum(
+        int(language.get("count", 0))
+        for language in languages
+    )
+
+    shown = languages[:MAX_LEGEND_ENTRIES]
+
+    hidden = len(languages) - len(shown)
+
+    badge = freshness_badge(
+        meta
+    )
+
+    # ------------------------------------------------------------------
+    # PROGRESS BAR
+    # ------------------------------------------------------------------
+
+    bar_x = 25
+    bar_width = CARD_WIDTH - 50
+
+    segments: list[str] = []
+
+    offset = 0.0
+
+    for index, language in enumerate(shown):
+
+        percent = float(
+            language.get("percent", 0)
+        )
+
+        width = bar_width * percent / 100
+
+        color = LANGUAGE_GRAYSCALE[
+            index % len(LANGUAGE_GRAYSCALE)
+        ]
+
+        segments.append(
+            f'<rect x="{bar_x + offset:.2f}" y="52" '
+            f'width="{width:.2f}" height="10" fill="{color}" />'
+        )
+
+        offset += width
+
+    # ------------------------------------------------------------------
+    # LEGEND
+    # ------------------------------------------------------------------
+
+    legend: list[str] = []
+
+    for index, language in enumerate(shown):
+
+        column = index % 2
+        row = index // 2
+
+        x = 25 + column * 215
+        y = 78 + row * 24
+
+        color = LANGUAGE_GRAYSCALE[
+            index % len(LANGUAGE_GRAYSCALE)
+        ]
+
+        name = str(
+            language.get("name", "Other")
+        )
+
+        percent = float(
+            language.get("percent", 0)
+        )
+
+        legend.append(
+            f'<g transform="translate({x}, {y})">\n'
+            f'    <circle cx="5" cy="6" r="5" fill="{color}" />\n'
+            f'    <text x="18" y="10" class="lang-name">{name}</text>\n'
+            f'    <text x="195" y="10" text-anchor="end" '
+            f'class="lang-pct">{percent:.1f}%</text>\n'
+            f'</g>'
+        )
+
+    hidden_note = (
+        f"+{hidden} more languages"
+        if hidden > 0
+        else ""
+    )
+
+    svg = f"""<svg
+xmlns="http://www.w3.org/2000/svg"
+width="{CARD_WIDTH}"
+height="{CARD_HEIGHT}"
+viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
+
+<style>
+.title {{
+    font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}}
+
+.label {{
+    font: 13px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}}
+
+.lang-name {{
+    font: bold 12px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}}
+
+.lang-pct {{
+    font: 12px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}}
+
+.small-label {{
+    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}}
+</style>
+
+<rect
+    x="0.5"
+    y="0.5"
+    width="{CARD_WIDTH - 1}"
+    height="{CARD_HEIGHT - 1}"
+    rx="7"
+    fill="#0d1117"
+    stroke="#30363d"
+    stroke-width="1"
+/>
+
+{badge}
+
+<g transform="translate(25,20)">
+    <svg
+        viewBox="0 0 16 16"
+        width="19"
+        height="19"
+    >
+        <path
+            fill="#e6edf3"
+            fill-rule="evenodd"
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+        />
+    </svg>
+    <text x="27" y="15" class="title">
+        Top Languages
+    </text>
+</g>
+
+<clipPath id="language-bar-clip">
+    <rect x="{bar_x}" y="52" width="{bar_width}" height="10" rx="5" />
+</clipPath>
+
+<g clip-path="url(#language-bar-clip)">
+{chr(10).join(segments)}
+</g>
+
+{chr(10).join(legend)}
+
+<line
+    x1="25"
+    y1="158"
+    x2="{CARD_WIDTH - 25}"
+    y2="158"
+    stroke="#27272a"
+    stroke-width="1"
+/>
+
+<text x="25" y="198" class="small-label">
+    {total_repos} repositories · {len(languages)} languages
+</text>
+
+<text x="25" y="212" class="small-label">
+    Share of repositories
+</text>
+
+<text x="225" y="198" class="small-label">
+    As of: {reference_date().isoformat()}
+</text>
+
+<text x="225" y="212" class="small-label">
+    {hidden_note if hidden_note else "all languages shown"}
+</text>
+
+</svg>
+"""
+
+    output.write_text(
+        svg,
+        encoding="utf-8",
+    )
+
+    log.info(
+        "Languages SVG written: %d repos, %d languages",
+        total_repos,
+        len(languages),
     )
 
 
@@ -1986,6 +2360,30 @@ def main() -> None:
         result.data,
         result,
     )
+
+    # ---------------------------------------------------------------------
+    # LANGUAGES CARD
+    # ---------------------------------------------------------------------
+    #
+    # Secondary request: it must never block or fail the streak cards.
+    # When it fails, the previously rendered card is kept untouched.
+
+    languages, languages_meta = fetch_repo_languages(
+        time.monotonic() + SECONDARY_BUDGET_SECONDS
+    )
+
+    if languages:
+
+        make_languages_svg(
+            languages,
+            languages_meta,
+        )
+
+    else:
+
+        log.warning(
+            "Language data unavailable - keeping the existing card"
+        )
 
     log.info("=" * 60)
     log.info(

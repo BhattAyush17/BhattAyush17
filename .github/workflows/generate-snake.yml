@@ -36,11 +36,11 @@ jobs:
           # palette=github-dark  -> GitHub dark background
           # color_dots           -> the 5 contribution levels of the grid,
           #                         from "no contributions" to the highest.
-          #                         These are the green boxes of the heatmap.
-          # color_snake          -> purple keeps the snake readable on top
-          #                         of the green contribution boxes.
+          #                         Monochrome ramp, so the profile stays
+          #                         black & white.
+          # color_snake          -> white, for contrast against the grid.
           outputs: |
-            assets/snake/github-contribution-grid-snake-dark.svg?palette=github-dark&color_snake=#8957e5&color_dots=#161b22,#0e4429,#006d32,#26a641,#39d353
+            assets/snake/github-contribution-grid-snake-dark.svg?palette=github-dark&color_snake=#ffffff&color_dots=#161b22,#3d444d,#6e7681,#adbac7,#e6edf3
 
       - name: Version the README image
         run: |
