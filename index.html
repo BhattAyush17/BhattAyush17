@@ -162,18 +162,103 @@
     .badges { display: flex; flex-wrap: wrap; gap: 8px; }
     .badges img { height: 28px; border-radius: 4px; }
 
-    /* ── Stats row (3-up horizontal) ─────────────────────────────── */
-    .stats-row {
-      display: flex;
-      gap: 10px;
-      align-items: stretch;
+    /* ── Stats cards (rendered by JS from assets/stats/data.json) ── */
+    /* All rules are scoped under .ghx so they won't clash with the
+       terminal styles. Re-theme by overriding the variables on .ghx. */
+    .ghx {
+      --ghx-bg: transparent;
+      --ghx-card: #111;
+      --ghx-line: #2a2a2a;
+      --ghx-track: #1c1c1c;
+      --ghx-t1: #f5f5f5;
+      --ghx-t2: #bdbdbd;
+      --ghx-t3: #8a8a8a;
+      --ghx-dash: #4a4a4a;
+      background: var(--ghx-bg);
+      color: var(--ghx-t1);
+      font: 13px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      padding: 0;
+      border-radius: 12px;
     }
-    .stats-row img {
-      flex: 1 1 0;
-      min-width: 0;
-      border-radius: 6px;
-      object-fit: contain;
-      background: #0d1117;
+    .ghx * { box-sizing: border-box; }
+    .ghx .card {
+      background: var(--ghx-card);
+      border: 1px solid var(--ghx-line);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ghx .head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .ghx .head svg { width: 20px; height: 20px; flex: none; }
+    .ghx .live {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--ghx-t3);
+    }
+    .ghx .live i {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--ghx-t1);
+    }
+    .ghx .viz { display: flex; justify-content: center; padding: 4px 0; }
+    .ghx .hr { border-top: 1px solid var(--ghx-line); }
+    .ghx .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--ghx-t2);
+      font-size: 12px;
+      padding: 2px 0;
+    }
+    .ghx .row b { font-weight: 500; color: var(--ghx-t1); font-size: 13px; }
+    .ghx .dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .ghx .muted { font-size: 11px; color: var(--ghx-t3); }
+    .ghx .big { text-align: center; }
+    .ghx .big strong {
+      display: block;
+      font-size: 44px;
+      font-weight: 500;
+      line-height: 1;
+    }
+    .ghx .strip { display: flex; gap: 2px; }
+    .ghx .strip span {
+      flex: 1;
+      height: 16px;
+      border-radius: 2px;
+      border: 1px dashed var(--ghx-dash);
+    }
+    .ghx .strip span.on {
+      background: var(--ghx-t1);
+      border: 1px solid var(--ghx-t1);
+    }
+    .ghx .bar {
+      height: 6px;
+      border-radius: 3px;
+      background: var(--ghx-track);
+    }
+    .ghx .bar div {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--ghx-t1);
     }
 
     /* ── Snake ───────────────────────────────────────────────────── */
@@ -327,11 +412,7 @@
           <div class="cmd">
             <span class="ps">$</span> <span class="cx">gh stats --user BhattAyush17</span>
           </div>
-          <div class="stats-row">
-            <img src="assets/stats/github-stats.svg"  alt="GitHub Stats">
-            <img src="assets/stats/languages.svg"     alt="Top Languages">
-            <img src="assets/stats/streak.svg"        alt="Current Streak">
-          </div>
+          <div id="github-cards"></div>
         </div>
 
         <!-- contribution snake -->
@@ -393,5 +474,151 @@
 
   </div><!-- /tbody -->
 </div><!-- /terminal -->
+
+<script>
+/* ---------- Card renderer ---------- */
+(function () {
+  var GH_PATH = "M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z";
+  var FLAME_PATH = "M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1 0 12 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z";
+  var SHADES = ["#f5f5f5", "#8a8a8a", "#d4d4d4", "#5c5c5c", "#b0b0b0", "#404040", "#7d7d7d", "#e0e0e0"]; // slice colors, in order
+  var REST = "#262626";
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function clamp01(x) { return Math.max(0, Math.min(1, x || 0)); }
+  function ring(r, frac, color) {
+    var C = 2 * Math.PI * r;
+    return '<circle cx="60" cy="60" r="' + r + '" stroke="var(--ghx-track)"/>' +
+           '<circle cx="60" cy="60" r="' + r + '" stroke="' + color + '" stroke-dasharray="' +
+           (C * clamp01(frac)).toFixed(1) + ' ' + C.toFixed(1) + '"/>';
+  }
+  function icon(path, vb, extra) {
+    return '<svg viewBox="' + vb + '" aria-hidden="true" ' + (extra || 'fill="currentColor"') + '><path d="' + path + '"/></svg>';
+  }
+  function head(iconSvg, title) {
+    return '<div class="head">' + iconSvg + esc(title) + '<span class="live"><i></i>live</span></div>';
+  }
+  function dayOfYear(iso) {
+    var d = new Date(iso + "T00:00:00Z");
+    return Math.floor((d - Date.UTC(d.getUTCFullYear(), 0, 0)) / 864e5);
+  }
+
+  function statsCard(d) {
+    var total = d.totalContributions || 1;
+    var f1 = d.commits / total;
+    var f2 = d.activeDays / dayOfYear(d.asOf);
+    var f3 = d.longestStreak ? d.currentStreak / d.longestStreak : 0;
+    return '<div class="card">' + head(icon(GH_PATH, "0 0 16 16"), "GitHub stats") +
+      '<div class="viz"><svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Contribution rings">' +
+      '<g transform="rotate(-90 60 60)" fill="none" stroke-width="8" stroke-linecap="round">' +
+      ring(50, f1, "#f5f5f5") + ring(39, f2, "#a3a3a3") + ring(28, f3, "#6b6b6b") + '</g>' +
+      '<text x="60" y="58" text-anchor="middle" font-size="18" font-weight="500" fill="#f5f5f5">' + esc(d.totalContributions) + '</text>' +
+      '<text x="60" y="73" text-anchor="middle" font-size="11" fill="#8a8a8a">total</text></svg></div>' +
+      '<div class="hr"></div>' +
+      '<div class="row"><span><span class="dot" style="background:#f5f5f5"></span>Commits</span><b>' + esc(d.commits) + '</b></div>' +
+      '<div class="row"><span><span class="dot" style="background:#a3a3a3"></span>Active days</span><b>' + esc(d.activeDays) + '</b></div>' +
+      '<div class="row"><span><span class="dot" style="background:#6b6b6b"></span>Streak / best</span><b>' + esc(d.currentStreak) + ' / ' + esc(d.longestStreak) + '</b></div>' +
+      '<div class="muted">' + esc(d.pullRequests) + ' pull request' + (d.pullRequests === 1 ? "" : "s") + ' · since ' + esc(d.since) + '</div></div>';
+  }
+
+  function langCard(d) {
+    var langs = d.languages.slice().sort(function (a, b) { return b.pct - a.pct; });
+    var R = 42, C = 2 * Math.PI * R, cum = 0, segs = "", used = 0;
+    langs.forEach(function (l, i) {
+      var len = Math.max(0, l.pct / 100 * C - 1);
+      segs += '<circle cx="60" cy="60" r="' + R + '" stroke="' + SHADES[i % SHADES.length] + '" stroke-dasharray="' +
+              len.toFixed(1) + ' ' + C.toFixed(1) + '" stroke-dashoffset="' + (-cum).toFixed(1) + '"/>';
+      cum += l.pct / 100 * C; used += l.pct;
+    });
+    if (used < 100) {
+      segs += '<circle cx="60" cy="60" r="' + R + '" stroke="' + REST + '" stroke-dasharray="' +
+              Math.max(0, (100 - used) / 100 * C - 1).toFixed(1) + ' ' + C.toFixed(1) + '" stroke-dashoffset="' + (-cum).toFixed(1) + '"/>';
+    }
+    var rows = langs.slice(0, d.legendCount || 4).map(function (l, i) {
+      return '<div class="row"><span><span class="dot" style="background:' + SHADES[i % SHADES.length] + '"></span>' +
+             esc(l.name) + '</span><b>' + esc(l.pct) + '%</b></div>';
+    }).join("");
+    var more = langs.slice(d.legendCount || 4).map(function (l) { return esc(l.name) + " " + esc(l.pct) + "%"; });
+    return '<div class="card">' + head(icon(GH_PATH, "0 0 16 16"), "Top languages") +
+      '<div class="viz"><svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Language share">' +
+      '<g transform="rotate(-90 60 60)" fill="none" stroke-width="16">' + segs + '</g>' +
+      '<text x="60" y="58" text-anchor="middle" font-size="18" font-weight="500" fill="#f5f5f5">' + esc(d.repos) + '</text>' +
+      '<text x="60" y="73" text-anchor="middle" font-size="11" fill="#8a8a8a">repos</text></svg></div>' +
+      '<div class="hr"></div>' + rows +
+      '<div class="muted">' + (more.length ? '+ ' + more.join(", ") + ' · ' : '') + 'as of ' + esc(d.asOf) + '</div></div>';
+  }
+
+  function streakCard(d) {
+    var n = Math.min(d.longestStreak, 30);
+    var on = d.currentStreak > 0 ? Math.max(1, Math.round(d.currentStreak / d.longestStreak * n)) : 0;
+    var cells = "";
+    for (var i = 0; i < n; i++) cells += '<span class="' + (i < on ? "on" : "") + '"></span>';
+    var left = Math.max(0, d.longestStreak - d.currentStreak);
+    return '<div class="card">' +
+      head(icon(FLAME_PATH, "0 0 24 24", 'fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"'), "Current streak") +
+      '<div class="big"><strong>' + esc(d.currentStreak) + '</strong><span class="muted">consecutive days</span></div>' +
+      '<div><div class="strip" role="img" aria-label="' + esc(d.currentStreak) + ' of ' + esc(d.longestStreak) + ' days">' + cells + '</div>' +
+      '<div class="row muted" style="margin-top:6px"><span>today</span><span>record: ' + esc(d.longestStreak) + ' days</span></div></div>' +
+      '<div class="hr"></div>' +
+      '<div><div class="row"><span class="muted">Progress to record</span><b>' + esc(d.currentStreak) + ' / ' + esc(d.longestStreak) + '</b></div>' +
+      '<div class="bar"><div style="width:' + (clamp01(d.currentStreak / d.longestStreak) * 100).toFixed(0) + '%"></div></div></div>' +
+      '<div class="muted">' + (left ? left + ' more days to beat your longest streak' : 'New personal record') + '</div></div>';
+  }
+
+  /* Public API: renderGithubCards(element, data) */
+  window.renderGithubCards = function (el, data) {
+    el.classList.add("ghx");
+    el.innerHTML = statsCard(data) + langCard(data) + streakCard(data);
+  };
+})();
+
+/* ---------- Data ---------- */
+/* Fallback snapshot, used when assets/stats/data.json cannot be fetched
+   (pages opened over file:// are blocked by CORS). The workflow keeps
+   the JSON up to date. */
+var githubData = {
+  asOf: "2026-10-21",
+  since: "2026-10-18",
+  totalContributions: 522,
+  commits: 506,
+  pullRequests: 1,
+  activeDays: 95,
+  currentStreak: 4,
+  longestStreak: 19,
+  repos: 25,
+  languages: [
+    { name: "Python", pct: 48 },
+    { name: "Other", pct: 16 },
+    { name: "JavaScript", pct: 8 },
+    { name: "Jupyter Notebook", pct: 8 },
+    { name: "TypeScript", pct: 8 },
+    { name: "C++", pct: 4 },
+    { name: "CSS", pct: 4 },
+    { name: "HTML", pct: 4 }
+  ]
+};
+
+var mount = document.getElementById("github-cards");
+renderGithubCards(mount, githubData);
+
+/* Live data: assets/stats/data.json is regenerated by the stats workflow.
+   Pages opened over file:// are blocked by CORS, so the embedded
+   snapshot above stays in place when the fetch fails. */
+fetch("assets/stats/data.json", { cache: "no-store" })
+  .then(function (r) {
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.json();
+  })
+  .then(function (d) {
+    githubData = d;
+    renderGithubCards(mount, d);
+  })
+  .catch(function () {
+    /* keep the embedded snapshot */
+  });
+</script>
 </body>
 </html>

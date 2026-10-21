@@ -51,9 +51,14 @@ python scripts/generate_stats.py
 ```
 
 The script writes `assets/stats/streak.svg`, `assets/stats/github-stats.svg`,
-`assets/streak/streak.svg` and the cache file. The `languages.svg`,
-`contribution-graph.svg` and `summary-*.svg` cards are produced by other
-tools and are only checked for existence by the health check.
+`assets/stats/languages.svg`, `assets/stats/data.json`,
+`assets/streak/streak.svg` and the cache file. The `contribution-graph.svg`
+and `summary-*.svg` cards are produced by other tools and are only checked
+for existence by the health check.
+
+`assets/stats/data.json` is the machine readable snapshot used by the HTML
+card renderer in `index.html` (the SVG cards cannot be used on a page that
+runs JavaScript).
 
 ### Option B: Without Token (Cache Only)
 If you don't have a token or want to test fallback behavior:

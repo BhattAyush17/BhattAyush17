@@ -2099,6 +2099,145 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 
 
 # ============================================================================
+# DATA JSON
+# ============================================================================
+
+def make_data_json(
+    contribution_data: dict[str, Any],
+    languages: Optional[list[dict[str, Any]]],
+) -> None:
+
+    """
+    Write the machine readable snapshot used by the HTML card renderer.
+
+    The SVG cards cannot be used on a page that runs JavaScript, so the
+    same numbers are also published as JSON. The page falls back to its
+    embedded snapshot when the file cannot be fetched (file:// pages are
+    blocked by CORS).
+    """
+
+    output = ASSETS_DIR / "data.json"
+
+    output.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    previous: dict[str, Any] = {}
+
+    if output.exists():
+        try:
+            previous = json.loads(
+                output.read_text(
+                    encoding="utf-8"
+                )
+            )
+
+        except Exception:
+            previous = {}
+
+    if not languages:
+        languages = previous.get("languages") or []
+
+    repos = sum(
+        int(language.get("count", 0))
+        for language in languages
+    )
+
+    if not repos:
+        repos = int(previous.get("repos", 0))
+
+    commits = (
+        contribution_data.get(
+            "total_commit_contributions",
+            0,
+        )
+        + contribution_data.get(
+            "restricted_contributions",
+            0,
+        )
+    )
+
+    payload = {
+        "asOf": contribution_data.get(
+            "reference_date"
+        ) or reference_date().isoformat(),
+
+        "since": contribution_data.get(
+            "current_streak_start"
+        ),
+
+        "totalContributions": int(
+            contribution_data.get(
+                "github_total_contributions",
+                contribution_data.get(
+                    "total_contributions",
+                    0,
+                ),
+            )
+        ),
+
+        "commits": int(commits),
+
+        "pullRequests": int(
+            contribution_data.get(
+                "total_pull_request_contributions",
+                0,
+            )
+        ),
+
+        "activeDays": int(
+            contribution_data.get(
+                "active_days",
+                0,
+            )
+        ),
+
+        "currentStreak": int(
+            contribution_data.get(
+                "current_streak",
+                0,
+            )
+        ),
+
+        "longestStreak": int(
+            contribution_data.get(
+                "longest_streak",
+                0,
+            )
+        ),
+
+        "repos": repos,
+
+        "languages": [
+            {
+                "name": str(language.get("name", "Other")),
+                "pct": float(language.get("percent", 0)),
+                "count": int(language.get("count", 0)),
+            }
+            for language in languages
+        ],
+
+        "updatedAt": now_iso(),
+    }
+
+    output.write_text(
+        json.dumps(
+            payload,
+            indent=2,
+        ) + "\n",
+        encoding="utf-8",
+    )
+
+    log.info(
+        "data.json written: streak=%s repos=%s languages=%d",
+        payload["currentStreak"],
+        payload["repos"],
+        len(payload["languages"]),
+    )
+
+
+# ============================================================================
 # UNAVAILABLE SVG
 # ============================================================================
 
@@ -2435,6 +2574,11 @@ def main() -> None:
         log.warning(
             "Language data unavailable - keeping the existing card"
         )
+
+    make_data_json(
+        result.data,
+        languages,
+    )
 
     log.info("=" * 60)
     log.info(

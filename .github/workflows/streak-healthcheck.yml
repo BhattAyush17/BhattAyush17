@@ -54,5 +54,7 @@ jobs:
             "chore: refresh streak counter" \
             assets/stats/streak.svg \
             assets/stats/github-stats.svg \
+            assets/stats/languages.svg \
+            assets/stats/data.json \
             assets/streak/streak.svg \
             assets/cache/bhattayush17-github.json
