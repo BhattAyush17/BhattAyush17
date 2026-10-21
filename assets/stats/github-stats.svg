@@ -29,6 +29,16 @@ viewBox="0 0 450 228">
     font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #8b949e;
 }
+
+.stat-label {
+    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}
+
+.stat-value {
+    font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}
 </style>
 
 <rect
@@ -73,71 +83,31 @@ viewBox="0 0 450 228">
     </text>
 </g>
 
-<text
-    x="225"
-    y="98"
-    text-anchor="middle"
-    class="value"
->
-    521
-</text>
-
-<text
-    x="225"
-    y="120"
-    text-anchor="middle"
-    class="label"
->
-    contributions in the last year
-</text>
-
 <line
     x1="25"
-    y1="138"
+    y1="52"
     x2="425"
-    y2="138"
+    y2="52"
     stroke="#27272a"
     stroke-width="1"
 />
 
-<text x="25" y="158" class="small-label">
-    Commits
-</text>
+<text x="25" y="74" class="stat-label">Commits</text>
+<text x="25" y="93" class="stat-value">505</text>
+<text x="25" y="112" class="stat-label">Pull Requests</text>
+<text x="25" y="131" class="stat-value">1</text>
+<text x="25" y="150" class="stat-label">Active Days</text>
+<text x="25" y="169" class="stat-value">95</text>
+<text x="25" y="188" class="stat-label">Longest Streak</text>
+<text x="25" y="207" class="stat-value">19 days</text>
 
-<text x="25" y="176" class="small-value">
-    505
-</text>
-
-<text x="155" y="158" class="small-label">
-    Pull Requests
-</text>
-
-<text x="155" y="176" class="small-value">
-    1
-</text>
-
-<text x="280" y="158" class="small-label">
-    Issues
-</text>
-
-<text x="280" y="176" class="small-value">
-    1
-</text>
-
-<text x="25" y="198" class="small-label">
-    Current Streak: 4 days
-</text>
-
-<text x="25" y="212" class="small-label">
-    Longest Streak: 19 days
-</text>
-
-<text x="225" y="198" class="small-label">
-    Active Days: 95
-</text>
-
-<text x="225" y="212" class="small-label">
-    As of: 2026-10-21
-</text>
+<text x="240" y="74" class="stat-label">Total Contributions</text>
+<text x="240" y="93" class="stat-value">521</text>
+<text x="240" y="112" class="stat-label">Current Streak</text>
+<text x="240" y="131" class="stat-value">4 days</text>
+<text x="240" y="150" class="stat-label">Latest Contribution</text>
+<text x="240" y="169" class="stat-value">4 on 2026-10-21</text>
+<text x="240" y="188" class="stat-label">Since</text>
+<text x="240" y="207" class="stat-value">2026-10-18</text>
 
 </svg>

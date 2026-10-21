@@ -1541,6 +1541,51 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 # SIMPLE STATS SVG
 # ============================================================================
 
+def contribution_count_on(
+    contribution_data: dict[str, Any],
+    day: Optional[str],
+) -> Optional[int]:
+
+    """
+    Number of contributions recorded on a given ISO date.
+
+    Used to show how much was contributed on the most recent active day.
+    """
+
+    if not day:
+        return None
+
+    weeks = contribution_data.get("weeks")
+
+    if not isinstance(weeks, list):
+        return None
+
+    for week in weeks:
+
+        if not isinstance(week, dict):
+            continue
+
+        days = week.get("contributionDays")
+
+        if not isinstance(days, list):
+            continue
+
+        for day_data in days:
+
+            if not isinstance(day_data, dict):
+                continue
+
+            if day_data.get("date") == day:
+                return int(
+                    day_data.get(
+                        "contributionCount",
+                        0,
+                    )
+                )
+
+    return None
+
+
 def make_stats_svg(
     contribution_data: dict[str, Any],
     meta: FetchResult,
@@ -1566,11 +1611,6 @@ def make_stats_svg(
 
     prs = contribution_data.get(
         "total_pull_request_contributions",
-        0,
-    )
-
-    issues = contribution_data.get(
-        "total_issue_contributions",
         0,
     )
 
@@ -1604,15 +1644,70 @@ def make_stats_svg(
         "reference_date"
     ) or reference_date().isoformat()
 
+    last_date = contribution_data.get(
+        "last_contribution_date"
+    )
+
+    streak_start = contribution_data.get(
+        "current_streak_start"
+    )
+
+    last_count = contribution_count_on(
+        contribution_data,
+        last_date,
+    )
+
+    if last_count is None:
+        latest_value = last_date or "none"
+
+    else:
+        latest_value = f"{last_count} on {last_date}"
+
+    since_value = streak_start or "no active streak"
+
     badge = freshness_badge(
         meta
     )
 
+    # Two columns, same rows, so the card reads as a table.
+    left_column = [
+        ("Commits", str(commits)),
+        ("Pull Requests", str(prs)),
+        ("Active Days", str(active_days)),
+        ("Longest Streak", f"{longest} days"),
+    ]
+
+    right_column = [
+        ("Total Contributions", str(total)),
+        ("Current Streak", f"{current} days"),
+        ("Latest Contribution", latest_value),
+        ("Since", since_value),
+    ]
+
+    def render_column(
+        entries: list[tuple[str, str]],
+        x: int,
+    ) -> str:
+        blocks = []
+
+        for index, (label, value) in enumerate(entries):
+            label_y = 74 + index * 38
+            value_y = label_y + 19
+
+            blocks.append(
+                f'<text x="{x}" y="{label_y}" class="stat-label">'
+                f"{label}</text>\n"
+                f'<text x="{x}" y="{value_y}" class="stat-value">'
+                f"{value}</text>"
+            )
+
+        return "\n".join(blocks)
+
     svg = f"""<svg
 xmlns="http://www.w3.org/2000/svg"
-width="450"
+width="{CARD_WIDTH}"
 height="{CARD_HEIGHT}"
-viewBox="0 0 450 {CARD_HEIGHT}">
+viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 
 <style>
 .title {{
@@ -1639,12 +1734,22 @@ viewBox="0 0 450 {CARD_HEIGHT}">
     font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #8b949e;
 }}
+
+.stat-label {{
+    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}}
+
+.stat-value {{
+    font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}}
 </style>
 
 <rect
     x="0.5"
     y="0.5"
-    width="449"
+    width="{CARD_WIDTH - 1}"
     height="{CARD_HEIGHT - 1}"
     rx="7"
     fill="#0d1117"
@@ -1671,72 +1776,18 @@ viewBox="0 0 450 {CARD_HEIGHT}">
     </text>
 </g>
 
-<text
-    x="225"
-    y="98"
-    text-anchor="middle"
-    class="value"
->
-    {total}
-</text>
-
-<text
-    x="225"
-    y="120"
-    text-anchor="middle"
-    class="label"
->
-    contributions in the last year
-</text>
-
 <line
     x1="25"
-    y1="138"
-    x2="425"
-    y2="138"
+    y1="52"
+    x2="{CARD_WIDTH - 25}"
+    y2="52"
     stroke="#27272a"
     stroke-width="1"
 />
 
-<text x="25" y="158" class="small-label">
-    Commits
-</text>
+{render_column(left_column, 25)}
 
-<text x="25" y="176" class="small-value">
-    {commits}
-</text>
-
-<text x="155" y="158" class="small-label">
-    Pull Requests
-</text>
-
-<text x="155" y="176" class="small-value">
-    {prs}
-</text>
-
-<text x="280" y="158" class="small-label">
-    Issues
-</text>
-
-<text x="280" y="176" class="small-value">
-    {issues}
-</text>
-
-<text x="25" y="198" class="small-label">
-    Current Streak: {current} days
-</text>
-
-<text x="25" y="212" class="small-label">
-    Longest Streak: {longest} days
-</text>
-
-<text x="225" y="198" class="small-label">
-    Active Days: {active_days}
-</text>
-
-<text x="225" y="212" class="small-label">
-    As of: {reference_date_value}
-</text>
+{render_column(right_column, 240)}
 
 </svg>
 """
