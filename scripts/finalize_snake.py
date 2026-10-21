@@ -87,6 +87,19 @@ def strip_progress_bar(svg: str) -> str:
         svg,
     )
 
+    # Safety net: snk has renamed its bar classes before. Any <rect> that
+    # sits below the grid and is neither a cell (.c) nor a snake part (.s)
+    # is a progress bar, whatever it is called.
+    def drop_if_below_grid(match: re.Match[str]) -> str:
+        y = float(match.group(1))
+        return "" if y > GRID_BOTTOM + 6 else match.group(0)
+
+    svg = re.sub(
+        r"\s*<rect(?![^>]*class=\"(?:c|s)[\s\"])[^>]*\sy=\"(-?[0-9.]+)\"[^>]*/>",
+        drop_if_below_grid,
+        svg,
+    )
+
     return svg
 
 
@@ -258,9 +271,10 @@ def finalize(svg: str) -> str:
         )
         return svg + "\n</svg>\n"
 
-    # Keep the original horizontal padding: 16px on the left, 18px on
-    # the right of the last 12px cell.
-    width = columns[-1] + 12 + 18 + 16
+    # Flush edges: the grid spans the full image width, so with
+    # width="100%" its left/right edges line up exactly with the
+    # 3-card row above it (each cell already has a 2px inset).
+    width = columns[-1] + 12 + CELL_X_OFFSET
 
     overlay = build_overlay(columns, columns[-1] + 12)
 
@@ -270,8 +284,15 @@ def finalize(svg: str) -> str:
     # progress bar used to be.
     svg = re.sub(
         r'viewBox="[^"]*"',
-        f'viewBox="-16 {VIEWBOX_TOP} {width:.0f} '
+        f'viewBox="0 {VIEWBOX_TOP} {width:.0f} '
         f'{VIEWBOX_BOTTOM - VIEWBOX_TOP}"',
+        svg,
+        count=1,
+    )
+
+    svg = re.sub(
+        r'(<svg[^>]*?)\swidth="[0-9.]+"',
+        rf'\1 width="{width:.0f}"',
         svg,
         count=1,
     )

@@ -16,11 +16,8 @@
 # Navigate to your repo
 cd /path/to/BhattAyush17-main
 
-# Install Python dependencies
+# Install Python dependencies (only requests is required)
 pip install -r scripts/requirements.txt
-
-# For macOS/Linux, if you hit matplotlib issues:
-pip install --upgrade matplotlib --break-system-packages
 ```
 
 ## 2. Run the Script Locally
@@ -44,19 +41,21 @@ python scripts/generate_stats.py
 10:08:17 [INFO] Current streak: 4
 10:08:17 [INFO] Longest streak: 19
 10:08:17 [INFO] Last contribution: 2026-10-21
-10:08:17 [INFO] Streak SVG written: current=4 longest=19
+10:08:17 [INFO] Cards written: assets/stats/github-cards.svg
 10:08:17 [INFO] ============================================================
 10:08:17 [INFO] SOURCE: graphql_api
 10:08:17 [INFO] FRESHNESS: just now
 ```
 
-The script writes `assets/stats/streak.svg`, `assets/stats/github-stats.svg`,
-`assets/stats/languages.svg`, `assets/stats/languages-donut.svg`,
-`assets/stats/stats-row.svg` (the three cards composed into one image so they
-stay on a single row), `assets/stats/data.json`,
-`assets/streak/streak.svg` and the cache file.
-`contribution-graph.svg` and `summary-productive-time.svg` come from other
-tools and are only checked for existence by the health check.
+The script writes the three-card row (`assets/stats/github-cards.svg`), the
+commits-by-hour card (`assets/stats/commit-hours.svg`), the standalone cards
+(`github-stats.svg`, `languages.svg`, `streak.svg`), `assets/stats/data.json`,
+`assets/streak/streak.svg` and the cache file. `cards_svg.py` holds the pure
+renderers; `generate_stats.py` does the fetching and file I/O.
+
+`assets/stats/hourly.json` is a committed snapshot of commits per hour (the
+GraphQL calendar has no hourly data), so `commit-hours.svg` is labelled
+`snapshot` rather than `live`.
 
 `assets/stats/data.json` is the machine readable snapshot used by the HTML
 card renderer in `index.html` (the SVG cards cannot be used on a page that
@@ -90,20 +89,20 @@ ls -lh assets/stats/
 du -h assets/stats/*.svg
 
 # Validate SVG syntax (should contain <svg xmlns>)
-head -1 assets/stats/github-stats.svg
-head -1 assets/stats/languages.svg
+head -1 assets/stats/github-cards.svg
+head -1 assets/stats/commit-hours.svg
 ```
 
 ### Open in Browser
 ```bash
 # macOS
-open assets/stats/stats-row.svg
+open assets/stats/github-cards.svg
+open assets/stats/commit-hours.svg
 open assets/stats/github-stats.svg
 open assets/stats/streak.svg
-open assets/stats/languages.svg
 
 # Linux
-xdg-open assets/stats/stats-row.svg
+xdg-open assets/stats/github-cards.svg
 
 # Or just drag any .svg file into your browser
 ```
@@ -139,32 +138,27 @@ python scripts/generate_stats.py
 # ❌ Should exit with error message, keeping old SVGs untouched
 ```
 
-### Scenario 4: Broken External Service (e.g., Vercel Down)
+### Scenario 4: Language Query Times Out
 ```bash
 export GH_STATS_TOKEN="your_token"
 python scripts/generate_stats.py
-# ✅ If Vercel API times out, should fall back to local heatmap
-# ✅ Other cards still render normally
+# ✅ The three cards still render from contribution data
+# ✅ languages falls back to the committed data.json snapshot
 ```
 
 ## 5. Troubleshooting
 
-### "No module named matplotlib"
+### "No module named requests"
 ```bash
-pip install matplotlib>=3.8.0 --break-system-packages
-```
-
-### "Matplotlib can't find X11" (Linux)
-```bash
-sudo apt-get install -y libcairo2-dev
-pip install cairosvg>=2.7.0
+pip install -r scripts/requirements.txt --break-system-packages
 ```
 
 ### SVGs look broken/blank
-1. Check file size: `ls -lh assets/stats/github-stats.svg`
-   - Should be > 2 KB
-2. Check for error markers in the SVG: `grep -i "unavailable\|error" assets/stats/github-stats.svg`
-3. Check logs for what failed: look at the [ERROR] lines in output
+1. Check file size: `ls -lh assets/stats/github-cards.svg`
+   - Should be > 4 KB
+2. Check the file starts with an `<svg` tag:
+   `head -c 200 assets/stats/github-cards.svg`
+3. Check logs for what failed: look at the `[ERROR]` lines in output
 4. Re-run with your token to force a fresh render
 
 ### Token not working

@@ -19,11 +19,12 @@ Environment:
     GH_STATS_TOKEN   GitHub token with appropriate permissions
 
 Output:
-    assets/stats/github-stats.svg
-    assets/stats/languages.svg
-    assets/stats/languages-donut.svg
-    assets/stats/streak.svg
-    assets/stats/stats-row.svg
+    assets/stats/github-cards.svg    (3-across row used by the README)
+    assets/stats/commit-hours.svg    (commits by hour, full width)
+    assets/stats/github-stats.svg    (standalone card)
+    assets/stats/languages.svg       (standalone card)
+    assets/stats/streak.svg          (standalone card)
+    assets/stats/data.json
     assets/streak/streak.svg
 """
 
@@ -31,9 +32,7 @@ from __future__ import annotations
 
 import json
 import logging
-import math
 import os
-import re
 import sys
 import tempfile
 import time
@@ -44,6 +43,8 @@ from pathlib import Path
 from typing import Any, Optional
 
 import requests
+
+import cards_svg
 
 
 # ============================================================================
@@ -77,19 +78,6 @@ OVERALL_BUDGET_SECONDS = 8.0
 # Separate budget for the secondary (non critical) request that feeds
 # the languages card. The streak data must never wait for it.
 SECONDARY_BUDGET_SECONDS = 6.0
-
-# Every stats card uses the same canvas so the row lines up perfectly.
-#
-# 300px is deliberate. The README shows the three cards with a fixed
-# width (not a percentage), so:
-#
-#   * desktop: 3 x 300px fits the README column, rendered 1:1
-#   * mobile : 300px is narrower than the phone column, so each card is
-#              still rendered 1:1 and simply stacks
-#
-# Nothing is scaled down, which is what used to make the text unreadable.
-CARD_WIDTH = 300
-CARD_HEIGHT = 210
 
 # Maximum socket timeout.
 MAX_REQUEST_TIMEOUT = 7.0
@@ -1285,536 +1273,8 @@ def get_github_data() -> FetchResult:
 
 
 # ============================================================================
-# FRESHNESS BADGE
+# LANGUAGES DATA
 # ============================================================================
-
-def freshness_badge(
-    meta: FetchResult,
-) -> str:
-
-    color, label = meta.badge()
-
-    # Monochrome: the achievement badges are the only colour on the page,
-    # so the freshness dot is a shade of grey instead of green/amber/red.
-    return f"""
-<g transform="translate({CARD_WIDTH - 14},26)">
-    <circle cx="-6" cy="-4" r="3" fill="{color}"/>
-    <text
-        x="-14"
-        y="0"
-        text-anchor="end"
-        font-family="Segoe UI, Ubuntu, Sans-Serif"
-        font-size="9.5"
-        fill="#8b949e"
-    >{label}</text>
-</g>
-"""
-
-
-# ============================================================================
-# STREAK SVG
-# ============================================================================
-
-def make_streak_svg(
-    result: FetchResult,
-) -> None:
-
-    output = STREAK_DIR / "streak.svg"
-    output_alt = ASSETS_DIR / "streak.svg"
-
-    STREAK_DIR.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    ASSETS_DIR.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    if not result.data:
-
-        write_unavailable_svg(
-            output
-        )
-
-        write_unavailable_svg(
-            output_alt
-        )
-
-        return
-
-    data = result.data
-
-    current = int(
-        data.get(
-            "current_streak",
-            0,
-        )
-    )
-
-    longest = int(
-        data.get(
-            "longest_streak",
-            0,
-        )
-    )
-
-    total = int(
-        data.get(
-            "github_total_contributions",
-            data.get(
-                "total_contributions",
-                0,
-            ),
-        )
-    )
-
-    active_days = int(
-        data.get(
-            "active_days",
-            0,
-        )
-    )
-
-    current_year = int(
-        data.get(
-            "current_year_contributions",
-            0,
-        )
-    )
-
-    last_date = data.get(
-        "last_contribution_date"
-    )
-
-    streak_start = data.get(
-        "current_streak_start"
-    )
-
-    reference_date_value = data.get(
-        "reference_date"
-    ) or reference_date().isoformat()
-
-    reference_year = int(
-        reference_date_value[:4]
-    )
-
-    badge = freshness_badge(
-        result
-    )
-
-    svg = f"""<svg
-xmlns="http://www.w3.org/2000/svg"
-width="{CARD_WIDTH}"
-height="{CARD_HEIGHT}"
-viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
-
-<style>
-.title {{
-    font: bold 15px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-
-.label {{
-    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
-}}
-
-.value {{
-    font: bold 44px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-
-.small-value {{
-    font: bold 12px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-
-.small-label {{
-    font: 9.5px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
-}}
-</style>
-
-<rect
-    x="0.5"
-    y="0.5"
-    width="{CARD_WIDTH - 1}"
-    height="{CARD_HEIGHT - 1}"
-    rx="7"
-    fill="#0d1117"
-    stroke="#30363d"
-    stroke-width="1"
-/>
-
-{badge}
-
-<g transform="translate(16,12)">
-    <svg
-        viewBox="0 0 16 16"
-        width="17"
-        height="17"
-    >
-        <path
-            fill="#e6edf3"
-            fill-rule="evenodd"
-            d="M8.618.067a.75.75 0 00-.736.035C6.096 1.34 4 3.758 4 6.5c0 2.373 1.272 4.316 2.977 5.253C6.398 12.016 6 12.656 6 13.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5c0-.844-.398-1.484-.977-1.747 1.705-.937 2.977-2.88 2.977-5.253 0-2.742-2.096-5.16-3.882-6.398a.75.75 0 00-.502-.135zM8.5 14.5c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1"
-        />
-    </svg>
-    <text x="24" y="13" class="title">
-        Current Streak
-    </text>
-</g>
-
-<text
-    x="150"
-    y="86"
-    text-anchor="middle"
-    class="value"
->
-    {current}
-</text>
-
-<text
-    x="150"
-    y="106"
-    text-anchor="middle"
-    class="label"
->
-    consecutive days
-</text>
-
-<line
-    x1="16"
-    y1="122"
-    x2="{CARD_WIDTH - 16}"
-    y2="122"
-    stroke="#27272a"
-    stroke-width="1"
-/>
-
-<text x="16" y="144" class="small-label">
-    Longest (12 mo)
-</text>
-
-<text x="16" y="160" class="small-value">
-    {longest} days
-</text>
-
-<text x="110" y="144" class="small-label">
-    Contributions
-</text>
-
-<text x="110" y="160" class="small-value">
-    {total}
-</text>
-
-<text x="204" y="144" class="small-label">
-    Active Days
-</text>
-
-<text x="204" y="160" class="small-value">
-    {active_days}
-</text>
-
-<text x="16" y="182" class="small-label">
-    {reference_year} contributions: {current_year}
-</text>
-
-<text x="16" y="196" class="small-label">
-    {("Since " + streak_start) if streak_start else "No active streak"}
-</text>
-
-<text x="{CARD_WIDTH - 16}" y="182" text-anchor="end" class="small-label">
-    Last: {last_date or "none"}
-</text>
-
-<text x="{CARD_WIDTH - 16}" y="196" text-anchor="end" class="small-label">
-    As of: {reference_date_value}
-</text>
-
-</svg>
-"""
-
-    output.write_text(
-        svg,
-        encoding="utf-8",
-    )
-
-    output_alt.write_text(
-        svg,
-        encoding="utf-8",
-    )
-
-    log.info(
-        "Streak SVG written: current=%d longest=%d",
-        current,
-        longest,
-    )
-
-
-# ============================================================================
-# SIMPLE STATS SVG
-# ============================================================================
-
-def contribution_count_on(
-    contribution_data: dict[str, Any],
-    day: Optional[str],
-) -> Optional[int]:
-
-    """
-    Number of contributions recorded on a given ISO date.
-
-    Used to show how much was contributed on the most recent active day.
-    """
-
-    if not day:
-        return None
-
-    weeks = contribution_data.get("weeks")
-
-    if not isinstance(weeks, list):
-        return None
-
-    for week in weeks:
-
-        if not isinstance(week, dict):
-            continue
-
-        days = week.get("contributionDays")
-
-        if not isinstance(days, list):
-            continue
-
-        for day_data in days:
-
-            if not isinstance(day_data, dict):
-                continue
-
-            if day_data.get("date") == day:
-                return int(
-                    day_data.get(
-                        "contributionCount",
-                        0,
-                    )
-                )
-
-    return None
-
-
-def make_stats_svg(
-    contribution_data: dict[str, Any],
-    meta: FetchResult,
-) -> None:
-
-    output = ASSETS_DIR / "github-stats.svg"
-
-    output.parent.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    commits = (
-        contribution_data.get(
-            "total_commit_contributions",
-            0,
-        )
-        + contribution_data.get(
-            "restricted_contributions",
-            0,
-        )
-    )
-
-    prs = contribution_data.get(
-        "total_pull_request_contributions",
-        0,
-    )
-
-    total = contribution_data.get(
-        "github_total_contributions",
-        0,
-    )
-
-    current = int(
-        contribution_data.get(
-            "current_streak",
-            0,
-        )
-    )
-
-    longest = int(
-        contribution_data.get(
-            "longest_streak",
-            0,
-        )
-    )
-
-    active_days = int(
-        contribution_data.get(
-            "active_days",
-            0,
-        )
-    )
-
-    reference_date_value = contribution_data.get(
-        "reference_date"
-    ) or reference_date().isoformat()
-
-    last_date = contribution_data.get(
-        "last_contribution_date"
-    )
-
-    streak_start = contribution_data.get(
-        "current_streak_start"
-    )
-
-    last_count = contribution_count_on(
-        contribution_data,
-        last_date,
-    )
-
-    if last_count is None:
-        latest_value = last_date or "none"
-
-    else:
-        latest_value = f"{last_count} on {last_date}"
-
-    since_value = streak_start or "no active streak"
-
-    badge = freshness_badge(
-        meta
-    )
-
-    # Two columns, same rows, so the card reads as a table.
-    left_column = [
-        ("Commits", str(commits)),
-        ("Pull Requests", str(prs)),
-        ("Active Days", str(active_days)),
-        ("Longest Streak", f"{longest} days"),
-    ]
-
-    right_column = [
-        ("Total Contributions", str(total)),
-        ("Current Streak", f"{current} days"),
-        ("Latest Contribution", latest_value),
-        ("Since", since_value),
-    ]
-
-    def render_column(
-        entries: list[tuple[str, str]],
-        x: int,
-    ) -> str:
-        blocks = []
-
-        for index, (label, value) in enumerate(entries):
-            label_y = 64 + index * 34
-            value_y = label_y + 15
-
-            blocks.append(
-                f'<text x="{x}" y="{label_y}" class="stat-label">'
-                f"{label}</text>\n"
-                f'<text x="{x}" y="{value_y}" class="stat-value">'
-                f"{value}</text>"
-            )
-
-        return "\n".join(blocks)
-
-    svg = f"""<svg
-xmlns="http://www.w3.org/2000/svg"
-width="{CARD_WIDTH}"
-height="{CARD_HEIGHT}"
-viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
-
-<style>
-.title {{
-    font: bold 15px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-
-.stat-label {{
-    font: 10.5px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
-}}
-
-.stat-value {{
-    font: bold 12.5px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-</style>
-
-<rect
-    x="0.5"
-    y="0.5"
-    width="{CARD_WIDTH - 1}"
-    height="{CARD_HEIGHT - 1}"
-    rx="7"
-    fill="#0d1117"
-    stroke="#30363d"
-    stroke-width="1"
-/>
-
-{badge}
-
-<g transform="translate(16,12)">
-    <svg
-        viewBox="0 0 16 16"
-        width="17"
-        height="17"
-    >
-        <path
-            fill="#e6edf3"
-            fill-rule="evenodd"
-            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
-        />
-    </svg>
-    <text x="24" y="13" class="title">
-        GitHub Stats
-    </text>
-</g>
-
-<line
-    x1="16"
-    y1="44"
-    x2="{CARD_WIDTH - 16}"
-    y2="44"
-    stroke="#27272a"
-    stroke-width="1"
-/>
-
-{render_column(left_column, 16)}
-
-{render_column(right_column, 154)}
-
-</svg>
-"""
-
-    output.write_text(
-        svg,
-        encoding="utf-8",
-    )
-
-
-# ============================================================================
-# LANGUAGES SVG
-# ============================================================================
-
-# Grayscale ramp for the language bar. The profile is monochrome, so the
-# languages are not painted in their own brand colors.
-#
-# Light and dark alternate, so neighbouring segments (and the matching
-# legend dots) are always easy to tell apart.
-LANGUAGE_GRAYSCALE = [
-    "#e6edf3",
-    "#484f58",
-    "#c9d1d9",
-    "#6e7681",
-    "#adbac7",
-    "#8b949e",
-]
-
-MAX_LEGEND_ENTRIES = 6
-
 
 def fetch_repo_languages(
     deadline: float,
@@ -1889,547 +1349,128 @@ def fetch_repo_languages(
     return languages, result
 
 
-def make_languages_svg(
-    languages: list[dict[str, Any]],
-    meta: FetchResult,
+# ============================================================================
+# MONOCHROME CARDS (3 across)
+# ============================================================================
+
+COMBINED_CARDS_FILE = ASSETS_DIR / "github-cards.svg"
+
+
+def _cards_languages(
+    languages: Optional[list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
+
+    """Normalize fresh language data, or fall back to the last data.json."""
+
+    if languages:
+        return [
+            {
+                "name": item["name"],
+                "pct": float(item.get("percent", 0)),
+                "count": int(item.get("count", 0)),
+            }
+            for item in languages
+        ]
+
+    try:
+        previous = json.loads(
+            (ASSETS_DIR / "data.json").read_text(encoding="utf-8")
+        )
+        return list(previous.get("languages") or [])
+
+    except (OSError, ValueError):
+        return []
+
+
+def make_cards_svg(
+    result: FetchResult,
+    languages: Optional[list[dict[str, Any]]],
 ) -> None:
 
-    output = ASSETS_DIR / "languages.svg"
+    """
+    Write the three monochrome cards plus ONE combined 3-across SVG.
 
-    output.parent.mkdir(
-        parents=True,
-        exist_ok=True,
+    The README embeds github-cards.svg with width=100%, so the row can
+    never wrap to 2 + 1 the way three separate 290px images did.
+    """
+
+    data = result.data or {}
+
+    langs = _cards_languages(languages)
+
+    total = int(
+        data.get(
+            "github_total_contributions",
+            data.get("total_contributions", 0),
+        )
     )
 
-    total_repos = sum(
-        int(language.get("count", 0))
-        for language in languages
+    commits = int(
+        data.get("total_commit_contributions", 0)
+        + data.get("restricted_contributions", 0)
     )
 
-    shown = languages[:MAX_LEGEND_ENTRIES]
+    card_data = {
+        "total": total,
+        "commits": commits,
+        "prs": int(data.get("total_pull_request_contributions", 0)),
+        "active_days": int(data.get("active_days", 0)),
+        "current": int(data.get("current_streak", 0)),
+        "longest": int(data.get("longest_streak", 0)),
+        "since": data.get("current_streak_start") or "",
+        "repos": sum(int(item.get("count", 0)) for item in langs),
+        "as_of": data.get("reference_date")
+        or reference_date().isoformat(),
+        "languages": langs,
+    }
 
-    hidden = len(languages) - len(shown)
+    badge = result.badge()
 
-    badge = freshness_badge(
-        meta
-    )
+    ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    STREAK_DIR.mkdir(parents=True, exist_ok=True)
 
-    # ------------------------------------------------------------------
-    # PROGRESS BAR
-    # ------------------------------------------------------------------
+    outputs = {
+        ASSETS_DIR / "github-stats.svg": "stats",
+        ASSETS_DIR / "streak.svg": "streak",
+        STREAK_DIR / "streak.svg": "streak",
+    }
 
-    bar_x = 16
-    bar_width = CARD_WIDTH - 32
+    # Keep the previous languages card when the language fetch failed
+    # and there is no earlier snapshot to draw from.
+    if langs:
+        outputs[ASSETS_DIR / "languages.svg"] = "languages"
 
-    segments: list[str] = []
-
-    offset = 0.0
-
-    for index, language in enumerate(shown):
-
-        percent = float(
-            language.get("percent", 0)
+    for path, kind in outputs.items():
+        path.write_text(
+            cards_svg.render_single(kind, card_data, badge),
+            encoding="utf-8",
         )
 
-        width = bar_width * percent / 100
-
-        color = LANGUAGE_GRAYSCALE[
-            index % len(LANGUAGE_GRAYSCALE)
-        ]
-
-        segments.append(
-            f'<rect x="{bar_x + offset:.2f}" y="54" '
-            f'width="{width:.2f}" height="8" fill="{color}" />'
-        )
-
-        offset += width
-
-    # ------------------------------------------------------------------
-    # LEGEND
-    # ------------------------------------------------------------------
-
-    legend: list[str] = []
-
-    for index, language in enumerate(shown):
-
-        column = index % 2
-        row = index // 2
-
-        x = 16 + column * 140
-        y = 80 + row * 22
-
-        color = LANGUAGE_GRAYSCALE[
-            index % len(LANGUAGE_GRAYSCALE)
-        ]
-
-        name = str(
-            language.get("name", "Other")
-        )
-
-        percent = float(
-            language.get("percent", 0)
-        )
-
-        legend.append(
-            f'<g transform="translate({x}, {y})">\n'
-            f'    <circle cx="4" cy="4" r="4" fill="{color}" />\n'
-            f'    <text x="13" y="8" class="lang-name">{name}</text>\n'
-            f'    <text x="128" y="8" text-anchor="end" '
-            f'class="lang-pct">{percent:.1f}%</text>\n'
-            f'</g>'
-        )
-
-    hidden_note = (
-        f"+{hidden} more languages"
-        if hidden > 0
-        else ""
-    )
-
-    svg = f"""<svg
-xmlns="http://www.w3.org/2000/svg"
-width="{CARD_WIDTH}"
-height="{CARD_HEIGHT}"
-viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
-
-<style>
-.title {{
-    font: bold 15px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-
-.lang-name {{
-    font: bold 10.5px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-
-.lang-pct {{
-    font: 10px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
-}}
-
-.small-label {{
-    font: 9.5px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
-}}
-</style>
-
-<rect
-    x="0.5"
-    y="0.5"
-    width="{CARD_WIDTH - 1}"
-    height="{CARD_HEIGHT - 1}"
-    rx="7"
-    fill="#0d1117"
-    stroke="#30363d"
-    stroke-width="1"
-/>
-
-{badge}
-
-<g transform="translate(16,12)">
-    <svg
-        viewBox="0 0 16 16"
-        width="17"
-        height="17"
-    >
-        <path
-            fill="#e6edf3"
-            fill-rule="evenodd"
-            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
-        />
-    </svg>
-    <text x="24" y="13" class="title">
-        Top Languages
-    </text>
-</g>
-
-<clipPath id="language-bar-clip">
-    <rect x="{bar_x}" y="54" width="{bar_width}" height="8" rx="4" />
-</clipPath>
-
-<g clip-path="url(#language-bar-clip)">
-{chr(10).join(segments)}
-</g>
-
-{chr(10).join(legend)}
-
-<line
-    x1="16"
-    y1="138"
-    x2="{CARD_WIDTH - 16}"
-    y2="138"
-    stroke="#27272a"
-    stroke-width="1"
-/>
-
-<text x="16" y="160" class="small-label">
-    {total_repos} repositories · {len(languages)} languages
-</text>
-
-<text x="16" y="176" class="small-label">
-    Share of repositories
-</text>
-
-<text x="{CARD_WIDTH - 16}" y="160" text-anchor="end" class="small-label">
-    As of: {reference_date().isoformat()}
-</text>
-
-<text x="{CARD_WIDTH - 16}" y="176" text-anchor="end" class="small-label">
-    {hidden_note if hidden_note else "all languages shown"}
-</text>
-
-</svg>
-"""
-
-    output.write_text(
-        svg,
+    COMBINED_CARDS_FILE.write_text(
+        cards_svg.render_combined(card_data, badge),
         encoding="utf-8",
     )
 
-    log.info(
-        "Languages SVG written: %d repos, %d languages",
-        total_repos,
-        len(languages),
-    )
-
-
-# ============================================================================
-# LANGUAGES DONUT (summary row)
-# ============================================================================
-
-# The summary row used to show two near-identical donuts ("by repo" and
-# "by commit"). There is now a single donut with an explicit legend.
-#
-# Shading alternates light/dark so neighbouring slices are unambiguous.
-DONUT_WIDTH = 340
-DONUT_HEIGHT = 200
-
-DONUT_SHADES = [
-    "#e6edf3",
-    "#6e7681",
-    "#adbac7",
-    "#484f58",
-    "#c9d1d9",
-    "#8b949e",
-    "#f0f6fc",
-    "#3d444d",
-]
-
-DONUT_LEGEND_ENTRIES = 6
-
-
-def make_languages_donut_svg(
-    languages: list[dict[str, Any]],
-) -> None:
-
-    output = ASSETS_DIR / "languages-donut.svg"
-
-    output.parent.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    ordered = sorted(
-        languages,
-        key=lambda item: (
-            -float(item.get("percent", 0)),
-            str(item.get("name", "")),
-        ),
-    )
-
-    total_repos = sum(
-        int(language.get("count", 0))
-        for language in ordered
-    )
-
-    radius = 46.0
-    circumference = 2 * math.pi * radius
-    gap = 1.5
-
-    slices: list[str] = []
-    offset = 0.0
-
-    for index, language in enumerate(ordered):
-
-        percent = float(
-            language.get("percent", 0)
+    # Commits-by-hour card. The hourly counts are a committed snapshot
+    # (the GraphQL calendar has no hourly data), so the badge says so.
+    try:
+        hourly = json.loads(
+            (ASSETS_DIR / "hourly.json").read_text(encoding="utf-8")
         )
 
-        length = max(
-            0.0,
-            circumference * percent / 100 - gap,
+        (ASSETS_DIR / "commit-hours.svg").write_text(
+            cards_svg.render_hourly(
+                [int(value) for value in hourly["counts"]],
+                str(hourly.get("tz", "UTC")),
+                ("#6e7681", "snapshot"),
+            ),
+            encoding="utf-8",
         )
 
-        color = DONUT_SHADES[
-            index % len(DONUT_SHADES)
-        ]
+    except (OSError, ValueError, KeyError):
+        log.warning("hourly.json missing - commit-hours.svg not updated")
 
-        slices.append(
-            f'<circle cx="88" cy="108" r="{radius}" '
-            f'fill="none" stroke="{color}" stroke-width="18" '
-            f'stroke-dasharray="{length:.2f} {circumference:.2f}" '
-            f'stroke-dashoffset="{-offset:.2f}" />'
-        )
-
-        offset += circumference * percent / 100
-
-    shown = ordered[:DONUT_LEGEND_ENTRIES]
-    hidden = len(ordered) - len(shown)
-
-    legend: list[str] = []
-
-    for index, language in enumerate(shown):
-
-        y = 46 + index * 21
-
-        color = DONUT_SHADES[
-            index % len(DONUT_SHADES)
-        ]
-
-        name = str(
-            language.get("name", "Other")
-        )
-
-        percent = float(
-            language.get("percent", 0)
-        )
-
-        legend.append(
-            f'<g transform="translate(166, {y})">\n'
-            f'    <rect x="0" y="-7" width="8" height="8" rx="1.5" '
-            f'fill="{color}" />\n'
-            f'    <text x="14" y="1" class="donut-name">{name}</text>\n'
-            f'    <text x="158" y="1" text-anchor="end" '
-            f'class="donut-pct">{percent:.1f}%</text>\n'
-            f'</g>'
-        )
-
-    hidden_note = (
-        f" · +{hidden} more"
-        if hidden > 0
-        else ""
-    )
-
-    svg = f"""<svg
-xmlns="http://www.w3.org/2000/svg"
-width="{DONUT_WIDTH}"
-height="{DONUT_HEIGHT}"
-viewBox="0 0 {DONUT_WIDTH} {DONUT_HEIGHT}">
-
-<style>
-.title {{
-    font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-
-.donut-name {{
-    font: bold 10.5px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-
-.donut-pct {{
-    font: 10px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
-}}
-
-.center-value {{
-    font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-
-.center-label {{
-    font: 9px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
-}}
-
-.footer {{
-    font: 9.5px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
-}}
-</style>
-
-<rect
-    x="0.5"
-    y="0.5"
-    width="{DONUT_WIDTH - 1}"
-    height="{DONUT_HEIGHT - 1}"
-    rx="7"
-    fill="#0d1117"
-    stroke="#30363d"
-    stroke-width="1"
-/>
-
-<text x="16" y="26" class="title">
-    Languages by Repository
-</text>
-
-<g transform="rotate(-90 88 108)">
-{chr(10).join(slices)}
-</g>
-
-<text x="88" y="105" text-anchor="middle" class="center-value">
-    {total_repos}
-</text>
-
-<text x="88" y="119" text-anchor="middle" class="center-label">
-    repos
-</text>
-
-{chr(10).join(legend)}
-
-<text x="16" y="182" class="footer">
-    {len(ordered)} languages{hidden_note}
-</text>
-
-<text x="{DONUT_WIDTH - 16}" y="182" text-anchor="end" class="footer">
-    as of {reference_date().isoformat()}
-</text>
-
-</svg>
-"""
-
-    output.write_text(
-        svg,
-        encoding="utf-8",
-    )
-
-    log.info(
-        "Languages donut written: %d languages",
-        len(ordered),
-    )
-
-
-# ============================================================================
-# COMBINED STATS ROW
-# ============================================================================
-
-# Horizontal gap between the three cards in the combined image.
-STATS_ROW_GAP = 14
-
-
-def _scope_svg_classes(body: str, prefix: str) -> str:
-    """
-    Namespace one card's CSS classes so three cards can share a document.
-
-    Each card is generated as a standalone SVG with generic class names
-    (``.title``, ``.label``). Inlining them into one file would make the
-    last stylesheet win for every card, so every selector and class
-    attribute gets a per-card prefix.
-    """
-
-    def scope_style(match: "re.Match[str]") -> str:
-        css = re.sub(
-            r"\.([A-Za-z_][\w-]*)",
-            lambda m: f".{prefix}-{m.group(1)}",
-            match.group(1),
-        )
-
-        return f"<style>{css}</style>"
-
-    body = re.sub(
-        r"<style>(.*?)</style>",
-        scope_style,
-        body,
-        flags=re.DOTALL,
-    )
-
-    def scope_class(match: "re.Match[str]") -> str:
-        names = match.group(1).split()
-
-        return 'class="' + " ".join(
-            f"{prefix}-{name}" for name in names
-        ) + '"'
-
-    return re.sub(
-        r'class="([^"]+)"',
-        scope_class,
-        body,
-    )
-
-
-def make_stats_row_svg() -> None:
-    """
-    Compose the three cards into a single image.
-
-    Three separate ``<img>`` tags wrap into a 2 + 1 stack as soon as the
-    README column is narrower than the three cards together. One image
-    always stays on one row, and the fixed aspect ratio keeps the cards
-    aligned at any width.
-    """
-
-    cards = [
-        ("github-stats.svg", "stats"),
-        ("languages.svg", "langs"),
-        ("streak.svg", "streak"),
-    ]
-
-    bodies: list[str] = []
-
-    for filename, prefix in cards:
-        path = ASSETS_DIR / filename
-
-        if not path.exists():
-            log.warning(
-                "Cannot build combined stats row: %s is missing",
-                path,
-            )
-
-            return
-
-        text = path.read_text(encoding="utf-8")
-
-        match = re.search(
-            r"<svg[^>]*>(.*)</svg>",
-            text,
-            flags=re.DOTALL,
-        )
-
-        if not match:
-            log.warning(
-                "Cannot build combined stats row: %s is not an SVG",
-                path,
-            )
-
-            return
-
-        bodies.append(
-            _scope_svg_classes(
-                match.group(1).strip(),
-                prefix,
-            )
-        )
-
-    width = CARD_WIDTH * len(cards) + STATS_ROW_GAP * (len(cards) - 1)
-
-    groups = []
-
-    for index, body in enumerate(bodies):
-        x = index * (CARD_WIDTH + STATS_ROW_GAP)
-
-        groups.append(
-            f'<g transform="translate({x},0)">\n{body}\n</g>'
-        )
-
-    svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" '
-        f'width="{width}" height="{CARD_HEIGHT}" '
-        f'viewBox="0 0 {width} {CARD_HEIGHT}">\n'
-        + "\n".join(groups)
-        + "\n</svg>\n"
-    )
-
-    output = ASSETS_DIR / "stats-row.svg"
-
-    output.write_text(
-        svg,
-        encoding="utf-8",
-    )
-
-    log.info(
-        "Combined stats row written: %dx%d",
-        width,
-        CARD_HEIGHT,
-    )
+    log.info("Cards written: %s", COMBINED_CARDS_FILE)
 
 
 # ============================================================================
@@ -2568,66 +1609,6 @@ def make_data_json(
         payload["currentStreak"],
         payload["repos"],
         len(payload["languages"]),
-    )
-
-
-# ============================================================================
-# UNAVAILABLE SVG
-# ============================================================================
-
-def write_unavailable_svg(
-    path: Path,
-) -> None:
-
-    path.parent.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    svg = """<svg
-xmlns="http://www.w3.org/2000/svg"
-width="450"
-height="180"
-viewBox="0 0 450 180">
-
-<rect
-    x="0.5"
-    y="0.5"
-    width="449"
-    height="179"
-    rx="7"
-    fill="#0d1117"
-    stroke="#30363d"
-/>
-
-<text
-    x="225"
-    y="80"
-    text-anchor="middle"
-    fill="#e6edf3"
-    font-size="18"
-    font-family="Segoe UI, Ubuntu, Sans-Serif"
->
-    GitHub data unavailable
-</text>
-
-<text
-    x="225"
-    y="110"
-    text-anchor="middle"
-    fill="#8b949e"
-    font-size="12"
-    font-family="Segoe UI, Ubuntu, Sans-Serif"
->
-    Retry on the next update
-</text>
-
-</svg>
-"""
-
-    path.write_text(
-        svg,
-        encoding="utf-8",
     )
 
 
@@ -2875,16 +1856,6 @@ def main() -> None:
         )
         sys.exit(1)
 
-    # The contribution data is already normalized.
-    make_streak_svg(
-        result
-    )
-
-    make_stats_svg(
-        result.data,
-        result,
-    )
-
     # ---------------------------------------------------------------------
     # LANGUAGES CARD
     # ---------------------------------------------------------------------
@@ -2892,28 +1863,20 @@ def main() -> None:
     # Secondary request: it must never block or fail the streak cards.
     # When it fails, the previously rendered card is kept untouched.
 
-    languages, languages_meta = fetch_repo_languages(
+    languages, _ = fetch_repo_languages(
         time.monotonic() + SECONDARY_BUDGET_SECONDS
     )
 
-    if languages:
-
-        make_languages_svg(
-            languages,
-            languages_meta,
-        )
-
-        make_languages_donut_svg(
-            languages,
-        )
-
-    else:
+    if not languages:
 
         log.warning(
             "Language data unavailable - keeping the existing cards"
         )
 
-    make_stats_row_svg()
+    make_cards_svg(
+        result,
+        languages,
+    )
 
     make_data_json(
         result.data,

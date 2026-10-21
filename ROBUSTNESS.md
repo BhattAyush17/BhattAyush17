@@ -6,7 +6,7 @@ This stats generator is designed to **never show false data** — only real GitH
 
 ### 1️⃣ Real Data Priority
 ```
-Live (fresh) Data  >  Cached Data  >  Old File  >  Placeholder  >  Invent Numbers
+Live (fresh) Data  >  Cached Data  >  Old File  >  Exit Cleanly (no fake data)
 ```
 
 **We'll never do this:**
@@ -17,33 +17,29 @@ Live (fresh) Data  >  Cached Data  >  Old File  >  Placeholder  >  Invent Number
 **We do this instead:**
 - ✅ If live fetch fails → use cache (even if 12+ hours old)
 - ✅ If cache fails → keep the last real SVG you had
-- ✅ Only show "data unavailable" placeholder if that file never existed
-- ✅ Mark every placeholder with a hidden marker so self-heal knows to retry
+- ✅ If no data exists at all → exit non-zero without touching the cards
+- ✅ Badge every card with its source (`live`, `cached · <age>`, `stale · <age>`)
 
 ### 2️⃣ Fail-Open, Not Fail-Closed
 When something breaks:
 
 | Scenario | Old Behavior | New Behavior |
 |---|---|---|
-| Vercel graph API down | Show placeholder, abandon real data | Use local heatmap from real GitHub data |
 | Language detection fails | Show fake `{"Python": 5, ...}` | Skip rendering, keep existing file |
-| Summary card download fails | Replace with placeholder | Keep old real card, try again next cycle |
-| Network timeout mid-render | Crash or show partial garbage | Preserve last good version |
+| GitHub API timeout | Crash or show partial garbage | Preserve last good version |
+| Hourly snapshot missing | Crash the run | Keep the previous `commit-hours.svg` |
 
 ### 3️⃣ Auditable & Detectable
 Every run logs exactly what data was used:
 
 ```
 ✅ Live GitHub data fetched and cached.
-Rendering stats with real data: 42 stars, 15 forks, 238 commits
-✅ github-stats.svg written with real data.
+Cards written: assets/stats/github-cards.svg
 ```
 
-Placeholders are marked so the health-check workflow knows to keep retrying:
-```html
-<!-- PLACEHOLDER: WILL_RETRY -->
-<svg>... data unavailable — will retry ...</svg>
-```
+There are no placeholder files: a failed run leaves the previous cards on disk
+and the freshness badge in the card header tells you which source they came
+from.
 
 ---
 
@@ -62,17 +58,17 @@ Placeholders are marked so the health-check workflow knows to keep retrying:
 5. All of them publish through `scripts/publish_assets.sh`, so a fix lands
    on `main` even when another workflow pushed in the meantime
 
-### Example: Vercel is Down
+### Example: Language Fetch Fails
 ```bash
 Time 14:00 — generate-readme-assets runs
-→ Vercel API is down
-→ Script logs: "Vercel graph fetch failed — generating local heatmap"
-→ Renders contribution heatmap from real GitHub calendar data
-→ SVG is GOOD (real data via fallback)
+→ The secondary repository query times out
+→ Script logs: "Language data unavailable - keeping the existing cards"
+→ The three cards are still written from contribution data
+→ languages card falls back to the committed data.json snapshot
 
 Time 20:30 — fallback-healthcheck runs (scheduled)
-→ Audits contribution-graph.svg
-→ File exists, contains real heatmap, no PLACEHOLDER marker
+→ Audits github-cards.svg and commit-hours.svg
+→ Both exist and contain <svg>
 → Status: ✅ HEALTHY, no action needed
 ```
 
@@ -103,14 +99,11 @@ python scripts/generate_stats.py 2>&1 | grep -E "✅|❌|ERROR|NEVER|real data"
 
 Expected output for a healthy run:
 ```
-Policy: NEVER show false data...
-✅ Live GitHub data fetched and cached.
-Rendering stats with real data: 42 stars, 15 forks, 238 commits
-✅ github-stats.svg written with real data.
-Rendering streak with real data: current=7, longest=45, total=892
-✅ streak.svg written with real data.
-...
-✨ Stats generation complete. All SVGs contain REAL data...
+[INFO] LIVE SUCCESS: 941 ms
+[INFO] Cards written: assets/stats/github-cards.svg
+[INFO] data.json written: streak=4 repos=25 languages=8
+[INFO] SOURCE: graphql_api
+[INFO] FRESHNESS: just now
 ```
 
 ### Test Fallback Behavior
@@ -125,14 +118,15 @@ python scripts/generate_stats.py
 # Exit code: 1
 ```
 
-### Test Placeholder Detection
+### Test Cache Fallback
 ```bash
-# Trigger a broken render (corrupt cache)
+# Trigger a broken cache and remove the live path
 echo '{"invalid": "json"}' > assets/cache/bhattayush17-github.json
+unset GH_STATS_TOKEN
 python scripts/generate_stats.py
 
-# Script will try to parse, fail, then keep old SVGs
-# ✅ Old data preserved
+# Script will try to parse the cache, fail, then exit without touching
+# the existing cards (exit code 1).
 ```
 
 ---
@@ -141,13 +135,11 @@ python scripts/generate_stats.py
 
 | Card | Source | Refreshed | Fallback |
 |---|---|---|---|
+| **github-cards.svg** | Composed from the three cards below | Every run | Keep old file |
+| **commit-hours.svg** | `assets/stats/hourly.json` (committed snapshot) | Every run | Keep old file |
 | **github-stats.svg** | GitHub GraphQL API | Every run | Cached data (6h TTL), then old file |
 | **streak.svg** | GitHub GraphQL (contributions calendar) | Every run | Cached data, then old file |
-| **languages.svg** | GitHub GraphQL (repo primary languages) | Every run | Skip (never fake), keep old file |
-| **languages-donut.svg** | GitHub GraphQL (repo primary languages) | Every run | Skip (never fake), keep old file |
-| **stats-row.svg** | Composed from the three cards above | Every run | Keep old file |
-| **contribution-graph.svg** | Vercel activity graph OR local heatmap | Every run | Local heatmap (real data), then old file |
-| **summary-productive-time.svg** | Vercel summary card | External | Keep old file |
+| **languages.svg** | GitHub GraphQL (repo primary languages) | Every run | Cached data or `data.json`, then old file |
 | **snake SVG** | `Platane/snk` (GitHub contribution grid) + `scripts/finalize_snake.py` | Every 12 h | Keep old file, retry next cycle |
 
 **Cache policy:**
@@ -218,10 +210,9 @@ re-created on top of the newest `main`.
 - **Mitigation:** If you have 100+ repos, consider increasing `first:` parameter in `_GQL_QUERY`
 
 ### External Service Downtime
-- **Services:** Vercel (activity graph, summary cards)
-- **Mitigation:** 
-  - For activity graph: fallback to local heatmap (still real data)
-  - For summary cards: keep old version, retry next cycle
+- **Services:** GitHub GraphQL API
+- **Mitigation:** use the committed cache, keep the old cards, and label them
+  `cached · <age>` so the stale source is visible
 
 ### Network Timeouts
 - **Risk:** Partial data corruption
@@ -284,14 +275,14 @@ cat assets/cache/bhattayush17-github.json | python -m json.tool | head -20
 python -u scripts/generate_stats.py 2>&1 | tee debug.log
 ```
 
-**Problem:** Placeholder SVGs keep appearing
+**Problem:** Cards look stale on the profile
 ```bash
-# Check if placeholder marker exists
-grep "PLACEHOLDER: WILL_RETRY" assets/stats/*.svg
+# GitHub caches README images by URL. The workflows bump ?v= on each run;
+# if you published manually, bump it yourself:
+sed -i -E "s#(assets/stats/(github-cards|commit-hours)\.svg)(\?v=[0-9]+)?#\1?v=$(date -u +%Y%m%d%H%M%S)#g" README.md
 
-# The health-check should have re-triggered. If not:
-# - Verify GH_STATS_TOKEN secret is set in GitHub Settings
-# - Manually trigger: Actions → fallback-healthcheck → Run workflow
+# If the cards are genuinely unchanged, check the run log for
+# "SOURCE: cache" or "FRESHNESS: cached" and verify GH_STATS_TOKEN is set.
 ```
 
 ---

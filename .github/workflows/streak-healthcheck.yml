@@ -32,8 +32,8 @@ jobs:
         run: |
           if [ ! -s assets/stats/streak.svg ]; then
             echo "streak.svg missing/empty"
-          elif grep -q "GitHub data unavailable" assets/stats/streak.svg; then
-            echo "streak.svg is the unavailable placeholder"
+          elif ! grep -q "<svg" assets/stats/streak.svg; then
+            echo "streak.svg is not an SVG"
           else
             echo "streak.svg present ($(wc -c < assets/stats/streak.svg) bytes)"
           fi
@@ -48,6 +48,14 @@ jobs:
           pip install requests
           python scripts/generate_stats.py
 
+      - name: Version the README card images
+        run: |
+          # GitHub caches README images by URL; a fresh ?v= makes the
+          # profile pick up the regenerated cards instead of a stale copy.
+          version="$(date -u +%Y%m%d%H%M%S)"
+          sed -i -E "s#(assets/stats/(github-cards|commit-hours)\.svg)(\?v=[0-9]+)?#\1?v=${version}#g" README.md
+          grep -n "github-cards\|commit-hours" README.md
+
       - name: Commit refreshed streak
         run: |
           scripts/publish_assets.sh \
@@ -55,7 +63,9 @@ jobs:
             assets/stats/streak.svg \
             assets/stats/github-stats.svg \
             assets/stats/languages.svg \
-            assets/stats/stats-row.svg \
+            assets/stats/github-cards.svg \
+            assets/stats/commit-hours.svg \
             assets/stats/data.json \
             assets/streak/streak.svg \
-            assets/cache/bhattayush17-github.json
+            assets/cache/bhattayush17-github.json \
+            README.md

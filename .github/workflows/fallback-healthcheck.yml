@@ -14,12 +14,12 @@ jobs:
 
       - name: Verify generated assets
         run: |
+          test -f assets/stats/github-cards.svg
+          test -f assets/stats/commit-hours.svg
           test -f assets/stats/github-stats.svg
           test -f assets/stats/languages.svg
-          test -f assets/stats/languages-donut.svg
           test -f assets/stats/streak.svg
-          test -f assets/stats/stats-row.svg
-          test -f assets/stats/contribution-graph.svg
-          test -f assets/stats/summary-productive-time.svg
+          test -f assets/stats/data.json
+          test -f assets/stats/hourly.json
           test -f assets/snake/github-contribution-grid-snake-dark.svg
 

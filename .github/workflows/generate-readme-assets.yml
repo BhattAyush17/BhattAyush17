@@ -43,8 +43,16 @@ jobs:
         run: |
           python scripts/generate_stats.py
 
+      - name: Version the README card images
+        run: |
+          # GitHub caches README images by URL; a fresh ?v= makes the
+          # profile pick up the regenerated cards instead of a stale copy.
+          version="$(date -u +%Y%m%d%H%M%S)"
+          sed -i -E "s#(assets/stats/(github-cards|commit-hours)\.svg)(\?v=[0-9]+)?#\1?v=${version}#g" README.md
+          grep -n "github-cards\|commit-hours" README.md
+
       - name: Commit generated assets
         run: |
           scripts/publish_assets.sh \
             "chore: update README analytics assets" \
-            assets/stats assets/streak assets/cache/bhattayush17-github.json
+            assets/stats assets/streak assets/cache/bhattayush17-github.json README.md

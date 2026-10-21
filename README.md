@@ -55,16 +55,11 @@
 
 > `$ gh stats --user BhattAyush17`
 
-<p align="center">
-  <img src="assets/stats/stats-row.svg" width="100%" alt="GitHub stats, top languages and current streak" />
-</p>
+<img src="assets/stats/github-cards.svg?v=20261021063600" width="100%" alt="GitHub stats, top languages and current streak" />
 
-> `$ gh api graphql   # language + activity breakdown`
+> `$ gh api graphql   # commit activity by hour`
 
-<p align="center">
-  <img src="assets/stats/languages-donut.svg" width="340" alt="Languages by repository" />
-  <img src="assets/stats/summary-productive-time.svg" width="340" alt="Commits by hour (IST)" />
-</p>
+<img src="assets/stats/commit-hours.svg?v=20261021063600" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
 
 > `$ gh repo list --sort pushed --limit 3`
 
@@ -78,7 +73,7 @@
 
 > `$ git log --graph --oneline --all   # contribution history`
 
-<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=20261021063233" width="100%" alt="Contribution Snake" />
+<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=20261021063600" width="100%" alt="Contribution Snake" />
 
 > `$ gh repo list --pinned --limit 4`
 
@@ -122,5 +117,3 @@
 
 </div>
 </details>
-
-</div>
