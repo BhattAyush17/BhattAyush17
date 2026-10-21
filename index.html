@@ -153,6 +153,7 @@
       font-size: 12.5px;
       line-height: 2;
       white-space: pre;
+      overflow-x: auto;
     }
     .k { color: var(--muted); }
     .ar { color: var(--dim); }
@@ -275,6 +276,11 @@
     /* ── Achievements ─────────────────────────────────────────────── */
     .achievements { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
     .achievements img { width: 68px; height: 68px; object-fit: contain; }
+    .achievements-caption {
+      margin-top: 8px;
+      font-size: 11.5px;
+      color: var(--muted);
+    }
 
     /* ── Trophies ─────────────────────────────────────────────────── */
     .trophies img { width: 100%; border-radius: 4px; }
@@ -320,6 +326,12 @@
     @keyframes rotateQuote {
       0%, 33.33%, 100% { opacity: 0; transform: translateY(4px); }
       3%, 30.33% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Narrow screens: let the rotating quote wrap instead of clipping it. */
+    @media (max-width: 700px) {
+      .quote-rotator { height: 60px; }
+      .quote-rotator .quote { white-space: normal; overflow: visible; text-overflow: clip; }
     }
   </style>
 </head>
@@ -390,9 +402,16 @@
             <img src="https://img.shields.io/badge/JavaScript-1a1a1a?style=for-the-badge&logo=javascript&logoColor=E5E7EB" alt="JavaScript">
             <img src="https://img.shields.io/badge/HTML5-1a1a1a?style=for-the-badge&logo=html5&logoColor=E5E7EB" alt="HTML5">
             <img src="https://img.shields.io/badge/Shell-1a1a1a?style=for-the-badge&logo=gnu-bash&logoColor=E5E7EB" alt="Shell">
+            <img src="https://img.shields.io/badge/Git-1a1a1a?style=for-the-badge&logo=git&logoColor=E5E7EB" alt="Git">
+            <img src="https://img.shields.io/badge/Linux-1a1a1a?style=for-the-badge&logo=linux&logoColor=E5E7EB" alt="Linux">
+          </div>
+          <div class="badges" style="margin-top: 8px;">
             <img src="https://img.shields.io/badge/PyTorch-1a1a1a?style=for-the-badge&logo=pytorch&logoColor=E5E7EB" alt="PyTorch">
             <img src="https://img.shields.io/badge/scikit--learn-1a1a1a?style=for-the-badge&logo=scikit-learn&logoColor=E5E7EB" alt="scikit-learn">
-            <img src="https://img.shields.io/badge/Linux-1a1a1a?style=for-the-badge&logo=linux&logoColor=E5E7EB" alt="Linux">
+            <img src="https://img.shields.io/badge/NumPy-1a1a1a?style=for-the-badge&logo=numpy&logoColor=E5E7EB" alt="NumPy">
+            <img src="https://img.shields.io/badge/Pandas-1a1a1a?style=for-the-badge&logo=pandas&logoColor=E5E7EB" alt="Pandas">
+            <img src="https://img.shields.io/badge/OpenCV-1a1a1a?style=for-the-badge&logo=opencv&logoColor=E5E7EB" alt="OpenCV">
+            <img src="https://img.shields.io/badge/Streamlit-1a1a1a?style=for-the-badge&logo=streamlit&logoColor=E5E7EB" alt="Streamlit">
             <img src="https://img.shields.io/badge/Docker-1a1a1a?style=for-the-badge&logo=docker&logoColor=E5E7EB" alt="Docker">
           </div>
         </div>
@@ -437,6 +456,7 @@
             <img src="assets/badges/achievement_yolo.png"       title="YOLO"       alt="YOLO">
             <img src="assets/badges/achievement_quickdraw.png"  title="Quickdraw"  alt="Quickdraw">
           </div>
+          <div class="achievements-caption">Pull Shark · YOLO · Quickdraw — merged PRs, unreviewed merges, same-day issue closes.</div>
 
           <div class="cmd" style="margin-top:22px">
             <span class="ps">$</span> <span class="cx">gh trophy --user BhattAyush17</span>
@@ -582,8 +602,8 @@
 var githubData = {
   asOf: "2026-10-21",
   since: "2026-10-18",
-  totalContributions: 522,
-  commits: 506,
+  totalContributions: 523,
+  commits: 507,
   pullRequests: 1,
   activeDays: 95,
   currentStreak: 4,

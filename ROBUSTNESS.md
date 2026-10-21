@@ -144,9 +144,10 @@ python scripts/generate_stats.py
 | **github-stats.svg** | GitHub GraphQL API | Every run | Cached data (6h TTL), then old file |
 | **streak.svg** | GitHub GraphQL (contributions calendar) | Every run | Cached data, then old file |
 | **languages.svg** | GitHub GraphQL (repo primary languages) | Every run | Skip (never fake), keep old file |
+| **languages-donut.svg** | GitHub GraphQL (repo primary languages) | Every run | Skip (never fake), keep old file |
 | **contribution-graph.svg** | Vercel activity graph OR local heatmap | Every run | Local heatmap (real data), then old file |
-| **summary-\*.svg** | Vercel summary cards | Every run | Keep old file, retry next cycle |
-| **snake SVG** | `Platane/snk` (GitHub contribution grid) | Every 12 h | Keep old file, retry next cycle |
+| **summary-productive-time.svg** | Vercel summary card | External | Keep old file |
+| **snake SVG** | `Platane/snk` (GitHub contribution grid) + `scripts/finalize_snake.py` | Every 12 h | Keep old file, retry next cycle |
 
 **Cache policy:**
 - Fetched data cached to `assets/cache/bhattayush17-github.json` with timestamp

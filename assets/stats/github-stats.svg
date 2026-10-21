@@ -1,42 +1,22 @@
 <svg
 xmlns="http://www.w3.org/2000/svg"
-width="450"
-height="228"
-viewBox="0 0 450 228">
+width="300"
+height="210"
+viewBox="0 0 300 210">
 
 <style>
 .title {
-    font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: bold 15px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #e6edf3;
-}
-
-.label {
-    font: 13px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
-}
-
-.value {
-    font: bold 34px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}
-
-.small-value {
-    font: bold 12px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}
-
-.small-label {
-    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
 }
 
 .stat-label {
-    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: 10.5px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #8b949e;
 }
 
 .stat-value {
-    font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: bold 12.5px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #e6edf3;
 }
 </style>
@@ -44,8 +24,8 @@ viewBox="0 0 450 228">
 <rect
     x="0.5"
     y="0.5"
-    width="449"
-    height="227"
+    width="299"
+    height="209"
     rx="7"
     fill="#0d1117"
     stroke="#30363d"
@@ -53,24 +33,24 @@ viewBox="0 0 450 228">
 />
 
 
-<g transform="translate(420,22)">
-    <circle cx="-6" cy="-4" r="3.5" fill="#3fb950"/>
+<g transform="translate(286,26)">
+    <circle cx="-6" cy="-4" r="3" fill="#e6edf3"/>
     <text
-        x="-16"
+        x="-14"
         y="0"
         text-anchor="end"
         font-family="Segoe UI, Ubuntu, Sans-Serif"
-        font-size="10"
+        font-size="9.5"
         fill="#8b949e"
     >live</text>
 </g>
 
 
-<g transform="translate(25,20)">
+<g transform="translate(16,12)">
     <svg
         viewBox="0 0 16 16"
-        width="19"
-        height="19"
+        width="17"
+        height="17"
     >
         <path
             fill="#e6edf3"
@@ -78,36 +58,36 @@ viewBox="0 0 450 228">
             d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
         />
     </svg>
-    <text x="27" y="15" class="title">
+    <text x="24" y="13" class="title">
         GitHub Stats
     </text>
 </g>
 
 <line
-    x1="25"
-    y1="52"
-    x2="425"
-    y2="52"
+    x1="16"
+    y1="44"
+    x2="284"
+    y2="44"
     stroke="#27272a"
     stroke-width="1"
 />
 
-<text x="25" y="74" class="stat-label">Commits</text>
-<text x="25" y="93" class="stat-value">507</text>
-<text x="25" y="112" class="stat-label">Pull Requests</text>
-<text x="25" y="131" class="stat-value">1</text>
-<text x="25" y="150" class="stat-label">Active Days</text>
-<text x="25" y="169" class="stat-value">95</text>
-<text x="25" y="188" class="stat-label">Longest Streak</text>
-<text x="25" y="207" class="stat-value">19 days</text>
+<text x="16" y="64" class="stat-label">Commits</text>
+<text x="16" y="79" class="stat-value">507</text>
+<text x="16" y="98" class="stat-label">Pull Requests</text>
+<text x="16" y="113" class="stat-value">1</text>
+<text x="16" y="132" class="stat-label">Active Days</text>
+<text x="16" y="147" class="stat-value">95</text>
+<text x="16" y="166" class="stat-label">Longest Streak</text>
+<text x="16" y="181" class="stat-value">19 days</text>
 
-<text x="240" y="74" class="stat-label">Total Contributions</text>
-<text x="240" y="93" class="stat-value">523</text>
-<text x="240" y="112" class="stat-label">Current Streak</text>
-<text x="240" y="131" class="stat-value">4 days</text>
-<text x="240" y="150" class="stat-label">Latest Contribution</text>
-<text x="240" y="169" class="stat-value">6 on 2026-10-21</text>
-<text x="240" y="188" class="stat-label">Since</text>
-<text x="240" y="207" class="stat-value">2026-10-18</text>
+<text x="154" y="64" class="stat-label">Total Contributions</text>
+<text x="154" y="79" class="stat-value">523</text>
+<text x="154" y="98" class="stat-label">Current Streak</text>
+<text x="154" y="113" class="stat-value">4 days</text>
+<text x="154" y="132" class="stat-label">Latest Contribution</text>
+<text x="154" y="147" class="stat-value">6 on 2026-10-21</text>
+<text x="154" y="166" class="stat-label">Since</text>
+<text x="154" y="181" class="stat-value">2026-10-18</text>
 
 </svg>

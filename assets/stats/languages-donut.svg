@@ -1,0 +1,112 @@
+<svg
+xmlns="http://www.w3.org/2000/svg"
+width="340"
+height="200"
+viewBox="0 0 340 200">
+
+<style>
+.title {
+    font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}
+
+.donut-name {
+    font: bold 10.5px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}
+
+.donut-pct {
+    font: 10px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}
+
+.center-value {
+    font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}
+
+.center-label {
+    font: 9px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}
+
+.footer {
+    font: 9.5px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}
+</style>
+
+<rect
+    x="0.5"
+    y="0.5"
+    width="339"
+    height="199"
+    rx="7"
+    fill="#0d1117"
+    stroke="#30363d"
+    stroke-width="1"
+/>
+
+<text x="16" y="26" class="title">
+    Languages by Repository
+</text>
+
+<g transform="rotate(-90 88 108)">
+<circle cx="88" cy="108" r="46.0" fill="none" stroke="#e6edf3" stroke-width="18" stroke-dasharray="137.23 289.03" stroke-dashoffset="-0.00" />
+<circle cx="88" cy="108" r="46.0" fill="none" stroke="#6e7681" stroke-width="18" stroke-dasharray="44.74 289.03" stroke-dashoffset="-138.73" />
+<circle cx="88" cy="108" r="46.0" fill="none" stroke="#adbac7" stroke-width="18" stroke-dasharray="21.62 289.03" stroke-dashoffset="-184.98" />
+<circle cx="88" cy="108" r="46.0" fill="none" stroke="#484f58" stroke-width="18" stroke-dasharray="21.62 289.03" stroke-dashoffset="-208.10" />
+<circle cx="88" cy="108" r="46.0" fill="none" stroke="#c9d1d9" stroke-width="18" stroke-dasharray="21.62 289.03" stroke-dashoffset="-231.22" />
+<circle cx="88" cy="108" r="46.0" fill="none" stroke="#8b949e" stroke-width="18" stroke-dasharray="10.06 289.03" stroke-dashoffset="-254.34" />
+<circle cx="88" cy="108" r="46.0" fill="none" stroke="#f0f6fc" stroke-width="18" stroke-dasharray="10.06 289.03" stroke-dashoffset="-265.90" />
+<circle cx="88" cy="108" r="46.0" fill="none" stroke="#3d444d" stroke-width="18" stroke-dasharray="10.06 289.03" stroke-dashoffset="-277.47" />
+</g>
+
+<text x="88" y="105" text-anchor="middle" class="center-value">
+    25
+</text>
+
+<text x="88" y="119" text-anchor="middle" class="center-label">
+    repos
+</text>
+
+<g transform="translate(166, 46)">
+    <rect x="0" y="-7" width="8" height="8" rx="1.5" fill="#e6edf3" />
+    <text x="14" y="1" class="donut-name">Python</text>
+    <text x="158" y="1" text-anchor="end" class="donut-pct">48.0%</text>
+</g>
+<g transform="translate(166, 67)">
+    <rect x="0" y="-7" width="8" height="8" rx="1.5" fill="#6e7681" />
+    <text x="14" y="1" class="donut-name">Other</text>
+    <text x="158" y="1" text-anchor="end" class="donut-pct">16.0%</text>
+</g>
+<g transform="translate(166, 88)">
+    <rect x="0" y="-7" width="8" height="8" rx="1.5" fill="#adbac7" />
+    <text x="14" y="1" class="donut-name">JavaScript</text>
+    <text x="158" y="1" text-anchor="end" class="donut-pct">8.0%</text>
+</g>
+<g transform="translate(166, 109)">
+    <rect x="0" y="-7" width="8" height="8" rx="1.5" fill="#484f58" />
+    <text x="14" y="1" class="donut-name">Jupyter Notebook</text>
+    <text x="158" y="1" text-anchor="end" class="donut-pct">8.0%</text>
+</g>
+<g transform="translate(166, 130)">
+    <rect x="0" y="-7" width="8" height="8" rx="1.5" fill="#c9d1d9" />
+    <text x="14" y="1" class="donut-name">TypeScript</text>
+    <text x="158" y="1" text-anchor="end" class="donut-pct">8.0%</text>
+</g>
+<g transform="translate(166, 151)">
+    <rect x="0" y="-7" width="8" height="8" rx="1.5" fill="#8b949e" />
+    <text x="14" y="1" class="donut-name">C++</text>
+    <text x="158" y="1" text-anchor="end" class="donut-pct">4.0%</text>
+</g>
+
+<text x="16" y="182" class="footer">
+    8 languages · +2 more
+</text>
+
+<text x="324" y="182" text-anchor="end" class="footer">
+    as of 2026-10-21
+</text>
+
+</svg>

@@ -34,19 +34,20 @@
 > `$ cat about.txt`
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│  role         →  ML Engineer & Data Science enthusiast          │
-│  focus        →  Machine Learning · Deep Learning · CV · NLP    │
-│  stack        →  Python · C++ · PyTorch · scikit-learn          │
-│  status       →  Exploring ML frameworks deeply                  │
-│  interests    →  Intelligent systems · AI research · Data archi  │
-│  collab       →  Open to research-oriented, impactful projects   │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────┐
+│  role         ->  ML Engineer & Data Science enthusiast                  │
+│  focus        ->  ML | Deep Learning | CV | NLP                          │
+│  stack        ->  Python | C++ | PyTorch | scikit-learn                  │
+│  status       ->  Exploring ML frameworks deeply                         │
+│  interests    ->  Intelligent systems | AI research | Data architecture  │
+│  collab       ->  Open to research-oriented, impactful projects          │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
 > `$ ls -la skills/`
 
-<img src="https://img.shields.io/badge/Python-1a1a1a?style=for-the-badge&logo=python&logoColor=E5E7EB" alt="Python"> <img src="https://img.shields.io/badge/C++-1a1a1a?style=for-the-badge&logo=cplusplus&logoColor=E5E7EB" alt="C++"> <img src="https://img.shields.io/badge/Jupyter-1a1a1a?style=for-the-badge&logo=jupyter&logoColor=E5E7EB" alt="Jupyter"> <img src="https://img.shields.io/badge/JavaScript-1a1a1a?style=for-the-badge&logo=javascript&logoColor=E5E7EB" alt="JavaScript"> <img src="https://img.shields.io/badge/HTML5-1a1a1a?style=for-the-badge&logo=html5&logoColor=E5E7EB" alt="HTML5"> <img src="https://img.shields.io/badge/Shell-1a1a1a?style=for-the-badge&logo=gnu-bash&logoColor=E5E7EB" alt="Shell"> <img src="https://img.shields.io/badge/PyTorch-1a1a1a?style=for-the-badge&logo=pytorch&logoColor=E5E7EB" alt="PyTorch"> <img src="https://img.shields.io/badge/scikit--learn-1a1a1a?style=for-the-badge&logo=scikit-learn&logoColor=E5E7EB" alt="scikit-learn"> <img src="https://img.shields.io/badge/Linux-1a1a1a?style=for-the-badge&logo=linux&logoColor=E5E7EB" alt="Linux"> <img src="https://img.shields.io/badge/Docker-1a1a1a?style=for-the-badge&logo=docker&logoColor=E5E7EB" alt="Docker">
+<img src="https://img.shields.io/badge/Python-1a1a1a?style=for-the-badge&logo=python&logoColor=E5E7EB" alt="Python"> <img src="https://img.shields.io/badge/C++-1a1a1a?style=for-the-badge&logo=cplusplus&logoColor=E5E7EB" alt="C++"> <img src="https://img.shields.io/badge/Jupyter-1a1a1a?style=for-the-badge&logo=jupyter&logoColor=E5E7EB" alt="Jupyter"> <img src="https://img.shields.io/badge/JavaScript-1a1a1a?style=for-the-badge&logo=javascript&logoColor=E5E7EB" alt="JavaScript"> <img src="https://img.shields.io/badge/HTML5-1a1a1a?style=for-the-badge&logo=html5&logoColor=E5E7EB" alt="HTML5"> <img src="https://img.shields.io/badge/Shell-1a1a1a?style=for-the-badge&logo=gnu-bash&logoColor=E5E7EB" alt="Shell"> <img src="https://img.shields.io/badge/Git-1a1a1a?style=for-the-badge&logo=git&logoColor=E5E7EB" alt="Git"> <img src="https://img.shields.io/badge/Linux-1a1a1a?style=for-the-badge&logo=linux&logoColor=E5E7EB" alt="Linux"><br>
+<img src="https://img.shields.io/badge/PyTorch-1a1a1a?style=for-the-badge&logo=pytorch&logoColor=E5E7EB" alt="PyTorch"> <img src="https://img.shields.io/badge/scikit--learn-1a1a1a?style=for-the-badge&logo=scikit-learn&logoColor=E5E7EB" alt="scikit-learn"> <img src="https://img.shields.io/badge/NumPy-1a1a1a?style=for-the-badge&logo=numpy&logoColor=E5E7EB" alt="NumPy"> <img src="https://img.shields.io/badge/Pandas-1a1a1a?style=for-the-badge&logo=pandas&logoColor=E5E7EB" alt="Pandas"> <img src="https://img.shields.io/badge/OpenCV-1a1a1a?style=for-the-badge&logo=opencv&logoColor=E5E7EB" alt="OpenCV"> <img src="https://img.shields.io/badge/Streamlit-1a1a1a?style=for-the-badge&logo=streamlit&logoColor=E5E7EB" alt="Streamlit"> <img src="https://img.shields.io/badge/Docker-1a1a1a?style=for-the-badge&logo=docker&logoColor=E5E7EB" alt="Docker">
 
 > `$ neofetch`
 
@@ -54,11 +55,18 @@
 
 > `$ gh stats --user BhattAyush17`
 
-<img src="assets/stats/github-stats.svg" width="32%" alt="GitHub Stats" /> <img src="assets/stats/languages.svg" width="32%" alt="Top Languages" /> <img src="assets/stats/streak.svg" width="32%" alt="GitHub Streak" />
+<p align="center">
+  <img src="assets/stats/github-stats.svg" width="290" alt="GitHub Stats" />
+  <img src="assets/stats/languages.svg" width="290" alt="Top Languages" />
+  <img src="assets/stats/streak.svg" width="290" alt="Current Streak" />
+</p>
 
-<br/><br/>
+> `$ gh api graphql   # language + activity breakdown`
 
-<img src="assets/stats/summary-repos-per-language.svg" width="32%" alt="Repos per Language" /> <img src="assets/stats/summary-most-commit-language.svg" width="32%" alt="Most Commit Language" /> <img src="assets/stats/summary-productive-time.svg" width="32%" alt="Productive Time" />
+<p align="center">
+  <img src="assets/stats/languages-donut.svg" width="340" alt="Languages by repository" />
+  <img src="assets/stats/summary-productive-time.svg" width="340" alt="Commits by hour (IST)" />
+</p>
 
 > `$ gh repo list --sort pushed --limit 3`
 
@@ -74,30 +82,37 @@
 
 <img src="assets/snake/github-contribution-grid-snake-dark.svg?v=20261021054746" width="100%" alt="Contribution Snake" />
 
-> `$ gh repo list --pinned BhattAyush17`
+> `$ gh repo list --pinned --limit 4`
 
 | `repo` | `description` | `lang` | `⭐` | `🍴` |
 |--------|---------------|--------|------|------|
-| [![ProPhet_BnB](https://img.shields.io/badge/ProPhet__BnB-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/ProPhet_BnB) | Airbnb price prediction | Python | ![](https://img.shields.io/github/stars/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [![Lane_Morph](https://img.shields.io/badge/Lane__Morph-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Lane_Morph) | Lane detection & morphing | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Lane_Morph?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Lane_Morph?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [![Greydge](https://img.shields.io/badge/Greydge-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Greydge) | Greyscale image analysis pipeline | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Greydge?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Greydge?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [![zavix-animegan-app](https://img.shields.io/badge/zavix--animegan--app-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/zavix-animegan-app) | AnimeGAN web app | Python | ![](https://img.shields.io/github/stars/BhattAyush17/zavix-animegan-app?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/zavix-animegan-app?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [![Loan-Dash-X](https://img.shields.io/badge/Loan--Dash--X-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Loan-Dash-X) | Loan dashboard application | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [![DSA](https://img.shields.io/badge/DSA-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/DSA) | Data structures & algorithms | C++ | ![](https://img.shields.io/github/stars/BhattAyush17/DSA?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/DSA?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| [![Feature_Engineering_SandBox](https://img.shields.io/badge/Feature__Engineering__SandBox-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Feature_Engineering_SandBox) | Feature experiments across ML algorithms | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Feature_Engineering_SandBox?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Feature_Engineering_SandBox?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| [![ProPhet_BnB](https://img.shields.io/badge/ProPhet__BnB-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/ProPhet_BnB) | Airbnb price prediction with Prophet | Python | ![](https://img.shields.io/github/stars/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| [![Loan-Dash-X](https://img.shields.io/badge/Loan--Dash--X-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Loan-Dash-X) | Loan approval predictor dashboard | — | ![](https://img.shields.io/github/stars/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| [![FaunAnalyze](https://img.shields.io/badge/FaunAnalyze-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/FaunAnalyze) | Cat vs dog image classification | Python | ![](https://img.shields.io/github/stars/BhattAyush17/FaunAnalyze?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/FaunAnalyze?style=flat-square&color=6b7280&labelColor=1a1a1a) |
 
 > `$ gh achievement list --user BhattAyush17`
 
 <!-- START_SECTION:achievements -->
 <img src="assets/badges/achievement_pull_shark.png" width="72px" alt="Pull Shark" title="Pull Shark" /> &nbsp;&nbsp; <img src="assets/badges/achievement_yolo.png" width="72px" alt="YOLO" title="YOLO" /> &nbsp;&nbsp; <img src="assets/badges/achievement_quickdraw.png" width="72px" alt="Quickdraw" title="Quickdraw" />
+
+<sub>Pull Shark · YOLO · Quickdraw — merged PRs, unreviewed merges, same-day issue closes.</sub>
 <!-- END_SECTION:achievements -->
 
 > `$ cat quotes.txt`
 
-<a href="https://github.com/DenverCoder1/readme-typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=13&pause=1000&color=E5E7EB&vCenter=true&width=800&height=30&lines=Currently+exploring+the+intersection+of+'this+is+interesting'+and+'this+is+a+terrible+idea.';Exploring+the+stack+one+questionable+decision+at+a+time.;Building,+breaking,+learning+;+occasionally+in+that+order." alt="Typing SVG" /></a>
+<p>
+  <code>Currently exploring the intersection of 'this is interesting' and 'this is a terrible idea.'</code><br>
+  <code>Exploring the stack one questionable decision at a time.</code><br>
+  <code>Building, breaking, learning ; occasionally in that order.</code>
+</p>
 
 > `$ cat ideology.txt`
 
-<a href="https://github.com/DenverCoder1/readme-typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=13&pause=1000&color=E5E7EB&vCenter=true&width=800&height=30&lines=I'd+rather+explore+ten+wrong+directions+than+spend+my+life+wondering+about+one.;Observe.+Understand.+Adapt.+Repeat." alt="Typing SVG" /></a>
+<p>
+  <code>I'd rather explore ten wrong directions than spend my life wondering about one.</code><br>
+  <code>Observe. Understand. Adapt. Repeat.</code>
+</p>
 
 <div align="center">
 

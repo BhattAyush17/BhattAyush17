@@ -20,6 +20,8 @@ Environment:
 
 Output:
     assets/stats/github-stats.svg
+    assets/stats/languages.svg
+    assets/stats/languages-donut.svg
     assets/stats/streak.svg
     assets/streak/streak.svg
 """
@@ -28,6 +30,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import os
 import sys
 import tempfile
@@ -74,8 +77,17 @@ OVERALL_BUDGET_SECONDS = 8.0
 SECONDARY_BUDGET_SECONDS = 6.0
 
 # Every stats card uses the same canvas so the row lines up perfectly.
-CARD_WIDTH = 450
-CARD_HEIGHT = 228
+#
+# 300px is deliberate. The README shows the three cards with a fixed
+# width (not a percentage), so:
+#
+#   * desktop: 3 x 300px fits the README column, rendered 1:1
+#   * mobile : 300px is narrower than the phone column, so each card is
+#              still rendered 1:1 and simply stacks
+#
+# Nothing is scaled down, which is what used to make the text unreadable.
+CARD_WIDTH = 300
+CARD_HEIGHT = 210
 
 # Maximum socket timeout.
 MAX_REQUEST_TIMEOUT = 7.0
@@ -212,18 +224,19 @@ class FetchResult:
 
     def badge(self) -> tuple[str, str]:
 
+        # Monochrome dot: brightness carries the meaning instead of hue.
         if self.status == ResultStatus.SUCCESS:
-            return "#3fb950", "live"
+            return "#e6edf3", "live"
 
         if self.status == ResultStatus.SUCCESS_USING_CACHE:
             age = self.data_age()
 
             if age and age > CACHE_STALE_AFTER:
-                return "#f85149", f"stale · {self.freshness_label()}"
+                return "#484f58", f"stale · {self.freshness_label()}"
 
-            return "#d29922", f"cached · {self.freshness_label()}"
+            return "#8b949e", f"cached · {self.freshness_label()}"
 
-        return "#8b949e", "unavailable"
+        return "#484f58", "unavailable"
 
 
 # ============================================================================
@@ -1279,15 +1292,17 @@ def freshness_badge(
 
     color, label = meta.badge()
 
+    # Monochrome: the achievement badges are the only colour on the page,
+    # so the freshness dot is a shade of grey instead of green/amber/red.
     return f"""
-<g transform="translate(420,22)">
-    <circle cx="-6" cy="-4" r="3.5" fill="{color}"/>
+<g transform="translate({CARD_WIDTH - 14},26)">
+    <circle cx="-6" cy="-4" r="3" fill="{color}"/>
     <text
-        x="-16"
+        x="-14"
         y="0"
         text-anchor="end"
         font-family="Segoe UI, Ubuntu, Sans-Serif"
-        font-size="10"
+        font-size="9.5"
         fill="#8b949e"
     >{label}</text>
 </g>
@@ -1395,17 +1410,17 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 
 <style>
 .title {{
-    font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: bold 15px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #e6edf3;
 }}
 
 .label {{
-    font: 13px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #8b949e;
 }}
 
 .value {{
-    font: bold 34px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: bold 44px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #e6edf3;
 }}
 
@@ -1415,7 +1430,7 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 }}
 
 .small-label {{
-    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: 9.5px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #8b949e;
 }}
 </style>
@@ -1433,26 +1448,26 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 
 {badge}
 
-<g transform="translate(25,20)">
+<g transform="translate(16,12)">
     <svg
         viewBox="0 0 16 16"
-        width="19"
-        height="19"
+        width="17"
+        height="17"
     >
         <path
-            fill="#f0883e"
+            fill="#e6edf3"
             fill-rule="evenodd"
             d="M8.618.067a.75.75 0 00-.736.035C6.096 1.34 4 3.758 4 6.5c0 2.373 1.272 4.316 2.977 5.253C6.398 12.016 6 12.656 6 13.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5c0-.844-.398-1.484-.977-1.747 1.705-.937 2.977-2.88 2.977-5.253 0-2.742-2.096-5.16-3.882-6.398a.75.75 0 00-.502-.135zM8.5 14.5c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1"
         />
     </svg>
-    <text x="27" y="15" class="title">
+    <text x="24" y="13" class="title">
         Current Streak
     </text>
 </g>
 
 <text
-    x="225"
-    y="98"
+    x="150"
+    y="86"
     text-anchor="middle"
     class="value"
 >
@@ -1460,8 +1475,8 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 </text>
 
 <text
-    x="225"
-    y="120"
+    x="150"
+    y="106"
     text-anchor="middle"
     class="label"
 >
@@ -1469,51 +1484,51 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 </text>
 
 <line
-    x1="25"
-    y1="138"
-    x2="425"
-    y2="138"
+    x1="16"
+    y1="122"
+    x2="{CARD_WIDTH - 16}"
+    y2="122"
     stroke="#27272a"
     stroke-width="1"
 />
 
-<text x="25" y="158" class="small-label">
+<text x="16" y="144" class="small-label">
     Longest (12 mo)
 </text>
 
-<text x="25" y="176" class="small-value">
+<text x="16" y="160" class="small-value">
     {longest} days
 </text>
 
-<text x="155" y="158" class="small-label">
+<text x="110" y="144" class="small-label">
     Contributions
 </text>
 
-<text x="155" y="176" class="small-value">
+<text x="110" y="160" class="small-value">
     {total}
 </text>
 
-<text x="280" y="158" class="small-label">
+<text x="204" y="144" class="small-label">
     Active Days
 </text>
 
-<text x="280" y="176" class="small-value">
+<text x="204" y="160" class="small-value">
     {active_days}
 </text>
 
-<text x="25" y="198" class="small-label">
+<text x="16" y="182" class="small-label">
     {reference_year} contributions: {current_year}
 </text>
 
-<text x="25" y="212" class="small-label">
+<text x="16" y="196" class="small-label">
     {("Since " + streak_start) if streak_start else "No active streak"}
 </text>
 
-<text x="225" y="198" class="small-label">
+<text x="{CARD_WIDTH - 16}" y="182" text-anchor="end" class="small-label">
     Last: {last_date or "none"}
 </text>
 
-<text x="225" y="212" class="small-label">
+<text x="{CARD_WIDTH - 16}" y="196" text-anchor="end" class="small-label">
     As of: {reference_date_value}
 </text>
 
@@ -1691,8 +1706,8 @@ def make_stats_svg(
         blocks = []
 
         for index, (label, value) in enumerate(entries):
-            label_y = 74 + index * 38
-            value_y = label_y + 19
+            label_y = 64 + index * 34
+            value_y = label_y + 15
 
             blocks.append(
                 f'<text x="{x}" y="{label_y}" class="stat-label">'
@@ -1711,37 +1726,17 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 
 <style>
 .title {{
-    font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: bold 15px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #e6edf3;
-}}
-
-.label {{
-    font: 13px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
-}}
-
-.value {{
-    font: bold 34px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-
-.small-value {{
-    font: bold 12px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #e6edf3;
-}}
-
-.small-label {{
-    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
 }}
 
 .stat-label {{
-    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: 10.5px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #8b949e;
 }}
 
 .stat-value {{
-    font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: bold 12.5px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #e6edf3;
 }}
 </style>
@@ -1759,11 +1754,11 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 
 {badge}
 
-<g transform="translate(25,20)">
+<g transform="translate(16,12)">
     <svg
         viewBox="0 0 16 16"
-        width="19"
-        height="19"
+        width="17"
+        height="17"
     >
         <path
             fill="#e6edf3"
@@ -1771,23 +1766,23 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
             d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
         />
     </svg>
-    <text x="27" y="15" class="title">
+    <text x="24" y="13" class="title">
         GitHub Stats
     </text>
 </g>
 
 <line
-    x1="25"
-    y1="52"
-    x2="{CARD_WIDTH - 25}"
-    y2="52"
+    x1="16"
+    y1="44"
+    x2="{CARD_WIDTH - 16}"
+    y2="44"
     stroke="#27272a"
     stroke-width="1"
 />
 
-{render_column(left_column, 25)}
+{render_column(left_column, 16)}
 
-{render_column(right_column, 240)}
+{render_column(right_column, 154)}
 
 </svg>
 """
@@ -1804,13 +1799,16 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 
 # Grayscale ramp for the language bar. The profile is monochrome, so the
 # languages are not painted in their own brand colors.
+#
+# Light and dark alternate, so neighbouring segments (and the matching
+# legend dots) are always easy to tell apart.
 LANGUAGE_GRAYSCALE = [
     "#e6edf3",
+    "#484f58",
     "#c9d1d9",
+    "#6e7681",
     "#adbac7",
     "#8b949e",
-    "#6e7681",
-    "#484f58",
 ]
 
 MAX_LEGEND_ENTRIES = 6
@@ -1918,8 +1916,8 @@ def make_languages_svg(
     # PROGRESS BAR
     # ------------------------------------------------------------------
 
-    bar_x = 25
-    bar_width = CARD_WIDTH - 50
+    bar_x = 16
+    bar_width = CARD_WIDTH - 32
 
     segments: list[str] = []
 
@@ -1938,8 +1936,8 @@ def make_languages_svg(
         ]
 
         segments.append(
-            f'<rect x="{bar_x + offset:.2f}" y="52" '
-            f'width="{width:.2f}" height="10" fill="{color}" />'
+            f'<rect x="{bar_x + offset:.2f}" y="54" '
+            f'width="{width:.2f}" height="8" fill="{color}" />'
         )
 
         offset += width
@@ -1955,8 +1953,8 @@ def make_languages_svg(
         column = index % 2
         row = index // 2
 
-        x = 25 + column * 215
-        y = 78 + row * 24
+        x = 16 + column * 140
+        y = 80 + row * 22
 
         color = LANGUAGE_GRAYSCALE[
             index % len(LANGUAGE_GRAYSCALE)
@@ -1972,9 +1970,9 @@ def make_languages_svg(
 
         legend.append(
             f'<g transform="translate({x}, {y})">\n'
-            f'    <circle cx="5" cy="6" r="5" fill="{color}" />\n'
-            f'    <text x="18" y="10" class="lang-name">{name}</text>\n'
-            f'    <text x="195" y="10" text-anchor="end" '
+            f'    <circle cx="4" cy="4" r="4" fill="{color}" />\n'
+            f'    <text x="13" y="8" class="lang-name">{name}</text>\n'
+            f'    <text x="128" y="8" text-anchor="end" '
             f'class="lang-pct">{percent:.1f}%</text>\n'
             f'</g>'
         )
@@ -1993,27 +1991,22 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 
 <style>
 .title {{
-    font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: bold 15px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #e6edf3;
 }}
 
-.label {{
-    font: 13px 'Segoe UI', Ubuntu, Sans-Serif;
-    fill: #8b949e;
-}}
-
 .lang-name {{
-    font: bold 12px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: bold 10.5px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #e6edf3;
 }}
 
 .lang-pct {{
-    font: 12px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: 10px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #8b949e;
 }}
 
 .small-label {{
-    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
+    font: 9.5px 'Segoe UI', Ubuntu, Sans-Serif;
     fill: #8b949e;
 }}
 </style>
@@ -2031,11 +2024,11 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 
 {badge}
 
-<g transform="translate(25,20)">
+<g transform="translate(16,12)">
     <svg
         viewBox="0 0 16 16"
-        width="19"
-        height="19"
+        width="17"
+        height="17"
     >
         <path
             fill="#e6edf3"
@@ -2043,13 +2036,13 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
             d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
         />
     </svg>
-    <text x="27" y="15" class="title">
+    <text x="24" y="13" class="title">
         Top Languages
     </text>
 </g>
 
 <clipPath id="language-bar-clip">
-    <rect x="{bar_x}" y="52" width="{bar_width}" height="10" rx="5" />
+    <rect x="{bar_x}" y="54" width="{bar_width}" height="8" rx="4" />
 </clipPath>
 
 <g clip-path="url(#language-bar-clip)">
@@ -2059,27 +2052,27 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
 {chr(10).join(legend)}
 
 <line
-    x1="25"
-    y1="158"
-    x2="{CARD_WIDTH - 25}"
-    y2="158"
+    x1="16"
+    y1="138"
+    x2="{CARD_WIDTH - 16}"
+    y2="138"
     stroke="#27272a"
     stroke-width="1"
 />
 
-<text x="25" y="198" class="small-label">
+<text x="16" y="160" class="small-label">
     {total_repos} repositories · {len(languages)} languages
 </text>
 
-<text x="25" y="212" class="small-label">
+<text x="16" y="176" class="small-label">
     Share of repositories
 </text>
 
-<text x="225" y="198" class="small-label">
+<text x="{CARD_WIDTH - 16}" y="160" text-anchor="end" class="small-label">
     As of: {reference_date().isoformat()}
 </text>
 
-<text x="225" y="212" class="small-label">
+<text x="{CARD_WIDTH - 16}" y="176" text-anchor="end" class="small-label">
     {hidden_note if hidden_note else "all languages shown"}
 </text>
 
@@ -2095,6 +2088,212 @@ viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}">
         "Languages SVG written: %d repos, %d languages",
         total_repos,
         len(languages),
+    )
+
+
+# ============================================================================
+# LANGUAGES DONUT (summary row)
+# ============================================================================
+
+# The summary row used to show two near-identical donuts ("by repo" and
+# "by commit"). There is now a single donut with an explicit legend.
+#
+# Shading alternates light/dark so neighbouring slices are unambiguous.
+DONUT_WIDTH = 340
+DONUT_HEIGHT = 200
+
+DONUT_SHADES = [
+    "#e6edf3",
+    "#6e7681",
+    "#adbac7",
+    "#484f58",
+    "#c9d1d9",
+    "#8b949e",
+    "#f0f6fc",
+    "#3d444d",
+]
+
+DONUT_LEGEND_ENTRIES = 6
+
+
+def make_languages_donut_svg(
+    languages: list[dict[str, Any]],
+) -> None:
+
+    output = ASSETS_DIR / "languages-donut.svg"
+
+    output.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    ordered = sorted(
+        languages,
+        key=lambda item: (
+            -float(item.get("percent", 0)),
+            str(item.get("name", "")),
+        ),
+    )
+
+    total_repos = sum(
+        int(language.get("count", 0))
+        for language in ordered
+    )
+
+    radius = 46.0
+    circumference = 2 * math.pi * radius
+    gap = 1.5
+
+    slices: list[str] = []
+    offset = 0.0
+
+    for index, language in enumerate(ordered):
+
+        percent = float(
+            language.get("percent", 0)
+        )
+
+        length = max(
+            0.0,
+            circumference * percent / 100 - gap,
+        )
+
+        color = DONUT_SHADES[
+            index % len(DONUT_SHADES)
+        ]
+
+        slices.append(
+            f'<circle cx="88" cy="108" r="{radius}" '
+            f'fill="none" stroke="{color}" stroke-width="18" '
+            f'stroke-dasharray="{length:.2f} {circumference:.2f}" '
+            f'stroke-dashoffset="{-offset:.2f}" />'
+        )
+
+        offset += circumference * percent / 100
+
+    shown = ordered[:DONUT_LEGEND_ENTRIES]
+    hidden = len(ordered) - len(shown)
+
+    legend: list[str] = []
+
+    for index, language in enumerate(shown):
+
+        y = 46 + index * 21
+
+        color = DONUT_SHADES[
+            index % len(DONUT_SHADES)
+        ]
+
+        name = str(
+            language.get("name", "Other")
+        )
+
+        percent = float(
+            language.get("percent", 0)
+        )
+
+        legend.append(
+            f'<g transform="translate(166, {y})">\n'
+            f'    <rect x="0" y="-7" width="8" height="8" rx="1.5" '
+            f'fill="{color}" />\n'
+            f'    <text x="14" y="1" class="donut-name">{name}</text>\n'
+            f'    <text x="158" y="1" text-anchor="end" '
+            f'class="donut-pct">{percent:.1f}%</text>\n'
+            f'</g>'
+        )
+
+    hidden_note = (
+        f" · +{hidden} more"
+        if hidden > 0
+        else ""
+    )
+
+    svg = f"""<svg
+xmlns="http://www.w3.org/2000/svg"
+width="{DONUT_WIDTH}"
+height="{DONUT_HEIGHT}"
+viewBox="0 0 {DONUT_WIDTH} {DONUT_HEIGHT}">
+
+<style>
+.title {{
+    font: bold 14px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}}
+
+.donut-name {{
+    font: bold 10.5px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}}
+
+.donut-pct {{
+    font: 10px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}}
+
+.center-value {{
+    font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}}
+
+.center-label {{
+    font: 9px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}}
+
+.footer {{
+    font: 9.5px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}}
+</style>
+
+<rect
+    x="0.5"
+    y="0.5"
+    width="{DONUT_WIDTH - 1}"
+    height="{DONUT_HEIGHT - 1}"
+    rx="7"
+    fill="#0d1117"
+    stroke="#30363d"
+    stroke-width="1"
+/>
+
+<text x="16" y="26" class="title">
+    Languages by Repository
+</text>
+
+<g transform="rotate(-90 88 108)">
+{chr(10).join(slices)}
+</g>
+
+<text x="88" y="105" text-anchor="middle" class="center-value">
+    {total_repos}
+</text>
+
+<text x="88" y="119" text-anchor="middle" class="center-label">
+    repos
+</text>
+
+{chr(10).join(legend)}
+
+<text x="16" y="182" class="footer">
+    {len(ordered)} languages{hidden_note}
+</text>
+
+<text x="{DONUT_WIDTH - 16}" y="182" text-anchor="end" class="footer">
+    as of {reference_date().isoformat()}
+</text>
+
+</svg>
+"""
+
+    output.write_text(
+        svg,
+        encoding="utf-8",
+    )
+
+    log.info(
+        "Languages donut written: %d languages",
+        len(ordered),
     )
 
 
@@ -2569,10 +2768,14 @@ def main() -> None:
             languages_meta,
         )
 
+        make_languages_donut_svg(
+            languages,
+        )
+
     else:
 
         log.warning(
-            "Language data unavailable - keeping the existing card"
+            "Language data unavailable - keeping the existing cards"
         )
 
     make_data_json(
