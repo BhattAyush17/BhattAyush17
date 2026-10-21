@@ -23,6 +23,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history, so the rebase in publish_assets.sh is reliable.
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -34,18 +37,14 @@ jobs:
         run: |
           pip install requests
 
-
       - name: Run generator
         env:
           GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
         run: |
           python scripts/generate_stats.py
 
-      - name: Sync latest branch
-        run: |
-          git pull --rebase origin main
-
       - name: Commit generated assets
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Update README analytics assets"
+        run: |
+          scripts/publish_assets.sh \
+            "chore: update README analytics assets" \
+            assets/stats assets/streak assets/cache/bhattayush17-github.json

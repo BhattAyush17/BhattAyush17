@@ -1,35 +1,143 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="450" height="195" viewBox="0 0 450 195">
-  <style>
-    .title { font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }
-    .label { font: 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
-    .value { font: bold 36px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }
-    .unit { font: 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
-    .stat-label { font: 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
-    .stat-val { font: bold 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #e6edf3; }
-    .icon { fill: #8b949e; }
-  </style>
-  <rect x="0.5" y="0.5" rx="6" ry="6" width="449" height="194" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
-  
-  <!-- Title with Fire Icon -->
-  <g transform="translate(25, 35)">
-    <svg class="icon" viewBox="0 0 16 16" width="20" height="20" style="vertical-align: middle;">
-      <path fill-rule="evenodd" d="M8.618.067a.75.75 0 00-.736.035C6.096 1.34 4 3.758 4 6.5c0 2.373 1.272 4.316 2.977 5.253C6.398 12.016 6 12.656 6 13.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5c0-.844-.398-1.484-.977-1.747 1.705-.937 2.977-2.88 2.977-5.253 0-2.742-2.096-5.16-3.882-6.398a.75.75 0 00-.502-.135zM8.5 14.5c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1"/>
+<svg
+xmlns="http://www.w3.org/2000/svg"
+width="450"
+height="228"
+viewBox="0 0 450 228">
+
+<style>
+.title {
+    font: bold 18px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}
+
+.label {
+    font: 13px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}
+
+.value {
+    font: bold 34px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}
+
+.small-value {
+    font: bold 12px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #e6edf3;
+}
+
+.small-label {
+    font: 11px 'Segoe UI', Ubuntu, Sans-Serif;
+    fill: #8b949e;
+}
+</style>
+
+<rect
+    x="0.5"
+    y="0.5"
+    width="449"
+    height="227"
+    rx="7"
+    fill="#0d1117"
+    stroke="#30363d"
+    stroke-width="1"
+/>
+
+
+<g transform="translate(420,22)">
+    <circle cx="-6" cy="-4" r="3.5" fill="#3fb950"/>
+    <text
+        x="-16"
+        y="0"
+        text-anchor="end"
+        font-family="Segoe UI, Ubuntu, Sans-Serif"
+        font-size="10"
+        fill="#8b949e"
+    >live</text>
+</g>
+
+
+<g transform="translate(25,20)">
+    <svg
+        viewBox="0 0 16 16"
+        width="19"
+        height="19"
+    >
+        <path
+            fill="#f0883e"
+            fill-rule="evenodd"
+            d="M8.618.067a.75.75 0 00-.736.035C6.096 1.34 4 3.758 4 6.5c0 2.373 1.272 4.316 2.977 5.253C6.398 12.016 6 12.656 6 13.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5c0-.844-.398-1.484-.977-1.747 1.705-.937 2.977-2.88 2.977-5.253 0-2.742-2.096-5.16-3.882-6.398a.75.75 0 00-.502-.135zM8.5 14.5c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1"
+        />
     </svg>
-    <text x="28" y="16" class="title">Current Streak</text>
-  </g>
-  
-  <!-- Big Streak Counter -->
-  <g transform="translate(225, 95)" text-anchor="middle">
-    <text class="value">2</text>
-    <text y="22" class="unit">days</text>
-  </g>
-  
-  <!-- Stats Footer -->
-  <g transform="translate(25, 155)">
-    <text class="stat-label">Longest Streak:</text>
-    <text x="110" class="stat-val">40 days</text>
-    
-    <text x="220" class="stat-label">Total Contributions:</text>
-    <text x="350" class="stat-val">508</text>
-  </g>
+    <text x="27" y="15" class="title">
+        Current Streak
+    </text>
+</g>
+
+<text
+    x="225"
+    y="98"
+    text-anchor="middle"
+    class="value"
+>
+    4
+</text>
+
+<text
+    x="225"
+    y="120"
+    text-anchor="middle"
+    class="label"
+>
+    consecutive days
+</text>
+
+<line
+    x1="25"
+    y1="138"
+    x2="425"
+    y2="138"
+    stroke="#27272a"
+    stroke-width="1"
+/>
+
+<text x="25" y="158" class="small-label">
+    Longest (12 mo)
+</text>
+
+<text x="25" y="176" class="small-value">
+    19 days
+</text>
+
+<text x="155" y="158" class="small-label">
+    Contributions
+</text>
+
+<text x="155" y="176" class="small-value">
+    519
+</text>
+
+<text x="280" y="158" class="small-label">
+    Active Days
+</text>
+
+<text x="280" y="176" class="small-value">
+    95
+</text>
+
+<text x="25" y="198" class="small-label">
+    2026 contributions: 438
+</text>
+
+<text x="25" y="212" class="small-label">
+    Since 2026-10-18
+</text>
+
+<text x="170" y="198" class="small-label">
+    Last: 2026-10-21
+</text>
+
+<text x="170" y="212" class="small-label">
+    As of: 2026-10-21
+</text>
+
 </svg>

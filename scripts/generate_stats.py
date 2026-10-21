@@ -81,6 +81,22 @@ BACKOFF_SECONDS = 0.5
 # UTC is used consistently so the algorithm is deterministic.
 REFERENCE_TZ = timezone.utc
 
+# GitHub buckets contributions by the USER's own timezone, not by UTC.
+#
+# That means the last day of the contribution calendar is not necessarily
+# the UTC date:
+#
+#   * user ahead of UTC (e.g. UTC+05:30) -> last day is "tomorrow" in UTC
+#   * user behind of UTC (e.g. UTC-07:00) -> last day is "yesterday" in UTC
+#
+# The calendar is therefore allowed to reach one day past the UTC date.
+CALENDAR_FUTURE_TOLERANCE_DAYS = 1
+
+# A calendar that is older than this is considered stale: it can no longer
+# prove that the current streak is still alive, so the streak is reported
+# as 0 instead of an outdated number.
+CALENDAR_STALE_TOLERANCE_DAYS = 1
+
 
 # ============================================================================
 # LOGGING
@@ -330,7 +346,20 @@ query($login: String!) {
 # ============================================================================
 
 def classify_http_failure(response: requests.Response) -> Optional[FailureReason]:
+    """
+    Map an HTTP response to a failure reason.
+
+    Returns None when the response is a success (2xx) so that callers
+    can treat "no failure reason" as "the request worked".
+    """
+
     status = response.status_code
+
+    # A successful response is not a failure.
+    # GraphQL answers with HTTP 200 even for logical errors, so this
+    # branch must come before every other check.
+    if 200 <= status < 300:
+        return None
 
     if status == 401:
         return FailureReason.AUTH_FAILED
@@ -534,6 +563,7 @@ def graphql_request(
 
 def validate_calendar(
     weeks: Any,
+    utc_today: Optional[date] = None,
 ) -> tuple[bool, bool, Optional[str]]:
 
     """
@@ -553,7 +583,13 @@ def validate_calendar(
 
     last_date: Optional[date] = None
 
-    today = reference_date()
+    today = utc_today or reference_date()
+
+    # The calendar is rendered in the user's timezone, so its newest day
+    # may legitimately be one day ahead of the UTC date.
+    latest_allowed = today + timedelta(
+        days=CALENDAR_FUTURE_TOLERANCE_DAYS
+    )
 
     for week_index, week in enumerate(weeks):
 
@@ -598,7 +634,7 @@ def validate_calendar(
                     f"Invalid ISO date: {raw_date}"
                 )
 
-            if parsed_date > today:
+            if parsed_date > latest_allowed:
                 return False, True, (
                     f"Future contribution date: {raw_date}"
                 )
@@ -664,9 +700,53 @@ def build_date_map(
 # STREAK CALCULATION
 # ============================================================================
 
+def resolve_reference_day(
+    date_map: dict[date, int],
+    utc_today: date,
+) -> date:
+    """
+    Resolve the user's current day from the contribution calendar.
+
+    GitHub renders the contribution grid in the user's own timezone, so
+    the newest day of the calendar is the user's "today":
+
+        * user ahead of UTC  -> newest day is utc_today + 1
+        * user behind of UTC -> newest day is utc_today - 1
+
+    The newest day of the calendar is therefore used as the anchor for
+    the current streak.
+
+    A calendar that is clearly older than that is treated as stale: it
+    cannot prove the streak is still alive, so the UTC date is used
+    instead, which resolves the current streak to 0 rather than
+    reporting an outdated number.
+    """
+
+    if not date_map:
+        return utc_today
+
+    newest_day = max(date_map)
+
+    lag = (utc_today - newest_day).days
+
+    if lag <= CALENDAR_STALE_TOLERANCE_DAYS:
+        return newest_day
+
+    log.warning(
+        "Contribution calendar is stale: newest day %s is %d days "
+        "behind %s - current streak cannot be trusted",
+        newest_day,
+        lag,
+        utc_today,
+    )
+
+    return utc_today
+
+
 def calculate_streaks(
     weeks: list[dict[str, Any]],
-    reference: date,
+    reference: Optional[date] = None,
+    utc_today: Optional[date] = None,
 ) -> dict[str, Any]:
 
     """
@@ -674,29 +754,44 @@ def calculate_streaks(
 
     Current streak:
 
-        If today is active:
-            start today.
+        The anchor day is the user's current day, taken from the
+        calendar itself (see resolve_reference_day).
 
-        If today is inactive:
-            start yesterday.
+        If the anchor day is active:
+            start there.
+
+        If the anchor day is inactive:
+            start the day before.
 
         Then walk backward using actual calendar dates.
 
-    A missing date is NOT considered active.
+        A missing date is NOT considered active.
 
     Longest streak:
 
         Walk through sorted active dates and require exact
         one-day adjacency.
+
+        Only the visible window (roughly one year) is covered, because
+        that is all GitHub exposes.
     """
 
     date_map = build_date_map(weeks)
 
+    today = utc_today or reference_date()
+
+    if reference is None:
+        reference = resolve_reference_day(date_map, today)
+
     if not date_map:
         return {
             "current_streak": 0,
+            "current_streak_start": None,
             "longest_streak": 0,
             "active_days": 0,
+            "total_contributions": 0,
+            "current_year_contributions": 0,
+            "reference_date": reference.isoformat(),
             "last_contribution_date": None,
         }
 
@@ -712,8 +807,21 @@ def calculate_streaks(
 
         return {
             "current_streak": 0,
+            "current_streak_start": None,
             "longest_streak": 0,
             "active_days": 0,
+            "total_contributions": sum(
+                count
+                for d, count in date_map.items()
+                if d <= reference
+            ),
+            "current_year_contributions": sum(
+                count
+                for d, count in date_map.items()
+                if d.year == reference.year
+                and d <= reference
+            ),
+            "reference_date": reference.isoformat(),
             "last_contribution_date": None,
         }
 
@@ -731,9 +839,12 @@ def calculate_streaks(
 
     current_streak = 0
 
+    streak_start: Optional[date] = None
+
     while date_map.get(cursor, 0) > 0:
 
         current_streak += 1
+        streak_start = cursor
         cursor -= timedelta(days=1)
 
     # ---------------------------------------------------------------------
@@ -781,10 +892,16 @@ def calculate_streaks(
 
     return {
         "current_streak": current_streak,
+        "current_streak_start": (
+            streak_start.isoformat()
+            if streak_start is not None
+            else None
+        ),
         "longest_streak": longest,
         "active_days": active_days,
         "total_contributions": total_contributions,
         "current_year_contributions": current_year_contributions,
+        "reference_date": reference.isoformat(),
         "last_contribution_date": last_contribution_date.isoformat(),
     }
 
@@ -819,10 +936,9 @@ def normalize_contribution_data(
     if not valid:
         return False, {}, error
 
-    stats = calculate_streaks(
-        weeks,
-        reference_date(),
-    )
+    # The reference day is resolved from the calendar itself, because
+    # GitHub buckets contributions in the user's own timezone.
+    stats = calculate_streaks(weeks)
 
     normalized = {
         "username": user.get("login", USERNAME),
@@ -1157,9 +1273,9 @@ def freshness_badge(
 
     return f"""
 <g transform="translate(420,22)">
-    <circle cx="-10" cy="-4" r="3.5" fill="{color}"/>
+    <circle cx="-6" cy="-4" r="3.5" fill="{color}"/>
     <text
-        x="0"
+        x="-16"
         y="0"
         text-anchor="end"
         font-family="Segoe UI, Ubuntu, Sans-Serif"
@@ -1247,6 +1363,18 @@ def make_streak_svg(
         "last_contribution_date"
     )
 
+    streak_start = data.get(
+        "current_streak_start"
+    )
+
+    reference_date_value = data.get(
+        "reference_date"
+    ) or reference_date().isoformat()
+
+    reference_year = int(
+        reference_date_value[:4]
+    )
+
     badge = freshness_badge(
         result
     )
@@ -1254,8 +1382,8 @@ def make_streak_svg(
     svg = f"""<svg
 xmlns="http://www.w3.org/2000/svg"
 width="450"
-height="215"
-viewBox="0 0 450 215">
+height="228"
+viewBox="0 0 450 228">
 
 <style>
 .title {{
@@ -1288,7 +1416,7 @@ viewBox="0 0 450 215">
     x="0.5"
     y="0.5"
     width="449"
-    height="214"
+    height="227"
     rx="7"
     fill="#0d1117"
     stroke="#30363d"
@@ -1297,13 +1425,22 @@ viewBox="0 0 450 215">
 
 {badge}
 
-<text
-    x="25"
-    y="35"
-    class="title"
->
-    🔥 Current Streak
-</text>
+<g transform="translate(25,20)">
+    <svg
+        viewBox="0 0 16 16"
+        width="19"
+        height="19"
+    >
+        <path
+            fill="#f0883e"
+            fill-rule="evenodd"
+            d="M8.618.067a.75.75 0 00-.736.035C6.096 1.34 4 3.758 4 6.5c0 2.373 1.272 4.316 2.977 5.253C6.398 12.016 6 12.656 6 13.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5c0-.844-.398-1.484-.977-1.747 1.705-.937 2.977-2.88 2.977-5.253 0-2.742-2.096-5.16-3.882-6.398a.75.75 0 00-.502-.135zM8.5 14.5c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1"
+        />
+    </svg>
+    <text x="27" y="15" class="title">
+        Current Streak
+    </text>
+</g>
 
 <text
     x="225"
@@ -1333,35 +1470,43 @@ viewBox="0 0 450 215">
 />
 
 <text x="25" y="158" class="small-label">
-    Longest
+    Longest (12 mo)
 </text>
 
 <text x="25" y="176" class="small-value">
     {longest} days
 </text>
 
-<text x="145" y="158" class="small-label">
+<text x="155" y="158" class="small-label">
     Contributions
 </text>
 
-<text x="145" y="176" class="small-value">
+<text x="155" y="176" class="small-value">
     {total}
 </text>
 
-<text x="270" y="158" class="small-label">
+<text x="280" y="158" class="small-label">
     Active Days
 </text>
 
-<text x="270" y="176" class="small-value">
+<text x="280" y="176" class="small-value">
     {active_days}
 </text>
 
 <text x="25" y="198" class="small-label">
-    {datetime.now().year} contributions: {current_year}
+    {reference_year} contributions: {current_year}
 </text>
 
-<text x="270" y="198" class="small-label">
+<text x="25" y="212" class="small-label">
+    {("Since " + streak_start) if streak_start else "No active streak"}
+</text>
+
+<text x="170" y="198" class="small-label">
     Last: {last_date or "none"}
+</text>
+
+<text x="170" y="212" class="small-label">
+    As of: {reference_date_value}
 </text>
 
 </svg>
@@ -1697,6 +1842,96 @@ def run_streak_self_test() -> None:
     )
 
     assert result["current_streak"] == 2
+
+    # ------------------------------------------------------------------
+    # Timezone aware reference day
+    # ------------------------------------------------------------------
+
+    # User is AHEAD of UTC: the calendar ends one day after the UTC
+    # date. The streak must still be counted from the user's own
+    # current day, and the payload must not be rejected as "future".
+    ahead = base + timedelta(days=1)
+
+    weeks = _make_test_weeks(
+        {
+            ahead.isoformat(): 0,
+            base.isoformat(): 1,
+            (base - timedelta(days=1)).isoformat(): 1,
+            (base - timedelta(days=2)).isoformat(): 1,
+        }
+    )
+
+    valid, _, error = validate_calendar(
+        weeks,
+        utc_today=base,
+    )
+
+    assert valid, error
+
+    result = calculate_streaks(
+        weeks,
+        utc_today=base,
+    )
+
+    # The anchor is "today" in the user's timezone (ahead), which has no
+    # contributions yet, so the streak continues from the UTC day.
+    assert result["reference_date"] == ahead.isoformat()
+    assert result["current_streak"] == 3
+
+    # User is BEHIND of UTC: the calendar ends one day before the UTC
+    # date. The streak must be anchored on the user's current day.
+    behind = base - timedelta(days=1)
+
+    weeks = _make_test_weeks(
+        {
+            behind.isoformat(): 1,
+            (behind - timedelta(days=1)).isoformat(): 1,
+            (behind - timedelta(days=2)).isoformat(): 0,
+        }
+    )
+
+    result = calculate_streaks(
+        weeks,
+        utc_today=base,
+    )
+
+    assert result["reference_date"] == behind.isoformat()
+    assert result["current_streak"] == 2
+
+    # A calendar that is clearly stale cannot prove the streak is alive.
+    stale = base - timedelta(days=5)
+
+    weeks = _make_test_weeks(
+        {
+            stale.isoformat(): 1,
+            (stale - timedelta(days=1)).isoformat(): 1,
+            (stale - timedelta(days=2)).isoformat(): 1,
+        }
+    )
+
+    result = calculate_streaks(
+        weeks,
+        utc_today=base,
+    )
+
+    assert result["reference_date"] == base.isoformat()
+    assert result["current_streak"] == 0
+
+    # A day further in the future than the timezone tolerance is still
+    # rejected outright.
+    weeks = _make_test_weeks(
+        {
+            (base + timedelta(days=2)).isoformat(): 1,
+        }
+    )
+
+    valid, _, error = validate_calendar(
+        weeks,
+        utc_today=base,
+    )
+
+    assert not valid
+    assert error is not None
 
     log.info(
         "✅ Streak self-tests passed"

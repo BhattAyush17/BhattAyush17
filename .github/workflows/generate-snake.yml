@@ -19,20 +19,40 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
 
+    env:
+      SNAKE_FILE: assets/snake/github-contribution-grid-snake-dark.svg
+      README_FILE: README.md
+
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history, so the rebase in publish_assets.sh is reliable.
+          fetch-depth: 0
 
-      - uses: Platane/snk@v3
+      - name: Generate snake animation
+        uses: Platane/snk@v3
         with:
           github_user_name: BhattAyush17
+          # palette=github-dark  -> GitHub dark background
+          # color_dots           -> the 5 contribution levels of the grid,
+          #                         from "no contributions" to the highest.
+          #                         These are the green boxes of the heatmap.
+          # color_snake          -> purple keeps the snake readable on top
+          #                         of the green contribution boxes.
           outputs: |
-            assets/snake/github-contribution-grid-snake-dark.svg?palette=github-dark&color_snake=white&color_dots=#161b22,#4d4d4d,#808080,#b3b3b3,#e6e6e6
+            assets/snake/github-contribution-grid-snake-dark.svg?palette=github-dark&color_snake=#8957e5&color_dots=#161b22,#0e4429,#006d32,#26a641,#39d353
 
-      - name: Sync latest branch
+      - name: Version the README image
         run: |
-          git pull --rebase origin main
+          # GitHub caches README images by their URL, so a static URL keeps
+          # serving the previous animation. The src is versioned with the
+          # generation timestamp so the profile always shows the newest run.
+          version="$(date -u +%Y%m%d%H%M%S)"
+          sed -i -E "s#(assets/snake/github-contribution-grid-snake-dark\.svg)(\?v=[0-9]+)?#\1?v=${version}#g" "$README_FILE"
+          grep -n "github-contribution-grid-snake-dark" "$README_FILE"
 
       - name: Commit generated snake
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Update contribution snake"
+        run: |
+          scripts/publish_assets.sh \
+            "chore: update contribution snake" \
+            "$SNAKE_FILE" "$README_FILE"

@@ -33,27 +33,34 @@ python scripts/generate_stats.py
 
 **Expected output:**
 ```
-17:45:23 [INFO] 🚀 Starting robust stats generator — 2026-08-26T17:45:23.456789+00:00
-17:45:24 [INFO] ✅ Live GitHub data fetched and cached.
-17:45:25 [INFO] ✅ github-stats.svg written.
-17:45:26 [INFO] ✅ languages.svg written.
-17:45:27 [INFO] ✅ streak.svg written.
-17:45:28 [INFO] ✅ contribution-graph.svg downloaded from Vercel.
-17:45:30 [INFO] ✅ summary-stats.svg downloaded.
-17:45:32 [INFO] ✅ summary-repos-per-language.svg downloaded.
-17:45:34 [INFO] ✅ summary-most-commit-language.svg downloaded.
-17:45:36 [INFO] ✅ summary-productive-time.svg downloaded.
-17:45:37 [INFO] 🏆 Scraping GitHub achievements…
-17:45:40 [INFO] ✅ Achievements injected into README.md.
-17:45:40 [INFO] ✨ Stats generation complete.
+10:08:16 [INFO] ✅ Streak self-tests passed
+10:08:16 [INFO] ============================================================
+10:08:16 [INFO] GitHub contribution fetch
+10:08:16 [INFO] User: BhattAyush17
+10:08:16 [INFO] ============================================================
+10:08:16 [INFO] Requesting LIVE contribution calendar...
+10:08:17 [INFO] Cache updated: assets/cache/bhattayush17-github.json
+10:08:17 [INFO] LIVE SUCCESS: 1123 ms
+10:08:17 [INFO] Current streak: 4
+10:08:17 [INFO] Longest streak: 19
+10:08:17 [INFO] Last contribution: 2026-10-21
+10:08:17 [INFO] Streak SVG written: current=4 longest=19
+10:08:17 [INFO] ============================================================
+10:08:17 [INFO] SOURCE: graphql_api
+10:08:17 [INFO] FRESHNESS: just now
 ```
+
+The script writes `assets/stats/streak.svg`, `assets/stats/github-stats.svg`,
+`assets/streak/streak.svg` and the cache file. The `languages.svg`,
+`contribution-graph.svg` and `summary-*.svg` cards are produced by other
+tools and are only checked for existence by the health check.
 
 ### Option B: Without Token (Cache Only)
 If you don't have a token or want to test fallback behavior:
 ```bash
 python scripts/generate_stats.py
 ```
-It will try to use the cache from `assets/cache/data.json` (created on first successful run). If the cache is fresh (< 6 hours old), it'll use real data. Otherwise it'll fail gracefully.
+It will try to use the cache from `assets/cache/bhattayush17-github.json` (created on first successful run). The cache is used as a fallback whenever the live API is unavailable — the card then shows a `cached · <age>` badge instead of `live`.
 
 ## 3. Inspect the Output
 
@@ -85,7 +92,7 @@ xdg-open assets/stats/github-stats.svg
 
 ### Check the Cache
 ```bash
-cat assets/cache/data.json | python -m json.tool | head -50
+cat assets/cache/bhattayush17-github.json | python -m json.tool | head -50
 ```
 Should show your real GitHub stats with a timestamp.
 
@@ -94,7 +101,7 @@ Should show your real GitHub stats with a timestamp.
 ### Scenario 1: Fresh Fetch + Real Render
 ```bash
 export GH_STATS_TOKEN="your_token"
-rm -f assets/cache/data.json  # force fresh fetch
+rm -f assets/cache/bhattayush17-github.json  # force fresh fetch
 python scripts/generate_stats.py
 # ✅ Should fetch live, render all cards, cache the data
 ```
@@ -109,7 +116,7 @@ python scripts/generate_stats.py
 ### Scenario 3: No Token, No Cache (Failure)
 ```bash
 unset GH_STATS_TOKEN
-rm -f assets/cache/data.json
+rm -f assets/cache/bhattayush17-github.json
 python scripts/generate_stats.py
 # ❌ Should exit with error message, keeping old SVGs untouched
 ```
@@ -158,22 +165,24 @@ pip install cairosvg>=2.7.0
 
 2. **Check cache was created:**
    ```bash
-   ls -lh assets/cache/data.json
+   ls -lh assets/cache/bhattayush17-github.json
    ```
 
-3. **Commit only the SVGs, not the cache:**
+3. **Commit the SVGs and the cache:**
    ```bash
-   git add assets/stats/*.svg README.md
+   git add assets/stats/*.svg assets/streak/*.svg README.md
+   git add assets/cache/bhattayush17-github.json
    git add -u assets/  # stage deletions if any
    git status
    git commit -m "chore: update README stats [generate_stats.py]"
    ```
 
-4. **Do NOT commit `assets/cache/data.json`** — add it to `.gitignore`:
-   ```bash
-   echo "assets/cache/" >> .gitignore
-   git add .gitignore
-   git commit -m "chore: ignore cache files"
+4. **Keep the cache committed** — `assets/cache/bhattayush17-github.json` is the
+   last-known-good snapshot that CI falls back to when the live GitHub API is
+   unavailable. `.gitignore` already un-ignores exactly that file:
+   ```gitignore
+   assets/cache/*
+   !assets/cache/bhattayush17-github.json
    ```
 
 ## 7. Watch Logs in Real Time

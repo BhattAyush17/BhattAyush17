@@ -50,12 +50,17 @@ Placeholders are marked so the health-check workflow knows to keep retrying:
 ## Self-Healing Workflow
 
 ### How It Works
-1. **Runs every 6 hours** via `fallback-healthcheck.yml`
-2. **Audits each SVG** for:
-   - File exists and has content (not empty)
-   - SVG is real data, not a temporary placeholder
-3. **Only regenerates if broken** — doesn't waste API calls on healthy assets
-4. **Commits fixes automatically** with message `fix: self-heal broken README assets [skip ci]`
+1. **`streak-healthcheck.yml`** runs every 6 hours and always refreshes the
+   streak card from live data (falling back to the committed cache)
+2. **`generate-readme-assets.yml`** runs every 6 hours and refreshes the
+   stats cards
+3. **`generate-snake.yml`** runs every 12 hours and regenerates the
+   contribution snake from the live GitHub grid
+4. **`fallback-healthcheck.yml`** audits that every expected asset exists
+   and is not empty — it fails loudly instead of silently shipping a broken
+   profile
+5. All of them publish through `scripts/publish_assets.sh`, so a fix lands
+   on `main` even when another workflow pushed in the meantime
 
 ### Example: Vercel is Down
 ```bash
@@ -112,7 +117,7 @@ Rendering streak with real data: current=7, longest=45, total=892
 ```bash
 # Simulate API failure (no token, no cache)
 unset GH_STATS_TOKEN
-rm -f assets/cache/data.json
+rm -f assets/cache/bhattayush17-github.json
 python scripts/generate_stats.py
 
 # Expected: Script fails gracefully, keeping old SVGs
@@ -123,7 +128,7 @@ python scripts/generate_stats.py
 ### Test Placeholder Detection
 ```bash
 # Trigger a broken render (corrupt cache)
-echo '{"invalid": "json"}' > assets/cache/data.json
+echo '{"invalid": "json"}' > assets/cache/bhattayush17-github.json
 python scripts/generate_stats.py
 
 # Script will try to parse, fail, then keep old SVGs
@@ -141,12 +146,61 @@ python scripts/generate_stats.py
 | **languages.svg** | GitHub GraphQL (repo primary languages) | Every run | Skip (never fake), keep old file |
 | **contribution-graph.svg** | Vercel activity graph OR local heatmap | Every run | Local heatmap (real data), then old file |
 | **summary-\*.svg** | Vercel summary cards | Every run | Keep old file, retry next cycle |
+| **snake SVG** | `Platane/snk` (GitHub contribution grid) | Every 12 h | Keep old file, retry next cycle |
 
 **Cache policy:**
-- Fetched data cached to `assets/cache/data.json` with timestamp
+- Fetched data cached to `assets/cache/bhattayush17-github.json` with timestamp
 - Cache is "fresh" if < 6 hours old → use immediately
 - Cache is "stale" if > 6 hours old → but still use if live fetch fails (graceful degradation)
 - Cache is re-written on every successful live fetch
+
+---
+
+## Streak Rules (and why they are timezone aware)
+
+GitHub buckets contributions by the **user's own timezone**, not by UTC. The
+calendar therefore ends on the user's "today", which can be one day ahead of
+or behind the UTC date.
+
+| Situation | Calendar ends | Streak is anchored on |
+|---|---|---|
+| User ahead of UTC (e.g. UTC+05:30) | `utc_today + 1` | The last day of the calendar |
+| User behind UTC (e.g. UTC-07:00) | `utc_today - 1` | The last day of the calendar |
+| Payload is stale (calendar older than that) | `utc_today - 2` or older | The UTC date → streak reports `0` |
+
+Rules applied by `scripts/generate_stats.py`:
+
+- The current streak starts on the anchor day when it has contributions,
+  otherwise on the day before it — a streak stays alive until the end of the
+  next day.
+- A **missing** date is never counted as active.
+- The longest streak requires exact one-day adjacency and is limited to the
+  ~12 months GitHub exposes (the card labels it `Longest (12 mo)`).
+- A payload whose newest day is more than one day behind the UTC date is
+  treated as stale: the current streak is reported as `0` instead of an
+  outdated number.
+
+---
+
+## Publishing Assets Without Conflicts
+
+All three asset workflows push to the same branch and share the
+`github-analytics` concurrency group, so a push can race with another
+workflow's commit.
+
+`scripts/publish_assets.sh` handles that safely:
+
+1. `git add` + `git commit` **first** (the working tree becomes clean)
+2. `git fetch origin main` + `git rebase origin/main`
+3. `git push origin HEAD:main`
+
+Rebasing **after** the commit is the important part: `git pull --rebase` on a
+dirty working tree aborts with
+`error: cannot pull with rebase: You have unstaged changes`, which is what
+kept the snake animation and the streak card stale for weeks.
+
+If the rebase conflicts, the freshly generated files win and the commit is
+re-created on top of the newest `main`.
 
 ---
 
@@ -182,8 +236,13 @@ Set `GH_STATS_TOKEN` as a repository secret:
 3. Scopes needed: `public_repo`, `read:user`
 
 ### Workflows
-- **`generate-readme-assets.yml`** — runs on schedule (usually nightly) to fetch fresh data
-- **`fallback-healthcheck.yml`** — runs every 6 hours to audit and self-heal
+- **`generate-readme-assets.yml`** — runs every 6 hours to fetch fresh data
+- **`streak-healthcheck.yml`** — runs every 6 hours to refresh the streak counter
+- **`generate-snake.yml`** — runs every 12 hours to regenerate the contribution snake
+- **`fallback-healthcheck.yml`** — runs every 6 hours to verify the assets exist
+
+All of them publish through `scripts/publish_assets.sh` and share the
+`github-analytics` concurrency group, so they queue instead of racing.
 
 ### Monitoring
 Check the **Actions** tab for any failures:
@@ -205,7 +264,7 @@ ls -lh assets/stats/github-stats.svg
 cat stats-run.log | grep ERROR
 
 # Solution 3: Force fresh render
-rm -f assets/cache/data.json
+rm -f assets/cache/bhattayush17-github.json
 export GH_STATS_TOKEN="your_token"
 python scripts/generate_stats.py
 ```
@@ -217,7 +276,7 @@ curl -H "Authorization: Bearer $GH_STATS_TOKEN" https://api.github.com/user
 # Should return your GitHub user, not {"message": "Bad credentials"}
 
 # Solution 2: Check cache
-cat assets/cache/data.json | python -m json.tool | head -20
+cat assets/cache/bhattayush17-github.json | python -m json.tool | head -20
 
 # Solution 3: Manually run with logging
 python -u scripts/generate_stats.py 2>&1 | tee debug.log

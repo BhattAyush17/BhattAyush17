@@ -19,6 +19,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history, so the rebase in publish_assets.sh is reliable.
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -46,7 +49,10 @@ jobs:
           python scripts/generate_stats.py
 
       - name: Commit refreshed streak
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Refresh streak counter"
-          file_pattern: "assets/stats/streak.svg assets/stats/github-stats.svg assets/streak/streak.svg assets/cache/bhattayush17-github.json"
+        run: |
+          scripts/publish_assets.sh \
+            "chore: refresh streak counter" \
+            assets/stats/streak.svg \
+            assets/stats/github-stats.svg \
+            assets/streak/streak.svg \
+            assets/cache/bhattayush17-github.json
