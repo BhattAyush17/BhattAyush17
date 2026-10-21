@@ -94,18 +94,11 @@
 
 > `$ cat quotes.txt`
 
-<p>
-  <code>Currently exploring the intersection of 'this is interesting' and 'this is a terrible idea.'</code><br>
-  <code>Exploring the stack one questionable decision at a time.</code><br>
-  <code>Building, breaking, learning ; occasionally in that order.</code>
-</p>
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=15&color=E5E7EB&vCenter=true&width=860&height=34&duration=4000&pause=1200&separator=%7C&repeat=true&lines=Currently%20exploring%20the%20intersection%20of%20%27this%20is%20interesting%27%20and%20%27this%20is%20a%20terrible%20idea.%27%7CExploring%20the%20stack%20one%20questionable%20decision%20at%20a%20time.%7CBuilding%2C%20breaking%2C%20learning%20%3B%20occasionally%20in%20that%20order." alt="Quotes" />
 
 > `$ cat ideology.txt`
 
-<p>
-  <code>I'd rather explore ten wrong directions than spend my life wondering about one.</code><br>
-  <code>Observe. Understand. Adapt. Repeat.</code>
-</p>
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=15&color=E5E7EB&vCenter=true&width=860&height=34&duration=4000&pause=1200&separator=%7C&repeat=true&lines=I%27d%20rather%20explore%20ten%20wrong%20directions%20than%20spend%20my%20life%20wondering%20about%20one.%7CObserve.%20Understand.%20Adapt.%20Repeat." alt="Ideology" />
 
 <div align="center">
 
