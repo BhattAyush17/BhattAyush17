@@ -80,7 +80,7 @@
 
 > `$ git log --graph --oneline --all   # contribution history`
 
-<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=20261021054746" width="100%" alt="Contribution Snake" />
+<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=20261021060720" width="100%" alt="Contribution Snake" />
 
 > `$ gh repo list --pinned --limit 4`
 
