@@ -23,6 +23,7 @@ Output:
     assets/stats/languages.svg
     assets/stats/languages-donut.svg
     assets/stats/streak.svg
+    assets/stats/stats-row.svg
     assets/streak/streak.svg
 """
 
@@ -32,6 +33,7 @@ import json
 import logging
 import math
 import os
+import re
 import sys
 import tempfile
 import time
@@ -2298,6 +2300,139 @@ viewBox="0 0 {DONUT_WIDTH} {DONUT_HEIGHT}">
 
 
 # ============================================================================
+# COMBINED STATS ROW
+# ============================================================================
+
+# Horizontal gap between the three cards in the combined image.
+STATS_ROW_GAP = 14
+
+
+def _scope_svg_classes(body: str, prefix: str) -> str:
+    """
+    Namespace one card's CSS classes so three cards can share a document.
+
+    Each card is generated as a standalone SVG with generic class names
+    (``.title``, ``.label``). Inlining them into one file would make the
+    last stylesheet win for every card, so every selector and class
+    attribute gets a per-card prefix.
+    """
+
+    def scope_style(match: "re.Match[str]") -> str:
+        css = re.sub(
+            r"\.([A-Za-z_][\w-]*)",
+            lambda m: f".{prefix}-{m.group(1)}",
+            match.group(1),
+        )
+
+        return f"<style>{css}</style>"
+
+    body = re.sub(
+        r"<style>(.*?)</style>",
+        scope_style,
+        body,
+        flags=re.DOTALL,
+    )
+
+    def scope_class(match: "re.Match[str]") -> str:
+        names = match.group(1).split()
+
+        return 'class="' + " ".join(
+            f"{prefix}-{name}" for name in names
+        ) + '"'
+
+    return re.sub(
+        r'class="([^"]+)"',
+        scope_class,
+        body,
+    )
+
+
+def make_stats_row_svg() -> None:
+    """
+    Compose the three cards into a single image.
+
+    Three separate ``<img>`` tags wrap into a 2 + 1 stack as soon as the
+    README column is narrower than the three cards together. One image
+    always stays on one row, and the fixed aspect ratio keeps the cards
+    aligned at any width.
+    """
+
+    cards = [
+        ("github-stats.svg", "stats"),
+        ("languages.svg", "langs"),
+        ("streak.svg", "streak"),
+    ]
+
+    bodies: list[str] = []
+
+    for filename, prefix in cards:
+        path = ASSETS_DIR / filename
+
+        if not path.exists():
+            log.warning(
+                "Cannot build combined stats row: %s is missing",
+                path,
+            )
+
+            return
+
+        text = path.read_text(encoding="utf-8")
+
+        match = re.search(
+            r"<svg[^>]*>(.*)</svg>",
+            text,
+            flags=re.DOTALL,
+        )
+
+        if not match:
+            log.warning(
+                "Cannot build combined stats row: %s is not an SVG",
+                path,
+            )
+
+            return
+
+        bodies.append(
+            _scope_svg_classes(
+                match.group(1).strip(),
+                prefix,
+            )
+        )
+
+    width = CARD_WIDTH * len(cards) + STATS_ROW_GAP * (len(cards) - 1)
+
+    groups = []
+
+    for index, body in enumerate(bodies):
+        x = index * (CARD_WIDTH + STATS_ROW_GAP)
+
+        groups.append(
+            f'<g transform="translate({x},0)">\n{body}\n</g>'
+        )
+
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" '
+        f'width="{width}" height="{CARD_HEIGHT}" '
+        f'viewBox="0 0 {width} {CARD_HEIGHT}">\n'
+        + "\n".join(groups)
+        + "\n</svg>\n"
+    )
+
+    output = ASSETS_DIR / "stats-row.svg"
+
+    output.write_text(
+        svg,
+        encoding="utf-8",
+    )
+
+    log.info(
+        "Combined stats row written: %dx%d",
+        width,
+        CARD_HEIGHT,
+    )
+
+
+# ============================================================================
 # DATA JSON
 # ============================================================================
 
@@ -2777,6 +2912,8 @@ def main() -> None:
         log.warning(
             "Language data unavailable - keeping the existing cards"
         )
+
+    make_stats_row_svg()
 
     make_data_json(
         result.data,

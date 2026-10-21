@@ -56,9 +56,7 @@
 > `$ gh stats --user BhattAyush17`
 
 <p align="center">
-  <img src="assets/stats/github-stats.svg" width="290" alt="GitHub Stats" />
-  <img src="assets/stats/languages.svg" width="290" alt="Top Languages" />
-  <img src="assets/stats/streak.svg" width="290" alt="Current Streak" />
+  <img src="assets/stats/stats-row.svg" width="100%" alt="GitHub stats, top languages and current streak" />
 </p>
 
 > `$ gh api graphql   # language + activity breakdown`

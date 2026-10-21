@@ -18,6 +18,7 @@ jobs:
           test -f assets/stats/languages.svg
           test -f assets/stats/languages-donut.svg
           test -f assets/stats/streak.svg
+          test -f assets/stats/stats-row.svg
           test -f assets/stats/contribution-graph.svg
           test -f assets/stats/summary-productive-time.svg
           test -f assets/snake/github-contribution-grid-snake-dark.svg

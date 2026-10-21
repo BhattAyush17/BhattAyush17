@@ -145,6 +145,7 @@ python scripts/generate_stats.py
 | **streak.svg** | GitHub GraphQL (contributions calendar) | Every run | Cached data, then old file |
 | **languages.svg** | GitHub GraphQL (repo primary languages) | Every run | Skip (never fake), keep old file |
 | **languages-donut.svg** | GitHub GraphQL (repo primary languages) | Every run | Skip (never fake), keep old file |
+| **stats-row.svg** | Composed from the three cards above | Every run | Keep old file |
 | **contribution-graph.svg** | Vercel activity graph OR local heatmap | Every run | Local heatmap (real data), then old file |
 | **summary-productive-time.svg** | Vercel summary card | External | Keep old file |
 | **snake SVG** | `Platane/snk` (GitHub contribution grid) + `scripts/finalize_snake.py` | Every 12 h | Keep old file, retry next cycle |

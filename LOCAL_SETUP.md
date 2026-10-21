@@ -52,7 +52,9 @@ python scripts/generate_stats.py
 
 The script writes `assets/stats/streak.svg`, `assets/stats/github-stats.svg`,
 `assets/stats/languages.svg`, `assets/stats/languages-donut.svg`,
-`assets/stats/data.json`, `assets/streak/streak.svg` and the cache file.
+`assets/stats/stats-row.svg` (the three cards composed into one image so they
+stay on a single row), `assets/stats/data.json`,
+`assets/streak/streak.svg` and the cache file.
 `contribution-graph.svg` and `summary-productive-time.svg` come from other
 tools and are only checked for existence by the health check.
 
@@ -95,12 +97,13 @@ head -1 assets/stats/languages.svg
 ### Open in Browser
 ```bash
 # macOS
+open assets/stats/stats-row.svg
 open assets/stats/github-stats.svg
 open assets/stats/streak.svg
 open assets/stats/languages.svg
 
 # Linux
-xdg-open assets/stats/github-stats.svg
+xdg-open assets/stats/stats-row.svg
 
 # Or just drag any .svg file into your browser
 ```
