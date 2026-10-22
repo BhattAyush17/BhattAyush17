@@ -51,11 +51,11 @@
 
 > `$ neofetch`
 
-<img src="neofetch_card.svg?v=afa171d44f45" alt="Neofetch Card" width="100%">
+<img src="neofetch_card.svg?v=8afdbda6a59d" alt="Neofetch Card" width="100%">
 
 > `$ gh stats --user BhattAyush17`
 
-<img src="assets/stats/github-cards.svg?v=64b36bb83b59" width="100%" alt="GitHub stats, top languages and current streak" />
+<img src="assets/stats/github-cards.svg?v=fb71ce51be03" width="100%" alt="GitHub stats, top languages and current streak" />
 
 > `$ gh api graphql   # commit activity by hour`
 
@@ -114,5 +114,5 @@
 </details>
 
 <!-- START_SECTION:sync_stamp -->
-`last synced: 2026-10-22 12:23:51 UTC` — regenerated automatically from the live GitHub API.
+`last synced: 2026-10-22 12:40:16 UTC` — regenerated automatically from the live GitHub API.
 <!-- END_SECTION:sync_stamp -->
