@@ -1670,6 +1670,10 @@ def _cards_languages(
 
 HOURLY_WINDOW_DAYS = 365
 
+# Set when the hourly distribution was rewritten, so the freshness
+# footer can follow it even though it is not a readme_sync surface.
+HOURLY_CHANGED = False
+
 IST = timezone(timedelta(hours=5, minutes=30))
 
 
@@ -1799,6 +1803,8 @@ def write_hourly_json(counts: list[int]) -> None:
 
     path = ASSETS_DIR / "hourly.json"
 
+    global HOURLY_CHANGED
+
     previous: Optional[dict[str, Any]] = None
 
     try:
@@ -1820,6 +1826,8 @@ def write_hourly_json(counts: list[int]) -> None:
         json.dumps(payload, indent=2) + "\n",
         encoding="utf-8",
     )
+
+    HOURLY_CHANGED = True
 
     log.info(
         "hourly.json updated: %d commits", sum(counts)
@@ -2402,6 +2410,12 @@ def main() -> None:
 
     try:
         import readme_sync
+
+        # The hourly chart is not one of readme_sync's surfaces, so a
+        # run that only moved that chart would leave the freshness
+        # footer pointing at an older publish. Refresh it here too.
+        if HOURLY_CHANGED:
+            readme_sync.update_sync_stamp()
 
         readme_sync.sync_all()
 
