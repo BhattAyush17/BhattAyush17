@@ -77,9 +77,14 @@ jobs:
           python scripts/generate_stats.py
 
           # The snake is a slow Docker action that only changes when the
-          # contribution calendar changes. The calendar lives in the
-          # cache file, so an unchanged cache means an unchanged grid.
-          if git diff --quiet -- assets/cache/bhattayush17-github.json \
+          # contribution calendar changes. Compare just the calendar:
+          # the same cache file also carries the head SHA and timestamps,
+          # which move on every push and must not force a repaint.
+          old_weeks=$(git show HEAD:assets/cache/bhattayush17-github.json 2>/dev/null \
+            | jq -c '.data.weeks' 2>/dev/null || echo null)
+          new_weeks=$(jq -c '.data.weeks' assets/cache/bhattayush17-github.json 2>/dev/null || echo null)
+
+          if [ "$old_weeks" = "$new_weeks" ] \
              && [ -s assets/snake/github-contribution-grid-snake-dark.svg ]; then
             echo "needs_snake=false" >> "$GITHUB_OUTPUT"
           else
