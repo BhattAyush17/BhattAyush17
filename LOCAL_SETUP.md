@@ -53,9 +53,12 @@ commits-by-hour card (`assets/stats/commit-hours.svg`), the standalone cards
 `assets/streak/streak.svg` and the cache file. `cards_svg.py` holds the pure
 renderers; `generate_stats.py` does the fetching and file I/O.
 
-`assets/stats/hourly.json` is a committed snapshot of commits per hour (the
-GraphQL calendar has no hourly data), so `commit-hours.svg` is labelled
-`snapshot` rather than `live`.
+`assets/stats/hourly.json` holds the live commits-per-hour distribution for
+the last year, built from real commit timestamps in the GitHub commit search
+API (the GraphQL calendar only has daily totals). It is rewritten only when
+the distribution moves, so an unchanged distribution produces no commit.
+When the lookup fails, `commit-hours.svg` is re-rendered from the last
+committed snapshot and labelled `snapshot` instead of `live`.
 
 `assets/stats/data.json` is the machine readable snapshot used by the HTML
 card renderer in `index.html` (the SVG cards cannot be used on a page that

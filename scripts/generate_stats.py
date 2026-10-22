@@ -1668,6 +1668,153 @@ def _cards_languages(
         return []
 
 
+HOURLY_WINDOW_DAYS = 365
+
+IST = timezone(timedelta(hours=5, minutes=30))
+
+
+def fetch_hourly_counts(
+    deadline: float,
+) -> Optional[list[int]]:
+    """
+    Commits per hour of the day for the last year, in IST.
+
+    The GraphQL contribution calendar only returns daily totals, so the
+    commit search API is the one source that carries real commit times.
+    It paginates 100 at a time and stops indexing at 1000 results, which
+    is plenty for one year of personal commits.
+
+    Returns None when the lookup fails, so the caller can keep the
+    previously committed snapshot instead of blanking the chart.
+    """
+
+    if not TOKEN:
+        return None
+
+    since = (
+        datetime.now(timezone.utc) - timedelta(days=HOURLY_WINDOW_DAYS)
+    ).strftime("%Y-%m-%d")
+
+    query = f"author:{USERNAME} author-date:>={since}"
+
+    counts = [0] * 24
+    seen = 0
+    page = 1
+
+    while page <= 10:
+
+        if time.monotonic() >= deadline:
+            log.warning(
+                "Commit hour lookup ran out of time on page %d", page
+            )
+            return None
+
+        try:
+
+            response = SESSION.get(
+                "https://api.github.com/search/commits",
+                params={
+                    "q": query,
+                    "sort": "author-date",
+                    "order": "desc",
+                    "per_page": 100,
+                    "page": page,
+                },
+                timeout=min(
+                    MAX_REQUEST_TIMEOUT,
+                    max(0.5, deadline - time.monotonic()),
+                ),
+            )
+
+            response.raise_for_status()
+
+            payload = response.json()
+
+        except Exception as exc:
+
+            log.warning(
+                "Commit hour lookup failed on page %d: %s", page, exc
+            )
+            return None
+
+        items = payload.get("items") or []
+
+        if not items:
+            break
+
+        for item in items:
+
+            raw = ((item.get("commit") or {}).get("author") or {}).get("date")
+
+            if not raw:
+                continue
+
+            try:
+                stamp = datetime.fromisoformat(
+                    raw.replace("Z", "+00:00")
+                )
+            except ValueError:
+                continue
+
+            counts[stamp.astimezone(IST).hour] += 1
+            seen += 1
+
+        total = int(payload.get("total_count") or 0)
+
+        if len(items) < 100 or seen >= min(total, 1000):
+            break
+
+        page += 1
+
+    if seen == 0:
+        log.warning("Commit hour lookup returned no commits")
+        return None
+
+    log.info(
+        "Commit hours: %d commits across %d hour buckets",
+        seen,
+        sum(1 for value in counts if value),
+    )
+
+    return counts
+
+
+def write_hourly_json(counts: list[int]) -> None:
+    """
+    Persist the hourly counts, keeping the old file byte-identical when
+    the distribution has not moved. Otherwise every run would produce a
+    commit that changes nothing but a timestamp.
+    """
+
+    path = ASSETS_DIR / "hourly.json"
+
+    previous: Optional[dict[str, Any]] = None
+
+    try:
+        previous = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        previous = None
+
+    if previous and previous.get("counts") == counts:
+        return
+
+    payload = {
+        "tz": "UTC+5:30 (IST)",
+        "counts": counts,
+        "total": sum(counts),
+        "updatedAt": datetime.now(timezone.utc).isoformat(),
+    }
+
+    path.write_text(
+        json.dumps(payload, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    log.info(
+        "hourly.json updated: %d commits", sum(counts)
+    )
+
+
 def make_cards_svg(
     result: FetchResult,
     languages: Optional[list[dict[str, Any]]],
@@ -1737,24 +1884,46 @@ def make_cards_svg(
         encoding="utf-8",
     )
 
-    # Commits-by-hour card. The hourly counts are a committed snapshot
-    # (the GraphQL calendar has no hourly data), so the badge says so.
-    try:
-        hourly = json.loads(
-            (ASSETS_DIR / "hourly.json").read_text(encoding="utf-8")
-        )
+    # Commits-by-hour card. Real commit timestamps come from the commit
+    # search API. When that lookup fails the last committed snapshot is
+    # rendered unchanged, so a transient API error never blanks the
+    # chart or silently lies about freshness.
+    hourly = fetch_hourly_counts(time.monotonic() + 25)
+    live_hours = hourly is not None
+
+    if hourly is not None:
+
+        try:
+            write_hourly_json(hourly)
+        except OSError as exc:
+            log.warning("hourly.json not written: %s", exc)
+
+    else:
+
+        try:
+            snapshot = json.loads(
+                (ASSETS_DIR / "hourly.json").read_text(encoding="utf-8")
+            )
+            hourly = [int(value) for value in snapshot["counts"]]
+            log.warning(
+                "Commit hour lookup failed - rendering the snapshot"
+            )
+        except (OSError, ValueError, KeyError):
+            hourly = None
+            log.warning(
+                "hourly data unavailable - commit-hours.svg not updated"
+            )
+
+    if hourly is not None:
 
         (ASSETS_DIR / "commit-hours.svg").write_text(
             cards_svg.render_hourly(
-                [int(value) for value in hourly["counts"]],
-                str(hourly.get("tz", "UTC")),
-                ("#6e7681", "snapshot"),
+                hourly,
+                "UTC+5:30 (IST)",
+                badge if live_hours else ("#6e7681", "snapshot"),
             ),
             encoding="utf-8",
         )
-
-    except (OSError, ValueError, KeyError):
-        log.warning("hourly.json missing - commit-hours.svg not updated")
 
     log.info("Cards written: %s", COMBINED_CARDS_FILE)
 

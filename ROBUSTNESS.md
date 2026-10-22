@@ -27,7 +27,7 @@ When something breaks:
 |---|---|---|
 | Language detection fails | Show fake `{"Python": 5, ...}` | Skip rendering, keep existing file |
 | GitHub API timeout | Crash or show partial garbage | Preserve last good version |
-| Hourly snapshot missing | Crash the run | Keep the previous `commit-hours.svg` |
+| Hourly lookup fails | Crash the run | Keep the previous `commit-hours.svg` and label it `snapshot` |
 
 ### 3️⃣ Auditable & Detectable
 Every run logs exactly what data was used:
@@ -148,7 +148,7 @@ python scripts/generate_stats.py
 | Card | Source | Refreshed | Fallback |
 |---|---|---|---|
 | **github-cards.svg** | Composed from the three cards below | Every run | Keep old file |
-| **commit-hours.svg** | `assets/stats/hourly.json` (committed snapshot) | Every run | Keep old file |
+| **commit-hours.svg** | GitHub commit search API (real commit times, last year) | Every run | Last committed `hourly.json`, labelled `snapshot` |
 | **github-stats.svg** | GitHub GraphQL API | Every run | Cached data (6h TTL), then old file |
 | **streak.svg** | GitHub GraphQL (contributions calendar) | Every run | Cached data, then old file |
 | **languages.svg** | GitHub GraphQL (repo primary languages) | Every run | Cached data or `data.json`, then old file |

@@ -762,7 +762,6 @@ def render_sync_stamp(stamp: str) -> str:
     return (
         '<p align="right"><sub>'
         f"last synced <code>{stamp}</code>"
-        " &nbsp;·&nbsp; auto-checks every 5 min"
         " &nbsp;·&nbsp; "
         f'<a href="https://github.com/{repo}/actions/workflows/sync-readme.yml">'
         f'<img src="{status_badge}" alt="sync status" height="18" />'
