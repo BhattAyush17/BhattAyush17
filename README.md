@@ -59,7 +59,7 @@
 
 > `$ gh api graphql   # commit activity by hour`
 
-<img src="assets/stats/commit-hours.svg?v=5d54e659c678" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
+<img src="assets/stats/commit-hours.svg?v=9917665738dd" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
 
 > `$ gh repo list --sort pushed --limit 3`
 
