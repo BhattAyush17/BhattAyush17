@@ -274,6 +274,40 @@ change on *every* run and produce an empty commit every 15 minutes. A
 content hash changes exactly when the content changes, so a run that
 finds nothing new upstream produces no commit at all.
 
+The same rule applies to `assets/stats/data.json` and the contribution
+cache: their timestamps only move when the data inside them moves.
+
+---
+
+## The Automation Feedback Loop
+
+A profile that publishes its own statistics has a classic trap: the
+automation commits, the commit shows up in the contribution calendar,
+the calendar changes, the next run sees a different number and commits
+again — forever.
+
+Three things prevent it here.
+
+**1. The bot's commits are not counted by GitHub.** The publish step
+rebases the bot's commits onto the newest `main`, which rewrites their
+SHA, and a rewritten commit loses its contribution credit. Measured over
+this repository's history: 23 automation commits on a day contributed
+**0** to the calendar, while the 9 human commits on the same day
+contributed exactly 9. The numbers are therefore reported exactly as
+GitHub reports them — no subtraction, no guessing.
+
+**2. The head of the profile repository is tracked.** Every run reads
+the recent history of the profile repo and remembers the head SHA in the
+cache. When every commit made since the previous run was the bot's, the
+contribution numbers cannot have changed, so the previous numbers are
+kept and nothing is published.
+
+**3. Everything is idempotent.** A run that finds no change upstream
+produces an identical tree: no diff, no commit, no cache invalidation.
+
+The result: the workflow reacts to real activity and stays completely
+silent otherwise.
+
 ### Monitoring
 Check the **Actions** tab for any failures:
 - 🟢 Green: All assets healthy

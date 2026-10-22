@@ -107,6 +107,57 @@ CALENDAR_FUTURE_TOLERANCE_DAYS = 1
 # as 0 instead of an outdated number.
 CALENDAR_STALE_TOLERANCE_DAYS = 1
 
+# ---------------------------------------------------------------------------
+# AUTOMATION SELF-CONTRIBUTIONS
+# ---------------------------------------------------------------------------
+#
+# This profile repository is updated by the automation itself, and every
+# commit the bot makes lands on the default branch.
+#
+# GitHub does not count those commits in the contribution calendar: the
+# publish step rebases the bot's commits onto the newest main, which
+# rewrites their SHA, and a rewritten commit loses its contribution
+# credit. Measured over the whole history of this repository, 23
+# automation commits on a day contributed 0 to the calendar while the 9
+# human commits on that day contributed exactly 9.
+#
+# The calendar is therefore already free of automation noise, and the
+# numbers must be reported exactly as GitHub reports them. Subtracting
+# the bot's commits would be wrong: it would wipe out days that have
+# real human work on them.
+#
+# The one thing that still has to be handled is the feedback loop. A bot
+# commit must never cause the next run to publish a new commit, or the
+# automation would keep itself busy forever. That is prevented by
+# comparing the profile repository's history against the one seen during
+# the previous run: when only the bot committed since then, the previous
+# numbers are kept, because they cannot have changed.
+
+BOT_AUTHOR = "github-actions[bot]"
+
+# The head of the profile repository, used to detect whether only the
+# automation worked since the previous run.
+PROFILE_HISTORY_QUERY = """
+query($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    defaultBranchRef {
+      target {
+        ... on Commit {
+          history(first: 50) {
+            nodes {
+              oid
+              author {
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+"""
+
 
 # ============================================================================
 # LOGGING
@@ -990,6 +1041,133 @@ def normalize_contribution_data(
 
 
 # ============================================================================
+# PROFILE HISTORY
+# ============================================================================
+#
+# The head of the profile repository, used to detect whether only the
+# automation worked since the previous run.
+
+def fetch_profile_history(
+    deadline: float,
+) -> tuple[Optional[str], list[dict[str, Any]]]:
+    """
+    The head commit of the profile repository and its recent history.
+
+    Returns the head SHA and a list of commits, newest first, each with
+    a `bot` flag telling whether the automation made it.
+
+    The head SHA is what makes the feedback loop detectable: the next
+    run compares it with the one seen last time and can tell whether
+    anything but the bot worked in the meantime.
+    """
+
+    if not TOKEN:
+        return None, []
+
+    try:
+
+        response = SESSION.post(
+            GRAPHQL_URL,
+            json={
+                "query": PROFILE_HISTORY_QUERY,
+                "variables": {
+                    "owner": USERNAME,
+                    "name": USERNAME,
+                },
+            },
+            timeout=min(
+                MAX_REQUEST_TIMEOUT,
+                max(0.5, deadline - time.monotonic() - 0.1),
+            ),
+        )
+
+        response.raise_for_status()
+
+        payload = response.json()
+
+    except Exception as exc:
+
+        log.warning(
+            "Profile history lookup failed: %s",
+            exc,
+        )
+        return None, []
+
+    if payload.get("errors"):
+
+        log.warning(
+            "Profile history lookup returned errors: %s",
+            payload["errors"],
+        )
+        return None, []
+
+    data = payload.get("data") or {}
+
+    repository = data.get("repository") or {}
+
+    default_branch = repository.get("defaultBranchRef") or {}
+
+    target = default_branch.get("target") or {}
+
+    history = target.get("history") or {}
+
+    commits: list[dict[str, Any]] = []
+
+    for node in history.get("nodes") or []:
+
+        author = node.get("author") or {}
+
+        commits.append(
+            {
+                "sha": node.get("oid") or "",
+                "bot": author.get("name") == BOT_AUTHOR,
+            }
+        )
+
+    head = commits[0]["sha"] if commits else None
+
+    log.info(
+        "Profile repository head: %s (%d recent commits)",
+        head[:8] if head else "unknown",
+        len(commits),
+    )
+
+    return head, commits
+
+
+def only_automation_worked(
+    previous_head: Optional[str],
+    commits: list[dict[str, Any]],
+) -> bool:
+    """
+    True when every commit made since the previous run was the bot's.
+
+    In that case the contribution numbers cannot have changed, so the
+    previous numbers are kept and nothing is published. Without this the
+    automation would keep reacting to its own commits.
+    """
+
+    if not previous_head or not commits:
+        return False
+
+    for commit in commits:
+
+        if commit.get("sha") == previous_head:
+            # Everything before this commit is newer than the previous
+            # run. The first entry is the head itself, so it is skipped.
+            newer = commits[: commits.index(commit)]
+
+            if not newer:
+                return False
+
+            return all(entry.get("bot") for entry in newer)
+
+    # The previous head is no longer in the history (a force push or a
+    # rebase). The situation is unknown, so the fresh data is used.
+    return False
+
+
+# ============================================================================
 # CACHE
 # ============================================================================
 
@@ -1200,6 +1378,17 @@ def get_github_data() -> FetchResult:
         "Requesting LIVE contribution calendar..."
     )
 
+    # The head of the profile repository tells us whether only the
+    # automation worked since the previous run.
+    head_sha, commits = fetch_profile_history(deadline)
+
+    previous_head = None
+
+    if cache and cache.data:
+        previous_head = cache.data.get(
+            "_profile_head_sha"
+        )
+
     live = graphql_request(
         STREAK_GRAPHQL_QUERY,
         deadline,
@@ -1223,6 +1412,67 @@ def get_github_data() -> FetchResult:
             )
 
         else:
+
+            only_bot = only_automation_worked(
+                previous_head,
+                commits,
+            )
+
+            if only_bot and cache and cache.data:
+
+                fresh_total = int(
+                    normalized.get(
+                        "github_total_contributions",
+                        0,
+                    )
+                    or 0
+                )
+
+                cached_total = int(
+                    cache.data.get(
+                        "github_total_contributions",
+                        0,
+                    )
+                    or 0
+                )
+
+                if fresh_total > cached_total:
+
+                    # The graph caught up with real new work. The
+                    # numbers are used after all, otherwise a commit
+                    # could be missed forever.
+                    log.info(
+                        "Contribution count grew from %d to %d - "
+                        "using the fresh numbers",
+                        cached_total,
+                        fresh_total,
+                    )
+
+                    only_bot = False
+
+            if only_bot and cache and cache.data:
+
+                # Only the bot committed and no new work showed up, so
+                # the contribution numbers cannot have changed. The
+                # previous numbers are kept and nothing is published.
+                # Without this the automation would react to its own
+                # commits forever.
+                #
+                # The remembered head is deliberately NOT advanced here.
+                # It marks the last time the numbers really changed, and
+                # advancing it would change the cache file on every bot
+                # commit, which would publish a commit, which would make
+                # the bot commit again.
+                log.info(
+                    "Only the automation worked - keeping the "
+                    "previous contribution numbers"
+                )
+
+                normalized = dict(cache.data)
+
+            elif head_sha:
+
+                normalized["_profile_head_sha"] = head_sha
 
             save_cache(normalized)
 
