@@ -1698,7 +1698,7 @@ def fetch_hourly_counts(
     query = f"author:{USERNAME} author-date:>={since}"
 
     counts = [0] * 24
-    seen = 0
+    seen_shas: set[str] = set()
     page = 1
 
     while page <= 10:
@@ -1744,6 +1744,16 @@ def fetch_hourly_counts(
 
         for item in items:
 
+            # Paginated search results are not guaranteed to be stable:
+            # a commit can drift onto two adjacent pages while the index
+            # settles. Counting by SHA keeps the total exact.
+            sha = item.get("sha")
+
+            if sha:
+                if sha in seen_shas:
+                    continue
+                seen_shas.add(sha)
+
             raw = ((item.get("commit") or {}).get("author") or {}).get("date")
 
             if not raw:
@@ -1757,7 +1767,8 @@ def fetch_hourly_counts(
                 continue
 
             counts[stamp.astimezone(IST).hour] += 1
-            seen += 1
+
+        seen = len(seen_shas)
 
         total = int(payload.get("total_count") or 0)
 
