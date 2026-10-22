@@ -18,9 +18,15 @@ name: Sync README
 
 on:
   schedule:
-    # Every 15 minutes. GitHub queues scheduled runs, so the real
-    # interval is 15 minutes plus a few minutes of queue delay.
-    - cron: "*/15 * * * *"
+    # Every 5 minutes, which is the shortest interval GitHub allows for
+    # scheduled workflows. Together with the push trigger that means a
+    # real change on GitHub reaches the README within roughly 5-10
+    # minutes: the cron tick plus GitHub's queue delay.
+    #
+    # A run only publishes when the rendered files actually differ, so
+    # the faster tick does not create empty commits or inflate the
+    # contribution graph.
+    - cron: "*/5 * * * *"
   workflow_dispatch:
   push:
     branches:
@@ -55,12 +61,37 @@ jobs:
           pip install -r scripts/requirements.txt
 
       # -------------------------------------------------------------------
-      # 1. Contribution snake
+      # 1. Live data, stats cards and every README text block
       # -------------------------------------------------------------------
-      # Runs before the generator so the README can be versioned against
-      # the finished snake file in the same commit.
+      # Runs first so the snake step below can tell whether the
+      # contribution grid actually moved. Everything this step writes is
+      # derived from the live GitHub API.
+
+      - name: Run generator
+        id: generate
+        env:
+          GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+          GH_USERNAME: BhattAyush17
+        run: |
+          set -euo pipefail
+          python scripts/generate_stats.py
+
+          # The snake is a slow Docker action that only changes when the
+          # contribution calendar changes. The calendar lives in the
+          # cache file, so an unchanged cache means an unchanged grid.
+          if git diff --quiet -- assets/cache/bhattayush17-github.json \
+             && [ -s assets/snake/github-contribution-grid-snake-dark.svg ]; then
+            echo "needs_snake=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "needs_snake=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # -------------------------------------------------------------------
+      # 2. Contribution snake (only when the grid changed)
+      # -------------------------------------------------------------------
 
       - name: Generate snake animation
+        if: steps.generate.outputs.needs_snake == 'true'
         uses: Platane/snk@v3
         with:
           github_user_name: BhattAyush17
@@ -78,20 +109,10 @@ jobs:
         # labels + "Less / More" legend and removes the animation's
         # progress bar, which renders as a grey bar under the graph when
         # the animation is paused or captured as a still image.
+        if: steps.generate.outputs.needs_snake == 'true'
         run: |
           python3 scripts/finalize_snake.py
           grep -c "month-labels" assets/snake/github-contribution-grid-snake-dark.svg
-
-      # -------------------------------------------------------------------
-      # 2. Stats cards, streak and every README text block
-      # -------------------------------------------------------------------
-
-      - name: Run generator
-        env:
-          GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
-          GH_USERNAME: BhattAyush17
-        run: |
-          python scripts/generate_stats.py
 
       # -------------------------------------------------------------------
       # 3. Content addressed cache busters

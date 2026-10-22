@@ -46,8 +46,9 @@ from.
 ## Self-Healing Workflow
 
 ### How It Works
-1. **`sync-readme.yml`** runs every 15 minutes and regenerates every
-   GitHub-derived surface in one pass:
+1. **`sync-readme.yml`** runs every 5 minutes (GitHub's shortest
+   scheduled interval) and regenerates every GitHub-derived surface in
+   one pass:
    - stats cards, commit-activity chart and streak (live GraphQL)
    - recent repos, pinned repos and achievements (live REST / profile scrape)
    - the neofetch card, with live GitHub numbers baked into the SVG
@@ -240,7 +241,7 @@ Set `GH_STATS_TOKEN` as a repository secret:
 3. Scopes needed: `public_repo`, `read:user`
 
 ### Workflows
-- **`sync-readme.yml`** — the single writer. Runs every 15 minutes and on
+- **`sync-readme.yml`** — the single writer. Runs every 5 minutes and on
   every push to `main`, and refreshes every GitHub-derived surface
 - **`fallback-healthcheck.yml`** — read-only verifier. Runs every 30
   minutes and checks that the assets exist, the README sections are
@@ -270,7 +271,7 @@ previous content in place. The README is never left half-written.
 `scripts/bump_versions.py` gives every local image in the README a
 `?v=<sha256 of the file>` parameter. GitHub caches images by URL, so the
 version has to change when the content does — but a timestamp would
-change on *every* run and produce an empty commit every 15 minutes. A
+change on *every* run and produce an empty commit every 5 minutes. A
 content hash changes exactly when the content changes, so a run that
 finds nothing new upstream produces no commit at all.
 

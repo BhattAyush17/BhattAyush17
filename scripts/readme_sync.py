@@ -720,6 +720,102 @@ def update_achievements() -> bool:
 # SECTION: sync stamp
 # ============================================================================
 
+STAMP_PLACEHOLDER = "0000-00-00 00:00:00 UTC"
+
+STAMP_TIMESTAMP = re.compile(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC")
+
+
+def render_sync_stamp(stamp: str) -> str:
+    """
+    Build the right-aligned freshness footer.
+
+    Three parts, each doing a different job:
+
+      * the exact UTC time the metadata was last regenerated. A static
+        file can only carry a new time when something is committed, so
+        this is written on every publish.
+      * how often the pipeline re-checks GitHub, so an old timestamp is
+        not mistaken for a stalled automation.
+      * a live workflow badge. shields.io reads it straight from GitHub,
+        so it turns green on every successful run and red the moment the
+        sync stops working - without a single commit.
+
+    Everything sits inside <p align="right">, which is the only
+    alignment GitHub's markdown sanitizer keeps, so the block stays
+    pinned to the right edge of the rendered page.
+    """
+
+    repo = os.getenv("GH_REPO", f"{USERNAME}/{USERNAME}")
+
+    status_badge = (
+        "https://img.shields.io/github/actions/workflow/status/"
+        f"{repo}/sync-readme.yml"
+        "?branch=main"
+        "&style=flat-square"
+        "&label=sync"
+        "&labelColor=1a1a1a"
+        "&color=6b7280"
+        "&logo=github"
+        "&logoColor=e5e7eb"
+    )
+
+    return (
+        '<p align="right"><sub>'
+        f"last synced <code>{stamp}</code>"
+        " &nbsp;·&nbsp; auto-checks every 5 min"
+        " &nbsp;·&nbsp; "
+        f'<a href="https://github.com/{repo}/actions/workflows/sync-readme.yml">'
+        f'<img src="{status_badge}" alt="sync status" height="18" />'
+        "</a>"
+        "</sub></p>"
+    )
+
+
+def section_body(content: str, name: str) -> Optional[str]:
+    """
+    Return the text between a section's markers, or None when absent.
+    """
+
+    start = f"<!-- START_SECTION:{name} -->"
+    end = f"<!-- END_SECTION:{name} -->"
+
+    if start not in content or end not in content:
+        return None
+
+    pattern = re.compile(
+        re.escape(start) + r"(.*?)" + re.escape(end),
+        re.DOTALL,
+    )
+
+    match = pattern.search(content)
+
+    return match.group(1) if match else None
+
+
+def sync_stamp_needs_refresh() -> bool:
+    """
+    True when the footer is missing or was written by an older template.
+
+    Without this the footer could only change when some unrelated
+    surface changed too, so a template fix would sit in the code for
+    days before it reached the README.
+    """
+
+    content = _read_text(README_PATH)
+
+    if content is None:
+        return False
+
+    current = section_body(content, "sync_stamp")
+
+    if current is None:
+        return True
+
+    normalised = STAMP_TIMESTAMP.sub(STAMP_PLACEHOLDER, current)
+
+    return normalised.strip() != render_sync_stamp(STAMP_PLACEHOLDER).strip()
+
+
 def update_sync_stamp() -> bool:
 
     try:
@@ -732,12 +828,7 @@ def update_sync_stamp() -> bool:
         if content is None:
             raise SyncError("README.md not found")
 
-        body = (
-            f"`last synced: {stamp}` — "
-            "regenerated automatically from the live GitHub API."
-        )
-
-        updated = replace_section(content, "sync_stamp", body)
+        updated = replace_section(content, "sync_stamp", render_sync_stamp(stamp))
 
         if updated == content:
             return False
@@ -1187,10 +1278,11 @@ def sync_all() -> int:
 
     changed = sum(1 for value in results.values() if value)
 
-    # The freshness stamp is only refreshed when something actually
-    # changed. Bumping it on every run would create an empty commit
-    # every few minutes and inflate the contribution graph.
-    if changed:
+    # The freshness stamp follows real publishes. Bumping it on every
+    # run would create an empty commit every five minutes and bury the
+    # history, so it changes when a surface changes - or when the footer
+    # template itself changed and the README still carries the old one.
+    if changed or sync_stamp_needs_refresh():
         results["sync_stamp"] = update_sync_stamp()
 
     for name, value in results.items():

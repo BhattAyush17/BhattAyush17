@@ -114,5 +114,5 @@
 </details>
 
 <!-- START_SECTION:sync_stamp -->
-`last synced: 2026-10-22 12:40:16 UTC` — regenerated automatically from the live GitHub API.
+<p align="right"><sub>last synced <code>2026-10-22 12:50:49 UTC</code> &nbsp;·&nbsp; auto-checks every 5 min &nbsp;·&nbsp; <a href="https://github.com/BhattAyush17/BhattAyush17/actions/workflows/sync-readme.yml"><img src="https://img.shields.io/github/actions/workflow/status/BhattAyush17/BhattAyush17/sync-readme.yml?branch=main&style=flat-square&label=sync&labelColor=1a1a1a&color=6b7280&logo=github&logoColor=e5e7eb" alt="sync status" height="18" /></a></sub></p>
 <!-- END_SECTION:sync_stamp -->
