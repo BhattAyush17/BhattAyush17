@@ -57,6 +57,14 @@ else
   git add -A
 fi
 
+# Stage anything else the run generated.
+#
+# The path list above is a convenience, not a contract: a workflow that
+# forgets to list a generated file leaves it unstaged, and the rebase
+# further down then aborts with
+# "cannot rebase: You have unstaged changes".
+git add -A
+
 if git diff --cached --quiet; then
   echo "No changes to publish."
   exit 0
@@ -69,13 +77,14 @@ git fetch origin main
 
 if ! git rebase origin/main; then
   echo "::warning::Rebase conflict - keeping the freshly generated files"
-  git rebase --abort
+  git rebase --abort 2>/dev/null || true
   git reset --soft origin/main
   if [ "${#paths[@]}" -gt 0 ]; then
     git add -- "${paths[@]}"
   else
     git add -A
   fi
+  git add -A
   git commit -m "$message"
 fi
 

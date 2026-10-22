@@ -136,6 +136,7 @@ jobs:
             "chore: sync README with live GitHub state" \
             assets/stats \
             assets/streak \
+            assets/snake \
             assets/badges \
             assets/cache/bhattayush17-github.json \
             neofetch_card.svg \
