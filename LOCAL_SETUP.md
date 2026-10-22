@@ -232,4 +232,4 @@ cat stats-run.log | grep "ERROR\|WARNING\|✅"
 
 ---
 
-**Next:** Once you've run it locally and visually confirmed the stats look correct, the GitHub Actions workflow will do the same automatically every 5 minutes. 🎉
+**Next:** Once you've run it locally and visually confirmed the stats look correct, the GitHub Actions workflow will do the same automatically every 15 minutes. 🎉

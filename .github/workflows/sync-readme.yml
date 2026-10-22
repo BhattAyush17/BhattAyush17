@@ -18,15 +18,12 @@ name: Sync README
 
 on:
   schedule:
-    # Every 5 minutes, which is the shortest interval GitHub allows for
-    # scheduled workflows. Together with the push trigger that means a
-    # real change on GitHub reaches the README within roughly 5-10
-    # minutes: the cron tick plus GitHub's queue delay.
-    #
-    # A run only publishes when the rendered files actually differ, so
-    # the faster tick does not create empty commits or inflate the
-    # contribution graph.
-    - cron: "*/5 * * * *"
+    # Every 15 minutes. This is the stable cadence: GitHub's scheduler is
+    # best effort, and a faster tick buys seconds while spending API
+    # quota and flooding the Actions tab. Fifteen minutes keeps every
+    # surface current without a single empty commit, because a run only
+    # publishes when the rendered files actually differ.
+    - cron: "*/15 * * * *"
   workflow_dispatch:
   push:
     branches:

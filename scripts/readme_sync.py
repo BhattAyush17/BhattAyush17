@@ -865,7 +865,7 @@ FEDORA_PATH = (
     "-0.407 0.23 -1.848 1.883 -3.256 3.754 -3.256z"
 )
 
-NEOFETCH_W = 780
+NEOFETCH_W = 620
 NEOFETCH_H = 220
 
 
@@ -903,44 +903,6 @@ def _text(
     return f"  <text {' '.join(attrs)}>{escaped}</text>"
 
 
-def _fetch_profile_totals() -> dict[str, Any]:
-    """Stars, forks, repo count and follower count of the account."""
-
-    profile = _get_json(f"{API_ROOT}/users/{USERNAME}")
-    repos = _get_json(
-        f"{API_ROOT}/users/{USERNAME}/repos",
-        params={"per_page": 100, "type": "owner"},
-    )
-
-    stars = 0
-    forks = 0
-    language_counts: dict[str, int] = {}
-
-    for repo in repos:
-        stars += int(repo.get("stargazers_count") or 0)
-        forks += int(repo.get("forks_count") or 0)
-        language = repo.get("language")
-        if language:
-            language_counts[language] = language_counts.get(language, 0) + 1
-
-    top_language = ""
-
-    if language_counts:
-        top_language = max(
-            language_counts.items(),
-            key=lambda item: item[1],
-        )[0]
-
-    return {
-        "repos": int(profile.get("public_repos") or len(repos)),
-        "followers": int(profile.get("followers") or 0),
-        "following": int(profile.get("following") or 0),
-        "stars": stars,
-        "forks": forks,
-        "top_language": top_language,
-    }
-
-
 def _read_contribution_snapshot() -> dict[str, Any]:
     """Commit / streak numbers from the stats snapshot, if it exists."""
 
@@ -957,21 +919,13 @@ def _read_contribution_snapshot() -> dict[str, Any]:
     return payload if isinstance(payload, dict) else {}
 
 
-def render_neofetch_card(
-    totals: dict[str, Any],
-    contribution: dict[str, Any],
-) -> str:
+def render_neofetch_card() -> str:
+    """
+    The neofetch card: system rows, focus rows and the colour swatches.
 
-    commits = int(contribution.get("commits") or 0)
-    streak = int(contribution.get("currentStreak") or 0)
-    total_contributions = int(
-        contribution.get("totalContributions") or 0
-    )
-
-    repos = int(totals.get("repos") or 0)
-    stars = int(totals.get("stars") or 0)
-    followers = int(totals.get("followers") or 0)
-    top_language = totals.get("top_language") or "—"
+    The live GitHub numbers moved to the stats cards at the top of the
+    README, so this card no longer fetches or prints anything live.
+    """
 
     system_rows = [
         ("OS", "Fedora Linux 40 x86_64"),
@@ -986,16 +940,6 @@ def render_neofetch_card(
         "Data Science · ML",
         "Python-first workflows",
         "Deep Learning research",
-    ]
-
-    github_rows = [
-        ("Repos", str(repos)),
-        ("Stars", str(stars)),
-        ("Followers", str(followers)),
-        ("Commits", str(commits)),
-        ("Contribs", str(total_contributions)),
-        ("Streak", f"{streak} days"),
-        ("Top Lang", top_language),
     ]
 
     lines: list[str] = []
@@ -1116,13 +1060,6 @@ def render_neofetch_card(
     for index, value in enumerate(focus_rows):
         lines.append(_text(414, 97 + index * 16, value, fill="#9ca3af"))
 
-    # Column 3: live GitHub numbers.
-    lines.append(_text(586, 81, "GitHub", fill="#4b5563"))
-    for index, (key, value) in enumerate(github_rows):
-        y = 97 + index * 16
-        lines.append(_text(586, y, key, fill="#6b7280"))
-        lines.append(_text(660, y, value, fill="#9ca3af"))
-
     # Swatches.
     swatches = ["#191919", "#374151", "#4b5563", "#6b7280", "#9ca3af", "#d1d5db", "#f3f4f6"]
     for index, colour in enumerate(swatches):
@@ -1140,9 +1077,7 @@ def render_neofetch_card(
 def update_neofetch_card() -> bool:
 
     try:
-        totals = _fetch_profile_totals()
-        contribution = _read_contribution_snapshot()
-        svg = render_neofetch_card(totals, contribution)
+        svg = render_neofetch_card()
 
         current = _read_text(NEOFETCH_PATH)
 
@@ -1151,12 +1086,7 @@ def update_neofetch_card() -> bool:
             return False
 
         _atomic_write(NEOFETCH_PATH, svg)
-        log.info(
-            "neofetch_card updated: %s repos, %s stars, %s followers",
-            totals.get("repos"),
-            totals.get("stars"),
-            totals.get("followers"),
-        )
+        log.info("neofetch_card updated")
         return True
 
     except Exception as exc:
