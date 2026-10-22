@@ -1857,10 +1857,10 @@ def make_cards_svg(
         )
     )
 
-    commits = int(
-        data.get("total_commit_contributions", 0)
-        + data.get("restricted_contributions", 0)
-    )
+    # Public commit contributions only. Restricted (private) contributions
+    # are excluded on purpose: the card is public and must not state
+    # private activity.
+    commits = int(data.get("total_commit_contributions", 0))
 
     card_data = {
         "total": total,

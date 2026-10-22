@@ -64,11 +64,11 @@
 > `$ gh repo list --sort pushed --limit 3`
 
 <!-- START_SECTION:recent_repos -->
-| `repo` | `description` | `last active` |
-|--------|---------------|---------------|
-| [![trentorch-solutions](https://img.shields.io/badge/trentorch--solutions-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/trentorch-solutions) | My TrenTorch solutions | Oct 22, 2026 |
-| [![AURA_CHAT](https://img.shields.io/badge/AURA__CHAT-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/AURA_CHAT) | conversations that feel alive, Built to underst... | Oct 15, 2026 |
-| [![Basic-Chatbot](https://img.shields.io/badge/Basic--Chatbot-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Basic-Chatbot) | No description | Aug 16, 2026 |
+| `repo` | `description` | `lang` | `commits` | `last active` |
+|--------|---------------|--------|--------:|---------------|
+| [![trentorch-solutions](https://img.shields.io/badge/trentorch--solutions-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/trentorch-solutions) | My TrenTorch solutions | Python | 168 | Oct 22, 2026 |
+| [![AURA_CHAT](https://img.shields.io/badge/AURA__CHAT-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/AURA_CHAT) | conversations that feel alive, Built to underst... | TypeScript | 155 | Oct 15, 2026 |
+| [![Basic-Chatbot](https://img.shields.io/badge/Basic--Chatbot-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Basic-Chatbot) | No description | Python | 5 | Aug 16, 2026 |
 <!-- END_SECTION:recent_repos -->
 
 > `$ git log --graph --oneline --all   # contribution history`

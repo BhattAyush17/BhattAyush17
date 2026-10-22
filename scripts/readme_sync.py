@@ -333,32 +333,82 @@ def _format_date(value: Optional[str]) -> str:
 # SECTION: recent repos
 # ============================================================================
 
+RECENT_REPOS_QUERY = """
+query($login: String!, $n: Int!) {
+  user(login: $login) {
+    repositories(
+      first: $n
+      ownerAffiliations: OWNER
+      privacy: PUBLIC
+      isFork: false
+      orderBy: {field: PUSHED_AT, direction: DESC}
+    ) {
+      nodes {
+        name
+        description
+        isPrivate
+        pushedAt
+        primaryLanguage { name }
+        defaultBranchRef {
+          target {
+            ... on Commit {
+              history(first: 0) { totalCount }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+"""
+
+
+def _total_commits(repo: dict[str, Any]) -> int:
+    """Commits on the default branch, or 0 for an empty repository."""
+
+    branch = repo.get("defaultBranchRef") or {}
+    target = branch.get("target") or {}
+    history = target.get("history") or {}
+
+    return int(history.get("totalCount") or 0)
+
+
 def fetch_recent_repos(
     limit: int = RECENT_REPO_LIMIT,
 ) -> list[dict[str, Any]]:
     """
-    Repositories of the user, most recently pushed first.
+    Public repositories owned by the user, most recently pushed first.
 
-    The profile repository itself is skipped: it is the README, not a
-    project, and it is always the most recently pushed repo.
+    Two filters are deliberate:
+
+    * ``privacy: PUBLIC`` excludes private repositories at the API, not
+      in the renderer, so a private repository cannot reach the README
+      even if the rendering code changes. The ``isPrivate`` check below
+      is a second guard for the same rule.
+    * The profile repository itself is skipped: it is the README, not a
+      project, and it is always the most recently pushed repo.
+
+    One extra node is requested because the profile repository is
+    normally the first result and is then discarded.
     """
 
-    payload = _get_json(
-        f"{API_ROOT}/users/{USERNAME}/repos",
-        params={"sort": "pushed", "per_page": 30},
+    data = _get_graphql(
+        RECENT_REPOS_QUERY,
+        {"login": USERNAME, "n": limit + 1},
     )
 
-    if not isinstance(payload, list):
-        raise SyncError("unexpected repo list payload")
+    user = data.get("user") or {}
+    repositories = user.get("repositories") or {}
+    nodes = repositories.get("nodes") or []
 
     selected: list[dict[str, Any]] = []
 
-    for repo in payload:
-        if repo.get("name", "").lower() == USERNAME.lower():
+    for repo in nodes:
+        if not repo or not repo.get("name"):
             continue
-        if repo.get("fork"):
+        if repo.get("isPrivate"):
             continue
-        if repo.get("archived"):
+        if repo["name"].lower() == USERNAME.lower():
             continue
         selected.append(repo)
         if len(selected) >= limit:
@@ -375,21 +425,24 @@ def render_recent_repos(
 ) -> str:
 
     lines = [
-        "| `repo` | `description` | `last active` |",
-        "|--------|---------------|---------------|",
+        "| `repo` | `description` | `lang` | `commits` | `last active` |",
+        "|--------|---------------|--------|--------:|---------------|",
     ]
 
     for repo in repos:
         name = repo.get("name", "")
-        url = repo.get("html_url") or f"{API_ROOT}/repos/{USERNAME}/{name}"
+        url = f"https://github.com/{USERNAME}/{name}"
         description = _truncate(
             repo.get("description") or "No description"
         )
-        pushed = _format_date(repo.get("pushed_at"))
+        language = (repo.get("primaryLanguage") or {}).get("name") or "—"
+        commits = _total_commits(repo)
+        pushed = _format_date(repo.get("pushedAt"))
 
         lines.append(
             f"| [![{name}]({_repo_badge(name)})]({url}) "
-            f"| {_escape_cell(description)} | {pushed} |"
+            f"| {_escape_cell(description)} | {language} "
+            f"| {commits} | {pushed} |"
         )
 
     return "\n".join(lines)
