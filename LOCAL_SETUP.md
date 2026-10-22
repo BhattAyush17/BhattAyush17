@@ -180,22 +180,39 @@ pip install -r scripts/requirements.txt --break-system-packages
    ls -lh assets/cache/bhattayush17-github.json
    ```
 
-3. **Commit the SVGs and the cache:**
+3. **Refresh the README text blocks and the image cache busters:**
+   ```bash
+   # recent repos, pinned repos, achievements, neofetch card, sync stamp
+   python scripts/readme_sync.py
+
+   # content hashed ?v= parameters for every local image
+   python scripts/bump_versions.py
+
+   # verify (exit code 1 means something is out of date)
+   python scripts/bump_versions.py --check
+   ```
+
+4. **Commit the SVGs and the cache:**
    ```bash
    git add assets/stats/*.svg assets/streak/*.svg README.md
    git add assets/cache/bhattayush17-github.json
+   git add assets/badges/ neofetch_card.svg index.html
    git add -u assets/  # stage deletions if any
    git status
    git commit -m "chore: update README stats [generate_stats.py]"
    ```
 
-4. **Keep the cache committed** — `assets/cache/bhattayush17-github.json` is the
+5. **Keep the cache committed** — `assets/cache/bhattayush17-github.json` is the
    last-known-good snapshot that CI falls back to when the live GitHub API is
    unavailable. `.gitignore` already un-ignores exactly that file:
    ```gitignore
    assets/cache/*
    !assets/cache/bhattayush17-github.json
    ```
+
+> **Note:** `scripts/generate_stats.py` already calls `readme_sync.sync_all()`
+> at the end of a successful run, so step 3 is only needed when you want to
+> refresh the README blocks without regenerating the cards.
 
 ## 7. Watch Logs in Real Time
 
@@ -212,4 +229,4 @@ cat stats-run.log | grep "ERROR\|WARNING\|✅"
 
 ---
 
-**Next:** Once you've run it locally and visually confirmed the stats look correct, the GitHub Actions workflow will do the same automatically every 6 hours. 🎉
+**Next:** Once you've run it locally and visually confirmed the stats look correct, the GitHub Actions workflow will do the same automatically every 15 minutes. 🎉

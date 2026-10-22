@@ -46,41 +46,52 @@ from.
 ## Self-Healing Workflow
 
 ### How It Works
-1. **`streak-healthcheck.yml`** runs every 6 hours and always refreshes the
-   streak card from live data (falling back to the committed cache)
-2. **`generate-readme-assets.yml`** runs every 6 hours and refreshes the
-   stats cards
-3. **`generate-snake.yml`** runs every 12 hours and regenerates the
-   contribution snake from the live GitHub grid
-4. **`fallback-healthcheck.yml`** audits that every expected asset exists
-   and is not empty — it fails loudly instead of silently shipping a broken
-   profile
-5. All of them publish through `scripts/publish_assets.sh`, so a fix lands
+1. **`sync-readme.yml`** runs every 15 minutes and regenerates every
+   GitHub-derived surface in one pass:
+   - stats cards, commit-activity chart and streak (live GraphQL)
+   - recent repos, pinned repos and achievements (live REST / profile scrape)
+   - the neofetch card, with live GitHub numbers baked into the SVG
+   - the contribution snake (from the live GitHub grid)
+   - the freshness stamp in the README
+2. **`fallback-healthcheck.yml`** audits that every expected asset exists,
+   that every managed README section is present, and that the image cache
+   busters match the file contents — it fails loudly instead of silently
+   shipping a broken profile
+3. Both publish through `scripts/publish_assets.sh`, so a fix lands
    on `main` even when another workflow pushed in the meantime
+
+There is exactly **one** writer. The three overlapping workflows that
+used to exist (`generate-readme-assets`, `generate-snake`,
+`streak-healthcheck`) duplicated each other's API calls, raced for the
+same branch, and left the two README repo tables frozen since
+2026-08-27.
 
 ### Example: Language Fetch Fails
 ```bash
-Time 14:00 — generate-readme-assets runs
+Time 14:00 — sync-readme runs
 → The secondary repository query times out
 → Script logs: "Language data unavailable - keeping the existing cards"
 → The three cards are still written from contribution data
 → languages card falls back to the committed data.json snapshot
+→ the README tables are still refreshed from the live API
+→ if nothing changed upstream, no commit is created at all
 
-Time 20:30 — fallback-healthcheck runs (scheduled)
+Time 14:30 — fallback-healthcheck runs (scheduled)
 → Audits github-cards.svg and commit-hours.svg
 → Both exist and contain <svg>
+→ Audits recent_repos / pinned_repos / achievements / sync_stamp
 → Status: ✅ HEALTHY, no action needed
 ```
 
 ### Example: Cache Corrupted
 ```bash
-Time 15:00 — generate-readme-assets runs
+Time 15:00 — sync-readme runs
 → Token is expired, cache doesn't exist
 → Script logs: "Both live API fetch and local cache failed"
 → Script exits with error code 1
 → All SVGs are UNCHANGED from previous run
 
-Time 21:30 — fallback-healthcheck runs
+Time 15:30 — fallback-healthcheck runs
 → Audits all SVGs
 → github-stats.svg exists and has content (from last run)
 → Status: ✅ HEALTHY, no action needed
@@ -178,7 +189,7 @@ Rules applied by `scripts/generate_stats.py`:
 
 ## Publishing Assets Without Conflicts
 
-All three asset workflows push to the same branch and share the
+All asset workflows push to the same branch and share the
 `github-analytics` concurrency group, so a push can race with another
 workflow's commit.
 
@@ -229,13 +240,39 @@ Set `GH_STATS_TOKEN` as a repository secret:
 3. Scopes needed: `public_repo`, `read:user`
 
 ### Workflows
-- **`generate-readme-assets.yml`** — runs every 6 hours to fetch fresh data
-- **`streak-healthcheck.yml`** — runs every 6 hours to refresh the streak counter
-- **`generate-snake.yml`** — runs every 12 hours to regenerate the contribution snake
-- **`fallback-healthcheck.yml`** — runs every 6 hours to verify the assets exist
+- **`sync-readme.yml`** — the single writer. Runs every 15 minutes and on
+  every push to `main`, and refreshes every GitHub-derived surface
+- **`fallback-healthcheck.yml`** — read-only verifier. Runs every 30
+  minutes and checks that the assets exist, the README sections are
+  present, and the image cache busters match the file contents
 
 All of them publish through `scripts/publish_assets.sh` and share the
 `github-analytics` concurrency group, so they queue instead of racing.
+
+### Managed README Sections
+
+`scripts/readme_sync.py` owns every block between `START_SECTION:` and
+`END_SECTION:` markers, plus the neofetch card and the `index.html`
+fallback snapshot:
+
+| Marker | Source |
+|--------|--------|
+| `recent_repos` | `GET /users/{user}/repos?sort=pushed` |
+| `pinned_repos` | GraphQL `pinnedItems` |
+| `achievements` | profile sidebar, `img.achievement-badge-sidebar` |
+| `sync_stamp` | local clock, only bumped when data actually changed |
+
+Every updater is fail-safe: a failed fetch logs a warning and leaves the
+previous content in place. The README is never left half-written.
+
+### Image Cache Busters
+
+`scripts/bump_versions.py` gives every local image in the README a
+`?v=<sha256 of the file>` parameter. GitHub caches images by URL, so the
+version has to change when the content does — but a timestamp would
+change on *every* run and produce an empty commit every 15 minutes. A
+content hash changes exactly when the content changes, so a run that
+finds nothing new upstream produces no commit at all.
 
 ### Monitoring
 Check the **Actions** tab for any failures:
@@ -277,9 +314,13 @@ python -u scripts/generate_stats.py 2>&1 | tee debug.log
 
 **Problem:** Cards look stale on the profile
 ```bash
-# GitHub caches README images by URL. The workflows bump ?v= on each run;
-# if you published manually, bump it yourself:
-sed -i -E "s#(assets/stats/(github-cards|commit-hours)\.svg)(\?v=[0-9]+)?#\1?v=$(date -u +%Y%m%d%H%M%S)#g" README.md
+# GitHub caches README images by URL. The ?v= parameter is a hash of the
+# file content, so it changes exactly when the content changes. If you
+# published manually, recompute it:
+python scripts/bump_versions.py
+
+# Check that it is in sync (exit code 1 means it is not):
+python scripts/bump_versions.py --check
 
 # If the cards are genuinely unchanged, check the run log for
 # "SOURCE: cache" or "FRESHNESS: cached" and verify GH_STATS_TOKEN is set.

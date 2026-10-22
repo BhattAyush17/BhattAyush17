@@ -51,43 +51,45 @@
 
 > `$ neofetch`
 
-<img src="neofetch_card.svg" alt="Neofetch Card" width="100%">
+<img src="neofetch_card.svg?v=c28265e0a1a5" alt="Neofetch Card" width="100%">
 
 > `$ gh stats --user BhattAyush17`
 
-<img src="assets/stats/github-cards.svg?v=20261022115238" width="100%" alt="GitHub stats, top languages and current streak" />
+<img src="assets/stats/github-cards.svg?v=819c8b3db053" width="100%" alt="GitHub stats, top languages and current streak" />
 
 > `$ gh api graphql   # commit activity by hour`
 
-<img src="assets/stats/commit-hours.svg?v=20261022115238" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
+<img src="assets/stats/commit-hours.svg?v=ea8d156b0442" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
 
 > `$ gh repo list --sort pushed --limit 3`
 
 <!-- START_SECTION:recent_repos -->
 | `repo` | `description` | `last active` |
 |--------|---------------|---------------|
-| [![AURA_CHAT](https://img.shields.io/badge/AURA__CHAT-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/AURA_CHAT) | conversations that feel alive, Built to underst... | Aug 26, 2026 |
+| [![trentorch-solutions](https://img.shields.io/badge/trentorch--solutions-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/trentorch-solutions) | My TrenTorch solutions | Oct 22, 2026 |
+| [![AURA_CHAT](https://img.shields.io/badge/AURA__CHAT-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/AURA_CHAT) | conversations that feel alive, Built to underst... | Oct 15, 2026 |
 | [![Basic-Chatbot](https://img.shields.io/badge/Basic--Chatbot-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Basic-Chatbot) | No description | Aug 16, 2026 |
-| [![Portfolio](https://img.shields.io/badge/Portfolio-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Portfolio) | Minimal portfolio | Jul 21, 2026 |
 <!-- END_SECTION:recent_repos -->
 
 > `$ git log --graph --oneline --all   # contribution history`
 
-<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=20261022032033" width="100%" alt="Contribution Snake" />
+<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=d1be68f17630" width="100%" alt="Contribution Snake" />
 
 > `$ gh repo list --pinned --limit 4`
 
+<!-- START_SECTION:pinned_repos -->
 | `repo` | `description` | `lang` | `⭐` | `🍴` |
 |--------|---------------|--------|------|------|
-| [![Feature_Engineering_SandBox](https://img.shields.io/badge/Feature__Engineering__SandBox-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Feature_Engineering_SandBox) | Feature experiments across ML algorithms | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Feature_Engineering_SandBox?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Feature_Engineering_SandBox?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [![ProPhet_BnB](https://img.shields.io/badge/ProPhet__BnB-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/ProPhet_BnB) | Airbnb price prediction with Prophet | Python | ![](https://img.shields.io/github/stars/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [![Loan-Dash-X](https://img.shields.io/badge/Loan--Dash--X-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Loan-Dash-X) | Loan approval predictor dashboard | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) |
-| [![FaunAnalyze](https://img.shields.io/badge/FaunAnalyze-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/FaunAnalyze) | Cat vs dog image classification | Python | ![](https://img.shields.io/github/stars/BhattAyush17/FaunAnalyze?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/FaunAnalyze?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| [![Feature_Engineering_SandBox](https://img.shields.io/badge/Feature__Engineering__SandBox-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Feature_Engineering_SandBox) | Allows experimentation with various features ba... | Python | ![](https://img.shields.io/github/stars/BhattAyush17/Feature_Engineering_SandBox?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Feature_Engineering_SandBox?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| [![ProPhet_BnB](https://img.shields.io/badge/ProPhet__BnB-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/ProPhet_BnB) | A Streamlit application leveraging advanced tim... | Python | ![](https://img.shields.io/github/stars/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/ProPhet_BnB?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| [![Loan-Dash-X](https://img.shields.io/badge/Loan--Dash--X-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Loan-Dash-X) | Lightning-fast, loan approval predictor. Enter... | — | ![](https://img.shields.io/github/stars/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/Loan-Dash-X?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+| [![FaunAnalyze](https://img.shields.io/badge/FaunAnalyze-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/FaunAnalyze) | Fauna-Network is a deep learning-powered image... | Python | ![](https://img.shields.io/github/stars/BhattAyush17/FaunAnalyze?style=flat-square&color=6b7280&labelColor=1a1a1a) | ![](https://img.shields.io/github/forks/BhattAyush17/FaunAnalyze?style=flat-square&color=6b7280&labelColor=1a1a1a) |
+<!-- END_SECTION:pinned_repos -->
 
 > `$ gh achievement list --user BhattAyush17`
 
 <!-- START_SECTION:achievements -->
-<img src="assets/badges/achievement_pull_shark.png" width="72px" alt="Pull Shark" title="Pull Shark" /> &nbsp;&nbsp; <img src="assets/badges/achievement_yolo.png" width="72px" alt="YOLO" title="YOLO" /> &nbsp;&nbsp; <img src="assets/badges/achievement_quickdraw.png" width="72px" alt="Quickdraw" title="Quickdraw" />
+<img src="assets/badges/achievement_pull_shark.png?v=d922b35c3d7c" width="72px" alt="Pull Shark" title="Pull Shark" /> &nbsp;&nbsp; <img src="assets/badges/achievement_yolo.png?v=6071a9aa07b5" width="72px" alt="YOLO" title="YOLO" /> &nbsp;&nbsp; <img src="assets/badges/achievement_quickdraw.png?v=1dd4c9cfd3cb" width="72px" alt="Quickdraw" title="Quickdraw" />
 
 <sub>Pull Shark · YOLO · Quickdraw — merged PRs, unreviewed merges, same-day issue closes.</sub>
 <!-- END_SECTION:achievements -->
@@ -110,3 +112,7 @@
 
 </div>
 </details>
+
+<!-- START_SECTION:sync_stamp -->
+`last synced: 2026-10-22 12:16:25 UTC` — regenerated automatically from the live GitHub API.
+<!-- END_SECTION:sync_stamp -->

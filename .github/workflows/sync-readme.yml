@@ -1,0 +1,143 @@
+name: Sync README
+
+# Single writer for every generated surface in the profile.
+#
+# Before this workflow the repo had three overlapping writers (stats,
+# snake, streak) plus two hand maintained README tables that no script
+# touched since 2026-08-27. They raced for the same branch, duplicated
+# the same API calls and still left the tables stale.
+#
+# One workflow now regenerates everything, so the whole profile reflects
+# the live GitHub state within minutes:
+#
+#   * stats cards, commit activity chart, streak   (scripts/generate_stats.py)
+#   * recent repos, pinned repos, achievements      (scripts/readme_sync.py)
+#   * neofetch card with live GitHub numbers        (scripts/readme_sync.py)
+#   * contribution snake                            (Platane/snk)
+#   * content hashed cache busters for every image  (scripts/bump_versions.py)
+
+on:
+  schedule:
+    # Every 15 minutes. GitHub queues scheduled runs, so the real
+    # interval is 15 minutes plus a few minutes of queue delay.
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  # Queue with the other asset workflows instead of cancelling them.
+  group: github-analytics
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history, so the rebase in publish_assets.sh is reliable.
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r scripts/requirements.txt
+
+      # -------------------------------------------------------------------
+      # 1. Contribution snake
+      # -------------------------------------------------------------------
+      # Runs before the generator so the README can be versioned against
+      # the finished snake file in the same commit.
+
+      - name: Generate snake animation
+        uses: Platane/snk@v3
+        with:
+          github_user_name: BhattAyush17
+          # palette=github-dark  -> GitHub dark background
+          # color_dots           -> the 5 contribution levels of the grid,
+          #                         from "no contributions" to the highest.
+          #                         Monochrome ramp, so the profile stays
+          #                         black & white.
+          # color_snake          -> white, for contrast against the grid.
+          outputs: |
+            assets/snake/github-contribution-grid-snake-dark.svg?palette=github-dark&color_snake=#ffffff&color_dots=#161b22,#3d444d,#6e7681,#adbac7,#e6edf3
+
+      - name: Add month labels and legend
+        # The action output is a bare grid. This step adds the month
+        # labels + "Less / More" legend and removes the animation's
+        # progress bar, which renders as a grey bar under the graph when
+        # the animation is paused or captured as a still image.
+        run: |
+          python3 scripts/finalize_snake.py
+          grep -c "month-labels" assets/snake/github-contribution-grid-snake-dark.svg
+
+      # -------------------------------------------------------------------
+      # 2. Stats cards, streak and every README text block
+      # -------------------------------------------------------------------
+
+      - name: Run generator
+        env:
+          GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+          GH_USERNAME: BhattAyush17
+        run: |
+          python scripts/generate_stats.py
+
+      # -------------------------------------------------------------------
+      # 3. Content addressed cache busters
+      # -------------------------------------------------------------------
+      # Every local image in the README gets ?v=<sha256 of the file>.
+      # The URL only changes when the content changes, so the image cache
+      # is invalidated exactly when it has to be, and a run that finds no
+      # change upstream produces no commit at all.
+
+      - name: Refresh image cache busters
+        run: |
+          python scripts/bump_versions.py
+          grep -n "?v=" README.md
+
+      # -------------------------------------------------------------------
+      # 4. Verify before publishing
+      # -------------------------------------------------------------------
+
+      - name: Verify generated surfaces
+        run: |
+          set -euo pipefail
+          test -s assets/stats/github-cards.svg
+          test -s assets/stats/commit-hours.svg
+          test -s assets/stats/github-stats.svg
+          test -s assets/stats/languages.svg
+          test -s assets/stats/streak.svg
+          test -s assets/stats/data.json
+          test -s assets/stats/hourly.json
+          test -s assets/streak/streak.svg
+          test -s assets/snake/github-contribution-grid-snake-dark.svg
+          test -s neofetch_card.svg
+          python scripts/bump_versions.py --check
+          for section in recent_repos pinned_repos achievements sync_stamp; do
+            grep -q "START_SECTION:${section}" README.md
+            grep -q "END_SECTION:${section}" README.md
+          done
+          echo "all surfaces present"
+
+      - name: Commit generated assets
+        run: |
+          scripts/publish_assets.sh \
+            "chore: sync README with live GitHub state" \
+            assets/stats \
+            assets/streak \
+            assets/badges \
+            assets/cache/bhattayush17-github.json \
+            neofetch_card.svg \
+            README.md \
+            index.html

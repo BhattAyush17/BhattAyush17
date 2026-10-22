@@ -1,8 +1,14 @@
 name: Fallback Health Check
 
+# Read only verification of every generated surface.
+#
+# It never writes, so it can run as often as needed without touching the
+# branch. If a surface is missing or the README cache busters are stale,
+# the check fails and the sync workflow is the one that repairs it.
+
 on:
   schedule:
-    - cron: "30 */6 * * *"
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -14,6 +20,7 @@ jobs:
 
       - name: Verify generated assets
         run: |
+          set -euo pipefail
           test -f assets/stats/github-cards.svg
           test -f assets/stats/commit-hours.svg
           test -f assets/stats/github-stats.svg
@@ -21,5 +28,33 @@ jobs:
           test -f assets/stats/streak.svg
           test -f assets/stats/data.json
           test -f assets/stats/hourly.json
+          test -f assets/streak/streak.svg
           test -f assets/snake/github-contribution-grid-snake-dark.svg
+          test -f neofetch_card.svg
+          echo "all assets present"
 
+      - name: Verify README sections
+        run: |
+          set -euo pipefail
+          for section in recent_repos pinned_repos achievements sync_stamp; do
+            grep -q "START_SECTION:${section}" README.md
+            grep -q "END_SECTION:${section}" README.md
+            echo "  ${section}: ok"
+          done
+
+      - name: Verify image cache busters
+        run: |
+          python scripts/bump_versions.py --check
+
+      - name: Report freshness
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path("assets/stats/data.json").read_text())
+          print("updatedAt  :", data.get("updatedAt"))
+          print("contribs   :", data.get("totalContributions"))
+          print("commits    :", data.get("commits"))
+          print("repos      :", data.get("repos"))
+          print("streak     :", data.get("currentStreak"))
+          PY

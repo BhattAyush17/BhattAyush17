@@ -1074,6 +1074,42 @@ def save_cache(
         "data": data,
     }
 
+    # Keep the previous timestamp when the cached DATA is identical.
+    #
+    # The sync workflow runs every few minutes. A fresh `cached_at` on
+    # every run would change the cache file every time, which means a
+    # commit every few minutes that changes nothing. The timestamp
+    # therefore only moves when the cached data actually moves.
+
+    try:
+
+        if CACHE_FILE.exists():
+
+            previous_payload = json.loads(
+                CACHE_FILE.read_text(
+                    encoding="utf-8"
+                )
+            )
+
+            if (
+                previous_payload.get("data")
+                == payload["data"]
+                and previous_payload.get("cached_at")
+            ):
+
+                payload["cached_at"] = previous_payload["cached_at"]
+
+                log.info(
+                    "Cache data unchanged - keeping cached_at %s",
+                    payload["cached_at"],
+                )
+
+    except Exception:
+
+        log.info(
+            "Cache comparison failed - using a fresh timestamp",
+        )
+
     try:
 
         CACHE_DIR.mkdir(
@@ -1596,6 +1632,45 @@ def make_data_json(
         "updatedAt": now_iso(),
     }
 
+    # The snapshot timestamp must only move when the DATA moves.
+    #
+    # The sync workflow runs every few minutes. If updatedAt changed on
+    # every run, data.json would differ on every run, the workflow would
+    # commit every few minutes, and the contribution graph would fill
+    # with commits that changed nothing.
+    #
+    # So the previous timestamp is kept whenever the payload is
+    # otherwise identical, and the file only changes when the numbers
+    # change.
+
+    comparable = {
+        key: value
+        for key, value in payload.items()
+        if key != "updatedAt"
+    }
+
+    previous_comparable = {
+        key: value
+        for key, value in previous.items()
+        if key != "updatedAt"
+    }
+
+    if previous_comparable == comparable and previous.get("updatedAt"):
+
+        payload["updatedAt"] = previous["updatedAt"]
+
+        log.info(
+            "data.json unchanged - keeping updatedAt %s",
+            payload["updatedAt"],
+        )
+
+    else:
+
+        log.info(
+            "data.json changed - updatedAt %s",
+            payload["updatedAt"],
+        )
+
     output.write_text(
         json.dumps(
             payload,
@@ -1882,6 +1957,30 @@ def main() -> None:
         result.data,
         languages,
     )
+
+    # ---------------------------------------------------------------------
+    # README SYNC
+    # ---------------------------------------------------------------------
+    #
+    # Every GitHub derived block in README.md (recent repos, pinned
+    # repos, achievements, the neofetch card and the freshness stamp) is
+    # refreshed from the live API here, so the profile never shows a
+    # number that GitHub already changed.
+    #
+    # readme_sync is fail-safe: a failed fetch leaves the previous
+    # content in place, it never writes a half-updated README.
+
+    try:
+        import readme_sync
+
+        readme_sync.sync_all()
+
+    except Exception as exc:
+
+        log.warning(
+            "README sync skipped: %s",
+            exc,
+        )
 
     log.info("=" * 60)
     log.info(
