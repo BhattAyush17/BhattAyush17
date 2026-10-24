@@ -1254,10 +1254,10 @@ def save_cache(
 
     # Keep the previous timestamp when the cached DATA is identical.
     #
-    # The sync workflow runs every few minutes. A fresh `cached_at` on
+    # The sync workflow runs on a schedule. A fresh `cached_at` on
     # every run would change the cache file every time, which means a
-    # commit every few minutes that changes nothing. The timestamp
-    # therefore only moves when the cached data actually moves.
+    # commit that changes nothing. The timestamp therefore only moves
+    # when the cached data actually moves.
 
     try:
 
@@ -2072,10 +2072,10 @@ def make_data_json(
 
     # The snapshot timestamp must only move when the DATA moves.
     #
-    # The sync workflow runs every few minutes. If updatedAt changed on
+    # The sync workflow runs on a schedule. If updatedAt changed on
     # every run, data.json would differ on every run, the workflow would
-    # commit every few minutes, and the contribution graph would fill
-    # with commits that changed nothing.
+    # commit even when nothing changed, and the contribution graph would
+    # fill with empty commits.
     #
     # So the previous timestamp is kept whenever the payload is
     # otherwise identical, and the file only changes when the numbers

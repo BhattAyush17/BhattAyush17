@@ -8,12 +8,14 @@ name: Fallback Health Check
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    # Staggered 30 minutes after the writer so it audits a fresh checkout.
+    - cron: "30 */6 * * *"
   workflow_dispatch:
 
 jobs:
   verify-assets:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v4

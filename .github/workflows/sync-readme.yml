@@ -8,35 +8,39 @@ name: Sync README
 # the same API calls and still left the tables stale.
 #
 # One workflow now regenerates everything, so the whole profile reflects
-# the live GitHub state within minutes:
+# the live GitHub state on a predictable cadence:
 #
 #   * stats cards, commit activity chart, streak   (scripts/generate_stats.py)
 #   * recent repos, pinned repos, achievements      (scripts/readme_sync.py)
 #   * neofetch card with live GitHub numbers        (scripts/readme_sync.py)
 #   * contribution snake                            (Platane/snk)
 #   * content hashed cache busters for every image  (scripts/bump_versions.py)
+#
+# The schedule is every six hours. Shorter crons are unreliable on GitHub:
+# scheduled runs are best effort, and a high frequency makes pending runs
+# replace each other in the concurrency group, so a "15 minute" job can
+# actually run only every few hours. Six hours stays well inside what the
+# scheduler reliably honours, and nothing is lost: a run only publishes
+# when the rendered files actually differ, and the image cache busters
+# are content hashes rather than timestamps.
 
 on:
   schedule:
-    # Every 15 minutes. This is the stable cadence: GitHub's scheduler is
-    # best effort, and a faster tick buys seconds while spending API
-    # quota and flooding the Actions tab. Fifteen minutes keeps every
-    # surface current without a single empty commit, because a run only
-    # publishes when the rendered files actually differ.
-    - cron: "*/15 * * * *"
+    - cron: "0 */6 * * *"
   workflow_dispatch:
   push:
     branches:
       - main
 
 concurrency:
-  # Queue with the other asset workflows instead of cancelling them.
+  # Queue with the other writer instead of cancelling it.
   group: github-analytics
   cancel-in-progress: false
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     permissions:
       contents: write

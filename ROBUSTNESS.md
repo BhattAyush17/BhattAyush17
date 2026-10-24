@@ -46,8 +46,8 @@ from.
 ## Self-Healing Workflow
 
 ### How It Works
-1. **`sync-readme.yml`** runs every 15 minutes and regenerates every GitHub-derived surface in
-   one pass:
+1. **`sync-readme.yml`** runs every 6 hours and on every push to `main`,
+   regenerating every GitHub-derived surface in one pass:
    - stats cards, commit-activity chart and streak (live GraphQL)
    - recent repos, pinned repos and achievements (live REST / profile scrape)
    - the neofetch card, with live GitHub numbers baked into the SVG
@@ -57,8 +57,9 @@ from.
    that every managed README section is present, and that the image cache
    busters match the file contents — it fails loudly instead of silently
    shipping a broken profile
-3. Both publish through `scripts/publish_assets.sh`, so a fix lands
-   on `main` even when another workflow pushed in the meantime
+3. The writer publishes through `scripts/publish_assets.sh`, so a fix lands
+   on `main` even when another workflow pushed in the meantime. The health
+   check is read-only and never commits.
 
 There is exactly **one** writer. The three overlapping workflows that
 used to exist (`generate-readme-assets`, `generate-snake`,
@@ -240,14 +241,17 @@ Set `GH_STATS_TOKEN` as a repository secret:
 3. Scopes needed: `public_repo`, `read:user`
 
 ### Workflows
-- **`sync-readme.yml`** — the single writer. Runs every 15 minutes and on
-  every push to `main`, and refreshes every GitHub-derived surface
-- **`fallback-healthcheck.yml`** — read-only verifier. Runs every 30
-  minutes and checks that the assets exist, the README sections are
-  present, and the image cache busters match the file contents
+- **`sync-readme.yml`** — the single writer. Runs every 6 hours, on
+  every push to `main`, and on demand; refreshes every GitHub-derived
+  surface
+- **`fallback-healthcheck.yml`** — read-only verifier. Runs every 6
+  hours, 30 minutes after the writer, and checks that the assets exist,
+  the README sections are present, and the image cache busters match the
+  file contents
 
-All of them publish through `scripts/publish_assets.sh` and share the
-`github-analytics` concurrency group, so they queue instead of racing.
+The writer uses the `github-analytics` concurrency group so overlapping
+runs queue instead of racing; the read-only verifier is deliberately
+outside that group so it can never be cancelled by a long generation run.
 
 ### Managed README Sections
 
@@ -270,7 +274,7 @@ previous content in place. The README is never left half-written.
 `scripts/bump_versions.py` gives every local image in the README a
 `?v=<sha256 of the file>` parameter. GitHub caches images by URL, so the
 version has to change when the content does — but a timestamp would
-change on *every* run and produce an empty commit every 15 minutes. A
+change on *every* run and produce an empty commit each time. A
 content hash changes exactly when the content changes, so a run that
 finds nothing new upstream produces no commit at all.
 

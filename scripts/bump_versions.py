@@ -8,8 +8,7 @@ Give every local image in README.md a content addressed cache buster.
 GitHub proxies and caches images by URL, so a static URL keeps serving
 the first version it ever saw. The previous fix was a timestamp, but a
 timestamp changes on every single run, which produces an empty commit
-every few minutes and inflates the contribution graph with commits that
-changed nothing.
+and inflates the contribution graph with commits that changed nothing.
 
 A content hash is strictly better: the URL only changes when the file
 content changes, so the cache is invalidated exactly when it has to be
