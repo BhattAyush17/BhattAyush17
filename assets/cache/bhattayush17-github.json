@@ -1,43 +1,11 @@
 {
   "schema_version": 2,
   "username": "BhattAyush17",
-  "cached_at": "2026-10-24T13:17:49.795863+00:00",
+  "cached_at": "2026-10-24T19:56:18.797713+00:00",
   "is_partial": false,
   "data": {
     "username": "BhattAyush17",
     "weeks": [
-      {
-        "contributionDays": [
-          {
-            "date": "2025-10-19",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-10-20",
-            "contributionCount": 0
-          },
-          {
-            "date": "2025-10-21",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-10-22",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-10-23",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-10-24",
-            "contributionCount": 5
-          },
-          {
-            "date": "2025-10-25",
-            "contributionCount": 14
-          }
-        ]
-      },
       {
         "contributionDays": [
           {
@@ -638,7 +606,7 @@
           },
           {
             "date": "2026-03-06",
-            "contributionCount": 0
+            "contributionCount": 2
           },
           {
             "date": "2026-03-07",
@@ -1686,7 +1654,7 @@
           },
           {
             "date": "2026-10-21",
-            "contributionCount": 13
+            "contributionCount": 14
           },
           {
             "date": "2026-10-22",
@@ -1698,25 +1666,33 @@
           },
           {
             "date": "2026-10-24",
-            "contributionCount": 9
+            "contributionCount": 10
+          }
+        ]
+      },
+      {
+        "contributionDays": [
+          {
+            "date": "2026-10-25",
+            "contributionCount": 0
           }
         ]
       }
     ],
-    "github_total_contributions": 564,
+    "github_total_contributions": 568,
     "total_commit_contributions": 543,
     "total_pull_request_contributions": 3,
     "total_issue_contributions": 3,
-    "restricted_contributions": 0,
+    "restricted_contributions": 4,
     "current_streak": 7,
     "current_streak_start": "2026-10-18",
-    "longest_streak": 19,
-    "active_days": 98,
-    "total_contributions": 564,
-    "current_year_contributions": 483,
-    "reference_date": "2026-10-24",
+    "longest_streak": 14,
+    "active_days": 93,
+    "total_contributions": 545,
+    "current_year_contributions": 487,
+    "reference_date": "2026-10-25",
     "last_contribution_date": "2026-10-24",
     "_is_partial": false,
-    "_profile_head_sha": "1911e4bbe187f7c56dcd74b717d9509fe9b836fb"
+    "_profile_head_sha": "5a6c79d42c7ba895836f44663b7a9b5cc4912ecb"
   }
 }

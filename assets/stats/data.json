@@ -1,12 +1,12 @@
 {
-  "asOf": "2026-10-24",
+  "asOf": "2026-10-25",
   "since": "2026-10-18",
-  "totalContributions": 564,
-  "commits": 543,
+  "totalContributions": 568,
+  "commits": 547,
   "pullRequests": 3,
-  "activeDays": 98,
+  "activeDays": 93,
   "currentStreak": 7,
-  "longestStreak": 19,
+  "longestStreak": 14,
   "repos": 26,
   "languages": [
     {
@@ -50,5 +50,5 @@
       "count": 1
     }
   ],
-  "updatedAt": "2026-10-24T13:17:54.067813+00:00"
+  "updatedAt": "2026-10-24T19:56:22.890260+00:00"
 }
