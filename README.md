@@ -56,7 +56,7 @@
 
 > `$ gh stats --user BhattAyush17`
 
-<img src="assets/stats/github-cards.svg?v=7335514af797" width="100%" alt="GitHub stats, top languages and current streak" />
+<img src="assets/stats/github-cards.svg?v=45c65da30749" width="100%" alt="GitHub stats, top languages and current streak" />
 
 > `$ gh api graphql   # commit activity by hour`
 
@@ -115,5 +115,5 @@
 </details>
 
 <!-- START_SECTION:sync_stamp -->
-<p align="right"><sub>last synced <code>2026-10-26 04:42:28 UTC</code> &nbsp;·&nbsp; <a href="https://github.com/BhattAyush17/BhattAyush17/actions/workflows/sync-readme.yml"><img src="https://img.shields.io/github/actions/workflow/status/BhattAyush17/BhattAyush17/sync-readme.yml?branch=main&style=flat-square&label=sync&labelColor=1a1a1a&color=6b7280&logo=github&logoColor=e5e7eb" alt="sync status" height="18" /></a></sub></p>
+<p align="right"><sub>last synced <code>2026-10-26 04:44:38 UTC</code> &nbsp;·&nbsp; <a href="https://github.com/BhattAyush17/BhattAyush17/actions/workflows/sync-readme.yml"><img src="https://img.shields.io/github/actions/workflow/status/BhattAyush17/BhattAyush17/sync-readme.yml?branch=main&style=flat-square&label=sync&labelColor=1a1a1a&color=6b7280&logo=github&logoColor=e5e7eb" alt="sync status" height="18" /></a></sub></p>
 <!-- END_SECTION:sync_stamp -->
