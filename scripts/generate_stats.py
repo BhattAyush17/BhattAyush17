@@ -131,7 +131,8 @@ CALENDAR_STALE_TOLERANCE_DAYS = 1
 # automation would keep itself busy forever. That is prevented by
 # comparing the profile repository's history against the one seen during
 # the previous run: when only the bot committed since then, the previous
-# numbers are kept, because they cannot have changed.
+# numbers are kept, unless the rolling one-year window itself changed
+# the visible total.
 
 BOT_AUTHOR = "github-actions[bot]"
 
@@ -1040,6 +1041,27 @@ def normalize_contribution_data(
     return True, normalized, None
 
 
+def display_total_contributions(data: dict[str, Any]) -> int:
+    """
+    Total contributions that belong to the rendered calendar cells.
+
+    GitHub's ``contributionCalendar.totalContributions`` can include a
+    partial leading week that is not present in the ``weeks`` array. That
+    made the card show 572 while the visible graph showed 551 once the
+    rolling one-year window moved forward.
+
+    Summing the day cells keeps the card consistent with the graph and
+    prevents an expired leading week from inflating the total.
+    """
+
+    value = data.get("total_contributions")
+
+    if value is None:
+        value = data.get("github_total_contributions", 0)
+
+    return int(value or 0)
+
+
 # ============================================================================
 # PROFILE HISTORY
 # ============================================================================
@@ -1420,29 +1442,23 @@ def get_github_data() -> FetchResult:
 
             if only_bot and cache and cache.data:
 
-                fresh_total = int(
-                    normalized.get(
-                        "github_total_contributions",
-                        0,
-                    )
-                    or 0
+                fresh_total = display_total_contributions(
+                    normalized
                 )
 
-                cached_total = int(
-                    cache.data.get(
-                        "github_total_contributions",
-                        0,
-                    )
-                    or 0
+                cached_total = display_total_contributions(
+                    cache.data
                 )
 
-                if fresh_total > cached_total:
+                if fresh_total != cached_total:
 
-                    # The graph caught up with real new work. The
-                    # numbers are used after all, otherwise a commit
-                    # could be missed forever.
+                    # The graph total changed even though only the bot
+                    # committed. That is the rolling one-year window
+                    # expiring the oldest day, not bot activity. Use the
+                    # fresh numbers so the card does not stay inflated
+                    # until the next human commit.
                     log.info(
-                        "Contribution count grew from %d to %d - "
+                        "Contribution count changed from %d to %d - "
                         "using the fresh numbers",
                         cached_total,
                         fresh_total,
@@ -1452,9 +1468,9 @@ def get_github_data() -> FetchResult:
 
             if only_bot and cache and cache.data:
 
-                # Only the bot committed and no new work showed up, so
-                # the contribution numbers cannot have changed. The
-                # previous numbers are kept and nothing is published.
+                # Only the bot committed and the graph total is
+                # unchanged, so there is nothing to publish. The
+                # previous numbers are kept.
                 # Without this the automation would react to its own
                 # commits forever.
                 #
@@ -1850,12 +1866,10 @@ def make_cards_svg(
 
     langs = _cards_languages(languages)
 
-    total = int(
-        data.get(
-            "github_total_contributions",
-            data.get("total_contributions", 0),
-        )
-    )
+    # Use the same day cells that the calendar renders. GitHub's
+    # totalContributions field can include a partial leading week that
+    # is not shown in those cells.
+    total = display_total_contributions(data)
 
     # Public commit contributions only. Restricted (private) contributions
     # are excluded on purpose: the card is public and must not state
@@ -2016,14 +2030,8 @@ def make_data_json(
             "current_streak_start"
         ),
 
-        "totalContributions": int(
-            contribution_data.get(
-                "github_total_contributions",
-                contribution_data.get(
-                    "total_contributions",
-                    0,
-                ),
-            )
+        "totalContributions": display_total_contributions(
+            contribution_data
         ),
 
         "commits": int(commits),
@@ -2324,6 +2332,22 @@ def run_streak_self_test() -> None:
 
     assert not valid
     assert error is not None
+
+    # The rendered total must come from the visible day cells, not from
+    # GitHub's totalContributions field, which can include a partial
+    # leading week outside the calendar grid.
+    assert display_total_contributions(
+        {
+            "github_total_contributions": 572,
+            "total_contributions": 549,
+        }
+    ) == 549
+
+    assert display_total_contributions(
+        {
+            "github_total_contributions": 551,
+        }
+    ) == 551
 
     log.info(
         "✅ Streak self-tests passed"
