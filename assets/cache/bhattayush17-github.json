@@ -1,43 +1,11 @@
 {
   "schema_version": 2,
   "username": "BhattAyush17",
-  "cached_at": "2026-10-31T11:22:47.779280+00:00",
+  "cached_at": "2026-10-31T20:45:21.429433+00:00",
   "is_partial": false,
   "data": {
     "username": "BhattAyush17",
     "weeks": [
-      {
-        "contributionDays": [
-          {
-            "date": "2025-10-26",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-10-27",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-10-28",
-            "contributionCount": 3
-          },
-          {
-            "date": "2025-10-29",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-10-30",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-10-31",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-11-01",
-            "contributionCount": 1
-          }
-        ]
-      },
       {
         "contributionDays": [
           {
@@ -1701,6 +1669,14 @@
             "contributionCount": 11
           }
         ]
+      },
+      {
+        "contributionDays": [
+          {
+            "date": "2026-11-01",
+            "contributionCount": 0
+          }
+        ]
       }
     ],
     "github_total_contributions": 630,
@@ -1711,12 +1687,12 @@
     "current_streak": 14,
     "current_streak_start": "2026-10-18",
     "longest_streak": 14,
-    "active_days": 100,
-    "total_contributions": 630,
+    "active_days": 93,
+    "total_contributions": 621,
     "current_year_contributions": 572,
-    "reference_date": "2026-10-31",
+    "reference_date": "2026-11-01",
     "last_contribution_date": "2026-10-31",
     "_is_partial": false,
-    "_profile_head_sha": "34f4a9f9a99699cb79584e4c3823bc451fd38a3a"
+    "_profile_head_sha": "f118d67b41c7d086d9f5606f1a86871b023d84fb"
   }
 }
