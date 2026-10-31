@@ -56,25 +56,25 @@
 
 > `$ gh stats --user BhattAyush17`
 
-<img src="assets/stats/github-cards.svg?v=b3832566a057" width="100%" alt="GitHub stats, top languages and current streak" />
+<img src="assets/stats/github-cards.svg?v=56c865c4133f" width="100%" alt="GitHub stats, top languages and current streak" />
 
 > `$ gh api graphql   # commit activity by hour`
 
-<img src="assets/stats/commit-hours.svg?v=15dea25e56ac" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
+<img src="assets/stats/commit-hours.svg?v=89eacb46def0" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
 
 > `$ gh repo list --sort pushed --limit 3`
 
 <!-- START_SECTION:recent_repos -->
 | `repo` | `description` | `lang` | `commits` | `last active` |
 |--------|---------------|--------|--------:|---------------|
-| [![trentorch-solutions](https://img.shields.io/badge/trentorch--solutions-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/trentorch-solutions) | My TrenTorch solutions | Python | 204 | Oct 30, 2026 |
+| [![Kakarot](https://img.shields.io/badge/Kakarot-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Kakarot) | No description | Python | 31 | Oct 31, 2026 |
+| [![trentorch-solutions](https://img.shields.io/badge/trentorch--solutions-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/trentorch-solutions) | My TrenTorch solutions | Python | 206 | Oct 31, 2026 |
 | [![AURA_CHAT](https://img.shields.io/badge/AURA__CHAT-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/AURA_CHAT) | conversations that feel alive, Built to underst... | TypeScript | 155 | Oct 15, 2026 |
-| [![Basic-Chatbot](https://img.shields.io/badge/Basic--Chatbot-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Basic-Chatbot) | No description | Python | 5 | Aug 16, 2026 |
 <!-- END_SECTION:recent_repos -->
 
 > `$ git log --graph --oneline --all   # contribution history`
 
-<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=dc09436ae107" width="100%" alt="Contribution Snake" />
+<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=144ca9063c11" width="100%" alt="Contribution Snake" />
 
 > `$ gh repo list --pinned --limit 4`
 
@@ -90,7 +90,7 @@
 > `$ gh achievement list --user BhattAyush17`
 
 <!-- START_SECTION:achievements -->
-<img src="assets/badges/achievement_pull_shark.png?v=d922b35c3d7c" width="72px" alt="Pull Shark" title="Pull Shark" /> &nbsp;&nbsp; <img src="assets/badges/achievement_yolo.png?v=6071a9aa07b5" width="72px" alt="YOLO" title="YOLO" /> &nbsp;&nbsp; <img src="assets/badges/achievement_quickdraw.png?v=1dd4c9cfd3cb" width="72px" alt="Quickdraw" title="Quickdraw" />
+<img src="assets/badges/achievement_pull_shark.png?v=d922b35c3d7c" width="72px" alt="Pull Shark" title="Pull Shark" /> &nbsp;&nbsp; <img src="assets/badges/achievement_yolo.png?v=6071a9aa07b5" width="72px" alt="YOLO" title="YOLO" /> &nbsp;&nbsp; <img src="assets/badges/achievement_quickdraw.png?v=0ab6ca4e9cde" width="72px" alt="Quickdraw" title="Quickdraw" />
 
 <sub>Pull Shark · YOLO · Quickdraw — merged PRs, unreviewed merges, same-day issue closes.</sub>
 <!-- END_SECTION:achievements -->
@@ -115,5 +115,5 @@
 </details>
 
 <!-- START_SECTION:sync_stamp -->
-<p align="right"><sub>last synced <code>2026-10-31 03:04:04 UTC</code> &nbsp;·&nbsp; <a href="https://github.com/BhattAyush17/BhattAyush17/actions/workflows/sync-readme.yml"><img src="https://img.shields.io/github/actions/workflow/status/BhattAyush17/BhattAyush17/sync-readme.yml?branch=main&style=flat-square&label=sync&labelColor=1a1a1a&color=6b7280&logo=github&logoColor=e5e7eb" alt="sync status" height="18" /></a></sub></p>
+<p align="right"><sub>last synced <code>2026-10-31 11:22:53 UTC</code> &nbsp;·&nbsp; <a href="https://github.com/BhattAyush17/BhattAyush17/actions/workflows/sync-readme.yml"><img src="https://img.shields.io/github/actions/workflow/status/BhattAyush17/BhattAyush17/sync-readme.yml?branch=main&style=flat-square&label=sync&labelColor=1a1a1a&color=6b7280&logo=github&logoColor=e5e7eb" alt="sync status" height="18" /></a></sub></p>
 <!-- END_SECTION:sync_stamp -->
