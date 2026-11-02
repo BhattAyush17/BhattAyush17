@@ -56,18 +56,18 @@
 
 > `$ gh stats --user BhattAyush17`
 
-<img src="assets/stats/github-cards.svg?v=4cadc5e1d615" width="100%" alt="GitHub stats, top languages and current streak" />
+<img src="assets/stats/github-cards.svg?v=7042a014533e" width="100%" alt="GitHub stats, top languages and current streak" />
 
 > `$ gh api graphql   # commit activity by hour`
 
-<img src="assets/stats/commit-hours.svg?v=0b9277f6d8c5" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
+<img src="assets/stats/commit-hours.svg?v=1e6bfc63e644" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
 
 > `$ gh repo list --sort pushed --limit 3`
 
 <!-- START_SECTION:recent_repos -->
 | `repo` | `description` | `lang` | `commits` | `last active` |
 |--------|---------------|--------|--------:|---------------|
-| [![trentorch-solutions](https://img.shields.io/badge/trentorch--solutions-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/trentorch-solutions) | My TrenTorch solutions | Python | 210 | Nov 02, 2026 |
+| [![trentorch-solutions](https://img.shields.io/badge/trentorch--solutions-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/trentorch-solutions) | My TrenTorch solutions | Python | 212 | Nov 02, 2026 |
 | [![Kakarot](https://img.shields.io/badge/Kakarot-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Kakarot) | No description | Python | 31 | Oct 31, 2026 |
 | [![AURA_CHAT](https://img.shields.io/badge/AURA__CHAT-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/AURA_CHAT) | conversations that feel alive, Built to underst... | TypeScript | 155 | Oct 15, 2026 |
 <!-- END_SECTION:recent_repos -->
@@ -90,7 +90,7 @@
 > `$ gh achievement list --user BhattAyush17`
 
 <!-- START_SECTION:achievements -->
-<img src="assets/badges/achievement_pull_shark.png?v=d922b35c3d7c" width="72px" alt="Pull Shark" title="Pull Shark" /> &nbsp;&nbsp; <img src="assets/badges/achievement_yolo.png?v=6071a9aa07b5" width="72px" alt="YOLO" title="YOLO" /> &nbsp;&nbsp; <img src="assets/badges/achievement_quickdraw.png?v=0ab6ca4e9cde" width="72px" alt="Quickdraw" title="Quickdraw" />
+<img src="assets/badges/achievement_pull_shark.png?v=25e37d13fa49" width="72px" alt="Pull Shark" title="Pull Shark" /> &nbsp;&nbsp; <img src="assets/badges/achievement_yolo.png?v=6071a9aa07b5" width="72px" alt="YOLO" title="YOLO" /> &nbsp;&nbsp; <img src="assets/badges/achievement_quickdraw.png?v=0ab6ca4e9cde" width="72px" alt="Quickdraw" title="Quickdraw" />
 
 <sub>Pull Shark · YOLO · Quickdraw — merged PRs, unreviewed merges, same-day issue closes.</sub>
 <!-- END_SECTION:achievements -->
@@ -115,5 +115,5 @@
 </details>
 
 <!-- START_SECTION:sync_stamp -->
-<p align="right"><sub>last synced <code>2026-11-02 03:08:38 UTC</code> &nbsp;·&nbsp; <a href="https://github.com/BhattAyush17/BhattAyush17/actions/workflows/sync-readme.yml"><img src="https://img.shields.io/github/actions/workflow/status/BhattAyush17/BhattAyush17/sync-readme.yml?branch=main&style=flat-square&label=sync&labelColor=1a1a1a&color=6b7280&logo=github&logoColor=e5e7eb" alt="sync status" height="18" /></a></sub></p>
+<p align="right"><sub>last synced <code>2026-11-02 14:03:41 UTC</code> &nbsp;·&nbsp; <a href="https://github.com/BhattAyush17/BhattAyush17/actions/workflows/sync-readme.yml"><img src="https://img.shields.io/github/actions/workflow/status/BhattAyush17/BhattAyush17/sync-readme.yml?branch=main&style=flat-square&label=sync&labelColor=1a1a1a&color=6b7280&logo=github&logoColor=e5e7eb" alt="sync status" height="18" /></a></sub></p>
 <!-- END_SECTION:sync_stamp -->
