@@ -56,25 +56,25 @@
 
 > `$ gh stats --user BhattAyush17`
 
-<img src="assets/stats/github-cards.svg?v=7042a014533e" width="100%" alt="GitHub stats, top languages and current streak" />
+<img src="assets/stats/github-cards.svg?v=e9289d94f92f" width="100%" alt="GitHub stats, top languages and current streak" />
 
 > `$ gh api graphql   # commit activity by hour`
 
-<img src="assets/stats/commit-hours.svg?v=871fcf5df0d1" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
+<img src="assets/stats/commit-hours.svg?v=5e915f20bf0c" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
 
 > `$ gh repo list --sort pushed --limit 3`
 
 <!-- START_SECTION:recent_repos -->
 | `repo` | `description` | `lang` | `commits` | `last active` |
 |--------|---------------|--------|--------:|---------------|
-| [![trentorch-solutions](https://img.shields.io/badge/trentorch--solutions-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/trentorch-solutions) | My TrenTorch solutions | Python | 212 | Nov 02, 2026 |
-| [![Kakarot](https://img.shields.io/badge/Kakarot-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Kakarot) | No description | Python | 31 | Oct 31, 2026 |
+| [![trentorch-solutions](https://img.shields.io/badge/trentorch--solutions-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/trentorch-solutions) | My TrenTorch solutions | Python | 214 | Nov 03, 2026 |
 | [![AURA_CHAT](https://img.shields.io/badge/AURA__CHAT-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/AURA_CHAT) | conversations that feel alive, Built to underst... | TypeScript | 155 | Oct 15, 2026 |
+| [![Basic-Chatbot](https://img.shields.io/badge/Basic--Chatbot-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Basic-Chatbot) | No description | Python | 5 | Aug 16, 2026 |
 <!-- END_SECTION:recent_repos -->
 
 > `$ git log --graph --oneline --all   # contribution history`
 
-<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=2a742715dd61" width="100%" alt="Contribution Snake" />
+<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=2f8d63d6bf31" width="100%" alt="Contribution Snake" />
 
 > `$ gh repo list --pinned --limit 4`
 
@@ -115,5 +115,5 @@
 </details>
 
 <!-- START_SECTION:sync_stamp -->
-<p align="right"><sub>last synced <code>2026-11-03 00:09:38 UTC</code> &nbsp;·&nbsp; <a href="https://github.com/BhattAyush17/BhattAyush17/actions/workflows/sync-readme.yml"><img src="https://img.shields.io/github/actions/workflow/status/BhattAyush17/BhattAyush17/sync-readme.yml?branch=main&style=flat-square&label=sync&labelColor=1a1a1a&color=6b7280&logo=github&logoColor=e5e7eb" alt="sync status" height="18" /></a></sub></p>
+<p align="right"><sub>last synced <code>2026-11-03 13:11:19 UTC</code> &nbsp;·&nbsp; <a href="https://github.com/BhattAyush17/BhattAyush17/actions/workflows/sync-readme.yml"><img src="https://img.shields.io/github/actions/workflow/status/BhattAyush17/BhattAyush17/sync-readme.yml?branch=main&style=flat-square&label=sync&labelColor=1a1a1a&color=6b7280&logo=github&logoColor=e5e7eb" alt="sync status" height="18" /></a></sub></p>
 <!-- END_SECTION:sync_stamp -->
