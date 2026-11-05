@@ -56,25 +56,25 @@
 
 > `$ gh stats --user BhattAyush17`
 
-<img src="assets/stats/github-cards.svg?v=895f3afc79c3" width="100%" alt="GitHub stats, top languages and current streak" />
+<img src="assets/stats/github-cards.svg?v=617e8bbf66e3" width="100%" alt="GitHub stats, top languages and current streak" />
 
 > `$ gh api graphql   # commit activity by hour`
 
-<img src="assets/stats/commit-hours.svg?v=123bc3aef562" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
+<img src="assets/stats/commit-hours.svg?v=d62ee0b45faf" width="100%" alt="Commits by hour of day (UTC+5:30, IST)" />
 
 > `$ gh repo list --sort pushed --limit 3`
 
 <!-- START_SECTION:recent_repos -->
 | `repo` | `description` | `lang` | `commits` | `last active` |
 |--------|---------------|--------|--------:|---------------|
-| [![trentorch-solutions](https://img.shields.io/badge/trentorch--solutions-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/trentorch-solutions) | My TrenTorch solutions | Python | 218 | Nov 04, 2026 |
+| [![trentorch-solutions](https://img.shields.io/badge/trentorch--solutions-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/trentorch-solutions) | My TrenTorch solutions | Python | 220 | Nov 05, 2026 |
 | [![AURA_CHAT](https://img.shields.io/badge/AURA__CHAT-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/AURA_CHAT) | conversations that feel alive, Built to underst... | TypeScript | 155 | Oct 15, 2026 |
 | [![Basic-Chatbot](https://img.shields.io/badge/Basic--Chatbot-1a1a1a?style=flat-square&logo=github&logoColor=white)](https://github.com/BhattAyush17/Basic-Chatbot) | No description | Python | 5 | Aug 16, 2026 |
 <!-- END_SECTION:recent_repos -->
 
 > `$ git log --graph --oneline --all   # contribution history`
 
-<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=4613546af8de" width="100%" alt="Contribution Snake" />
+<img src="assets/snake/github-contribution-grid-snake-dark.svg?v=d9f2b1567836" width="100%" alt="Contribution Snake" />
 
 > `$ gh repo list --pinned --limit 4`
 
@@ -115,5 +115,5 @@
 </details>
 
 <!-- START_SECTION:sync_stamp -->
-<p align="right"><sub>last synced <code>2026-11-05 04:01:58 UTC</code> &nbsp;·&nbsp; <a href="https://github.com/BhattAyush17/BhattAyush17/actions/workflows/sync-readme.yml"><img src="https://img.shields.io/github/actions/workflow/status/BhattAyush17/BhattAyush17/sync-readme.yml?branch=main&style=flat-square&label=sync&labelColor=1a1a1a&color=6b7280&logo=github&logoColor=e5e7eb" alt="sync status" height="18" /></a></sub></p>
+<p align="right"><sub>last synced <code>2026-11-05 13:39:40 UTC</code> &nbsp;·&nbsp; <a href="https://github.com/BhattAyush17/BhattAyush17/actions/workflows/sync-readme.yml"><img src="https://img.shields.io/github/actions/workflow/status/BhattAyush17/BhattAyush17/sync-readme.yml?branch=main&style=flat-square&label=sync&labelColor=1a1a1a&color=6b7280&logo=github&logoColor=e5e7eb" alt="sync status" height="18" /></a></sub></p>
 <!-- END_SECTION:sync_stamp -->
