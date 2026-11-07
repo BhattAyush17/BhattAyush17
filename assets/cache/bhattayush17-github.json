@@ -1,43 +1,11 @@
 {
   "schema_version": 2,
   "username": "BhattAyush17",
-  "cached_at": "2026-11-07T12:01:51.644611+00:00",
+  "cached_at": "2026-11-07T21:11:43.639734+00:00",
   "is_partial": false,
   "data": {
     "username": "BhattAyush17",
     "weeks": [
-      {
-        "contributionDays": [
-          {
-            "date": "2025-11-02",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-11-03",
-            "contributionCount": 2
-          },
-          {
-            "date": "2025-11-04",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-11-05",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-11-06",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-11-07",
-            "contributionCount": 1
-          },
-          {
-            "date": "2025-11-08",
-            "contributionCount": 1
-          }
-        ]
-      },
       {
         "contributionDays": [
           {
@@ -1698,25 +1666,33 @@
           },
           {
             "date": "2026-11-07",
-            "contributionCount": 2
+            "contributionCount": 4
+          }
+        ]
+      },
+      {
+        "contributionDays": [
+          {
+            "date": "2026-11-08",
+            "contributionCount": 0
           }
         ]
       }
     ],
-    "github_total_contributions": 639,
-    "total_commit_contributions": 557,
+    "github_total_contributions": 641,
+    "total_commit_contributions": 559,
     "total_pull_request_contributions": 3,
     "total_issue_contributions": 3,
     "restricted_contributions": 62,
     "current_streak": 21,
     "current_streak_start": "2026-10-18",
     "longest_streak": 21,
-    "active_days": 100,
-    "total_contributions": 639,
-    "current_year_contributions": 590,
-    "reference_date": "2026-11-07",
+    "active_days": 93,
+    "total_contributions": 633,
+    "current_year_contributions": 592,
+    "reference_date": "2026-11-08",
     "last_contribution_date": "2026-11-07",
     "_is_partial": false,
-    "_profile_head_sha": "a154dbc6cec47ad013d8c925a6dde3b6ae2f3042"
+    "_profile_head_sha": "f386631ace06ea196db11d82d83d76306c4df13f"
   }
 }
